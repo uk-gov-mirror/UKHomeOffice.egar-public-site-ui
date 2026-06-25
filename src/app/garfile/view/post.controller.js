@@ -57,8 +57,8 @@ module.exports = async (req, res) => {
       dataAccessApi.garApi.getSupportingDocs(garId),
     ]);
 
-    const parsedGar = garPeople;
-    const parsedPeople = garDetails;
+    const parsedGar = garDetails;
+    const parsedPeople = garPeople;
     const supportingDocuments = garDocs;
     const { departureDate, departureTime } = parsedGar;
     const lastDepartureDateString = departureDate && departureTime ? `${departureDate}T${departureTime}.000Z` : null;
@@ -104,8 +104,6 @@ module.exports = async (req, res) => {
     logger.info('Rendering GAR review page');
     res.render('app/garfile/view/index', renderContext);
   } catch (err) {
-    console.log(err);
-    console.log(err.stack);
     logger.error('Failed to get GAR information');
     logger.error(err);
     renderContext.errors = [{ message: 'Failed to get GAR information' }];
