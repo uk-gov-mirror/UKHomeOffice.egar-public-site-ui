@@ -29,7 +29,6 @@ class GarApi {
       const gar = await this.client.get(`/gar/${garId}`, { query: { cbp_id: isCbpId } });
       gar.responsibleCountryLabel = autocompleteUtil.getCountryFromCode(gar.responsibleCountry);
       logger.debug('Successfully called GAR get endpoint');
-
       return gar;
     } catch (err) {
       logger.error('Failed to call GAR get API endpoint');
@@ -99,7 +98,9 @@ class GarApi {
       const url = `/gar/${garId}/supportingdocs`;
 
       logger.debug(`Calling get supporting docs endpoint ${url}`);
-      return this.client.get(`/gar/${garId}/supportingdocs`, { query });
+      const result = this.client.get(`/gar/${garId}/supportingdocs`, { query });
+      console.log(result);
+      return result;
     } catch (err) {
       logger.error('Failed to call GAR get supporting documents API endpoint');
       const responseErrorMessage = getResponseErrorMessage(err);

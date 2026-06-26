@@ -45,9 +45,9 @@ describe('GAR view post controller', () => {
       render: sinon.spy(),
     };
 
-    garApiGetStub = sinon.stub(dataAccessApi, 'garApi.get');
-    garApiGetPeopleStub = sinon.stub(dataAccessApi, 'garApi.getPeople');
-    garApiGetSupportingDocsStub = sinon.stub(dataAccessApi, 'garApi.getSupportingDocs');
+    garApiGetStub = sinon.stub(dataAccessApi.garApi, 'get');
+    garApiGetPeopleStub = sinon.stub(dataAccessApi.garApi, 'getPeople');
+    garApiGetSupportingDocsStub = sinon.stub(dataAccessApi.garApi, 'getSupportingDocs');
     getDurationBeforeDepartureStub = sinon.stub(garApi, 'getDurationBeforeDeparture');
   });
 

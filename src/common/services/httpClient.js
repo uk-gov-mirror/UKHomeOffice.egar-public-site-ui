@@ -10,7 +10,7 @@ class ApiClient {
     this.timeout = timeout;
   }
 
-  async request(path, { method = 'GET', headers = {}, body, query } = {}) {
+  async #request(path, { method = 'GET', headers = {}, body, query } = {}) {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), this.timeout);
 
@@ -67,22 +67,22 @@ class ApiClient {
   }
 
   get(path, options = {}) {
-    return this.request(path, { ...options, method: 'GET' });
+    return this.#request(path, { ...options, method: 'GET' });
   }
 
   post(path, body, options = {}) {
-    return this.request(path, { ...options, method: 'POST', body });
+    return this.#request(path, { ...options, method: 'POST', body });
   }
 
   put(path, body, options = {}) {
-    return this.request(path, { ...options, method: 'PUT', body });
+    return this.#request(path, { ...options, method: 'PUT', body });
   }
   patch(path, body, options = {}) {
-    return this.request(path, { ...options, method: 'PATCH', body });
+    return this.#request(path, { ...options, method: 'PATCH', body });
   }
 
   delete(path, options = {}) {
-    return this.request(path, { ...options, method: 'DELETE' });
+    return this.#request(path, { ...options, method: 'DELETE' });
   }
 }
 
