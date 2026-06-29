@@ -1,4 +1,4 @@
-class ApiClient {
+class HttpClient {
   constructor({ baseUrl, defaultHeaders = {}, timeout = 10000 }) {
     this.baseUrl = baseUrl;
     this.defaultHeaders = {
@@ -86,4 +86,6 @@ class ApiClient {
   }
 }
 
-module.exports = ApiClient;
+module.exports = {
+  HttpClient,
+};
