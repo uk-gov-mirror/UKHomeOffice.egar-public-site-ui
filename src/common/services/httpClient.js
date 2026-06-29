@@ -54,7 +54,7 @@ class HttpClient {
       throw {
         ok: response.ok,
         type: 'http_error',
-        status: response.status,
+        statusCode: response.statusCode,
         statusMessage: response.statusText,
         message: data?.message || response.statusText,
         url: url.toString(),
