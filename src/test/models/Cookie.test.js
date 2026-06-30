@@ -38,6 +38,10 @@ describe('Cookie Model', () => {
     sinon.spy(CookieModel.prototype, 'initialiseGar');
   });
 
+  afterEach(function () {
+    sinon.restore();
+  });
+
   it('should throw an error with null parameter', () => {
     const nullConstructor = () => new CookieModel(null);
 
