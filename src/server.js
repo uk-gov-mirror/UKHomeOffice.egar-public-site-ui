@@ -15,7 +15,7 @@ const nunjucks = require('nunjucks');
 const helmet = require('helmet');
 const _ = require('lodash');
 const cookieParser = require('cookie-parser');
-const uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 const csrf = require('csurf');
 const PgSession = require('connect-pg-simple')(session);
 
