@@ -1,12 +1,6 @@
 const request = require('request');
-const moment = require('moment');
-const Sequelize = require('sequelize');
 const logger = require('../utils/logger')(__filename);
 const endpoints = require('../config/endpoints');
-const db = require('../utils/db');
-const config = require('../config/index');
-
-const { lte } = Sequelize.Op;
 
 module.exports = {
   /**
@@ -111,16 +105,5 @@ module.exports = {
         }
       );
     });
-  },
-
-    /**
-   * Validates the number of verification attempts for a token.
-   *
-   * @param {Object} UserSession object
-   */
-  validNumAttempts(token) {
-    token.increment('NumAttempts', { by: 1 });
-    logger.info(`Token verification attempt number ${token.NumAttempts}`);
-    return token.NumAttempts <= config.MFA_TOKEN_MAX_ATTEMPTS;
   },
 };

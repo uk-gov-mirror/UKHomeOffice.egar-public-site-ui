@@ -1,9 +1,5 @@
 const { expect } = require('chai');
 const chai = require('chai');
-const sinon = require('sinon');
-const sinonChai = require('sinon-chai');
-const proxyquire = require('proxyquire');
-const moment = require('moment');
 const nock = require('nock');
 
 require('../../global.test');
@@ -12,42 +8,6 @@ const endpoints = require('../../../common/config/endpoints');
 const tokenApi = require('../../../common/services/tokenApi');
 const genToken = require('../../../common/services/create-token');
 const config = require('../../../common/config/index');
-
-const { MFA_TOKEN_EXPIRY, MFA_TOKEN_MAX_ATTEMPTS } = config;
-const createStub = sinon.stub().resolves(true);
-const updateStub = sinon.stub().resolves(true);
-const findOneStub = sinon.stub().resolves({
-  get() {
-    return '2019-03-01 14:24:23.195+00';
-  },
-  increment() {
-    this.NumAttempts += 1;
-  },
-  MFAToken: '87654321',
-  NumAttempts: 0,
-});
-
-const dbStub = {
-  sequelize: {
-    models: {
-      UserSessions: {
-        update: updateStub,
-        create: createStub,
-        findOne: findOneStub,
-      },
-    },
-  },
-};
-
-describe('UserSessions', () => {
-  const tokenApiProxy = proxyquire('../../../common/services/tokenApi', { '../utils/db': dbStub });
-
-  before(() => {
-    chai.use(sinonChai);
-    this.clock = (date) => sinon.useFakeTimers(new Date(date));
-    this.clock('2019-04-01');
-  });
-});
 
 describe('TokenService', () => {
   const url = '/user/settoken';
@@ -139,7 +99,10 @@ describe('TokenService', () => {
         organisationId: orgId,
         roleName,
       })
-      .replyWithError({ message: 'Example setInviteUserToken error', code: 404 });
+      .replyWithError({
+        message: 'Example setInviteUserToken error',
+        code: 404,
+      });
 
     tokenApi
       .setInviteUserToken(tokenId, userId, orgId, roleName)

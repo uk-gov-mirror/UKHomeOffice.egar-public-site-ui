@@ -1,6 +1,5 @@
 const logger = require('../../common/utils/logger')(__filename);
 const CookieModel = require('../../common/models/Cookie.class');
-const tokenApi = require('../../common/services/tokenApi');
 const garApi = require('../../common/services/garApi');
 
 const PAGE_ONE = 1;
@@ -19,7 +18,6 @@ module.exports = async (req, res) => {
 
   const statusTab = req.query?.status || 'Draft';
   const pageVal = req.query?.page || PAGE_ONE;
-
 
   const { successHeader, successMsg } = req.session;
   const getPageObj = (status) => ({

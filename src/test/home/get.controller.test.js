@@ -5,7 +5,6 @@ const sinonChai = require('sinon-chai');
 
 require('../global.test');
 const CookieModel = require('../../common/models/Cookie.class');
-const tokenApi = require('../../common/services/tokenApi');
 const garApi = require('../../common/services/garApi');
 
 const controller = require('../../app/home/get.controller');
@@ -13,7 +12,6 @@ const controller = require('../../app/home/get.controller');
 describe('Home Get Controller', () => {
   let req;
   let res;
-  let tokenApiStub;
   let garApiStub;
 
   beforeEach(() => {
@@ -21,7 +19,11 @@ describe('Home Get Controller', () => {
 
     req = {
       session: {
-        u: { dbId: 'abcde-12345', e: 'captain.kirk@enterprise.com', rl: 'Individual' },
+        u: {
+          dbId: 'abcde-12345',
+          e: 'captain.kirk@enterprise.com',
+          rl: 'Individual',
+        },
       },
       query: { status: 'Draft', page: 1 },
     };
