@@ -20,7 +20,7 @@ spec:
       volumes:
         - name: bundle-certs
           configMap:
-            name: bundle 
+            name: bundle
       containers:
         - name: public-site-proxy
           image: quay.io/ukhomeofficedigital/acp-nginx-proxy-rocky:0.0.3
@@ -38,7 +38,7 @@ spec:
               cpu: "250m"
           ports:
             - name: public-prxy-prt
-              containerPort: 10443 
+              containerPort: 10443
           env:
             - name: PROXY_SERVICE_HOST
               value: "127.0.0.1"
@@ -118,16 +118,6 @@ spec:
                 secretKeyRef:
                   name: environment
                   key: NOTIFY_API_KEY
-            - name: NOTIFY_TOKEN_TEMPLATE_ID
-              valueFrom:
-                secretKeyRef:
-                  name: environment
-                  key: NOTIFY_TOKEN_TEMPLATE_ID
-            - name: NOTIFY_INVITE_TEMPLATE_ID
-              valueFrom:
-                secretKeyRef:
-                  name: environment
-                  key: NOTIFY_INVITE_TEMPLATE_ID
             - name: NOTIFY_GAR_CANCEL_TEMPLATE_ID
               valueFrom:
                 secretKeyRef:
@@ -143,26 +133,6 @@ spec:
                 secretKeyRef:
                   name: environment
                   key: NOTIFY_ACCOUNT_DELETE_TEMPLATE_ID
-            - name: NOTIFY_MFA_TOKEN_LENGTH
-              valueFrom:
-                secretKeyRef:
-                  name: environment
-                  key: NOTIFY_MFA_TOKEN_LENGTH
-            - name: NOTIFY_MFA_TOKEN_TTL
-              valueFrom:
-                secretKeyRef:
-                  name: environment
-                  key: NOTIFY_MFA_TOKEN_TTL
-            - name: NOTIFY_MFA_TOKEN_MAX_ATTEMPTS
-              valueFrom:
-                secretKeyRef:
-                  name: environment
-                  key: NOTIFY_MFA_TOKEN_MAX_ATTEMPTS
-            - name: NOTIFY_MFA_TEMPLATE_ID
-              valueFrom:
-                secretKeyRef:
-                  name: environment
-                  key: NOTIFY_MFA_TEMPLATE_ID
             - name: NOTIFY_ADMIN_ABOUT_USER_EMAIL_CHANGE_TEMPLATE_ID
               valueFrom:
                 secretKeyRef:
@@ -346,7 +316,7 @@ spec:
           volumeMounts:
             - name: bundle-certs
               mountPath: /etc/ssl/certs
-              readOnly: true                        
+              readOnly: true
           ports:
             - name: public-site-prt
               containerPort: 3000
