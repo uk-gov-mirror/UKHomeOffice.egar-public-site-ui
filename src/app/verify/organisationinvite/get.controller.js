@@ -1,9 +1,7 @@
 const logger = require('../../../common/utils/logger')(__filename);
-const { API_BASE } = require('../../../common/config');
 const CookieModel = require('../../../common/models/Cookie.class');
 const tokenService = require('../../../common/services/create-token');
 const oneLoginUtil = require('../../../common/utils/oneLoginAuth');
-const { URL } = require('url');
 const verifyUserService = require('../../../common/services/verificationApi');
 
 module.exports = async (req, res) => {
@@ -17,7 +15,6 @@ module.exports = async (req, res) => {
   // Look up and validate token, checking it hasn't expired
   const token = req.query.query;
   const hashedToken = tokenService.generateHash(token);
-  const pathName = new URL(req.originalUrl, API_BASE).pathname;
 
   const oneLoginAuthUrl = oneLoginUtil.getOneLoginAuthUrl(req, res);
 
@@ -31,7 +28,7 @@ module.exports = async (req, res) => {
       return res.redirect('/error/inviteExpiredError');
     }
 
-    return res.render('app/verify/organisationinvite/index', { pathName, oneLoginAuthUrl });
+    return res.render('app/verify/organisationinvite/index', { oneLoginAuthUrl });
   } catch (error) {
     logger.error(`Invite link to register failed ${error}`);
     return res.redirect('/error/404');

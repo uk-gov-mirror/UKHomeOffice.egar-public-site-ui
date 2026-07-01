@@ -15,7 +15,6 @@ describe('Verify Organisation Invite Get Controller', () => {
   let req;
   let res;
   const oneLoginAuthUrl = 'https://onelogin?code=123&state=state';
-  const pathName = '/verify/invite/onelogin';
   let verifyUserServiceStub;
 
   beforeEach(() => {
@@ -26,7 +25,6 @@ describe('Verify Organisation Invite Get Controller', () => {
         query: 'Example Incoming Unhashed Token',
       },
       get: sinon.stub().returns('stubbed-header'),
-      originalUrl: pathName,
     };
 
     res = {
@@ -55,7 +53,6 @@ describe('Verify Organisation Invite Get Controller', () => {
     expect(tokenService.generateHash).to.have.been.calledOnceWithExactly('Example Incoming Unhashed Token');
     expect(cookie.getInviteUserToken()).to.eq('HashedToken123');
     expect(res.render).to.have.been.calledOnceWithExactly('app/verify/organisationinvite/index', {
-      pathName,
       oneLoginAuthUrl,
     });
   });
