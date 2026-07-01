@@ -1,12 +1,12 @@
-const logger = require("../../common/utils/logger")(__filename);
-const CookieModel = require("../../common/models/Cookie.class");
-const garApi = require("../../common/services/garApi");
+const logger = require('../../common/utils/logger')(__filename);
+const CookieModel = require('../../common/models/Cookie.class');
+const garApi = require('../../common/services/garApi');
 
 const PAGE_ONE = 1;
 const PER_PAGE = 10;
 
 module.exports = async (req, res) => {
-  logger.debug("In home  get controller");
+  logger.debug('In home  get controller');
   const cookie = new CookieModel(req);
 
   const userId = cookie.getUserDbId();
@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
   // Delete any GAR stored in the cookie session
   cookie.session.gar = null;
 
-  const statusTab = req.query?.status || "Draft";
+  const statusTab = req.query?.status || 'Draft';
   const pageVal = req.query?.page || PAGE_ONE;
 
   const { successHeader, successMsg } = req.session;
@@ -25,9 +25,9 @@ module.exports = async (req, res) => {
     perPage: PER_PAGE,
     status,
   });
-  const draftPageObj = getPageObj("Draft");
-  const submittedPageObj = getPageObj("Submitted");
-  const cancelledPageObj = getPageObj("Cancelled");
+  const draftPageObj = getPageObj('Draft');
+  const submittedPageObj = getPageObj('Submitted');
+  const cancelledPageObj = getPageObj('Cancelled');
 
   delete req.session.successHeader;
   delete req.session.successMsg;
@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
       garApi.getGars(userId, role, cancelledPageObj, orgId),
     ]);
 
-    res.render("app/home/index", {
+    res.render('app/home/index', {
       cookie,
       successMsg,
       successHeader,
@@ -49,13 +49,13 @@ module.exports = async (req, res) => {
       cancelledGars: JSON.parse(cancelledGars),
     });
   } catch (error) {
-    logger.error("Failed to get GARS from API");
+    logger.error('Failed to get GARS from API');
     logger.error(error);
-    res.render("app/home/index", {
+    res.render('app/home/index', {
       cookie,
       successMsg,
       successHeader,
-      errors: [{ message: "Failed to get GARs" }],
+      errors: [{ message: 'Failed to get GARs' }],
       statusTab,
     });
   }
