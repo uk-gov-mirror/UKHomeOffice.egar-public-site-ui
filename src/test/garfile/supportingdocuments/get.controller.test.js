@@ -162,9 +162,7 @@ describe('GAR Supporting Documents Get Controller', () => {
         cookie,
         supportingDoc: apiResponse,
         max_num_files: 8,
-        errors: [
-          { message: 'The total file size of all uploaded documents must be less than 8MB', identifier: 'file' },
-        ],
+        errors: [{ message: '8 is the maximum number of documents that can be uploaded', identifier: 'file' }],
       });
     });
   });
