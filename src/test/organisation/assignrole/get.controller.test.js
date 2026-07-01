@@ -32,7 +32,7 @@ describe('Organisation Assign Role Get Controller', () => {
     const cookie = new CookieModel(req);
     cookie.setUserRole('Admin');
 
-    await controller(req, res);
+    controller(req, res);
 
     expect(res.render).to.have.been.calledWith('app/organisation/assignrole/index', {
       cookie,
