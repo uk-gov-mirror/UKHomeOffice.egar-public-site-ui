@@ -99,7 +99,10 @@ describe('TokenService', () => {
         organisationId: orgId,
         roleName,
       })
-      .replyWithError({ message: 'Example setInviteUserToken error', code: 404 });
+      .replyWithError({
+        message: 'Example setInviteUserToken error',
+        code: 404,
+      });
 
     tokenApi
       .setInviteUserToken(tokenId, userId, orgId, roleName)

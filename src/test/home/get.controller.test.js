@@ -19,7 +19,11 @@ describe('Home Get Controller', () => {
 
     req = {
       session: {
-        u: { dbId: 'abcde-12345', e: 'captain.kirk@enterprise.com', rl: 'Individual' },
+        u: {
+          dbId: 'abcde-12345',
+          e: 'captain.kirk@enterprise.com',
+          rl: 'Individual',
+        },
       },
       query: { status: 'Draft', page: 1 },
     };
