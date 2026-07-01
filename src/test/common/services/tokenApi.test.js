@@ -23,30 +23,7 @@ const findOneStub = sinon.stub().resolves({
   increment() {
     this.NumAttempts += 1;
   },
-  MFAToken: '87654321',
   NumAttempts: 0,
-});
-
-const dbStub = {
-  sequelize: {
-    models: {
-      UserSessions: {
-        update: updateStub,
-        create: createStub,
-        findOne: findOneStub,
-      },
-    },
-  },
-};
-
-describe('UserSessions', () => {
-  const tokenApiProxy = proxyquire('../../../common/services/tokenApi', { '../utils/db': dbStub });
-
-  before(() => {
-    chai.use(sinonChai);
-    this.clock = (date) => sinon.useFakeTimers(new Date(date));
-    this.clock('2019-04-01');
-  });
 });
 
 describe('TokenService', () => {

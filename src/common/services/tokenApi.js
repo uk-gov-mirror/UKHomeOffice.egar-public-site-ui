@@ -1,12 +1,8 @@
 const request = require('request');
 const moment = require('moment');
-const Sequelize = require('sequelize');
 const logger = require('../utils/logger')(__filename);
 const endpoints = require('../config/endpoints');
-const db = require('../utils/db');
 const config = require('../config/index');
-
-const { lte } = Sequelize.Op;
 
 module.exports = {
   /**

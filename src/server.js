@@ -24,7 +24,6 @@ const logger = require('./common/utils/logger')(__filename);
 const config = require('./common/config/index');
 const availability = require('./common/config/availability');
 const router = require('./app/router');
-const db = require('./common/utils/db');
 const noCache = require('./common/utils/no-cache');
 const autocompleteUtil = require('./common/utils/autocomplete');
 const nunjucksFilters = require('./common/utils/templateFilters.js');
@@ -53,24 +52,6 @@ const APP_VIEWS = [
   'common/templates',
   'common/templates/includes',
 ];
-
-function initialiseDb() {
-  return new Promise((resolve, reject) => {
-    logger.info('Syncing db');
-    db.sequelize
-      .query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
-      .then(() => db.sequelize.sync())
-      .then(() => {
-        logger.debug('Successfully created tables');
-        resolve();
-      })
-      .catch((e) => {
-        logger.error('Failed to sync db');
-        logger.error(e);
-        reject(e);
-      });
-  });
-}
 
 function initialisExpressSession(app) {
   app.use(cookieParser());
@@ -297,10 +278,8 @@ function initialise() {
 
   // DB calls are asynchronous, need them executed before aspects like
   // sessions which talk to the DB are executed, so all other init calls
-  // performed after initialiseDb
   async function prepDb() {
     try {
-      await initialiseDb();
       setupLoggingContext();
       initialisExpressSession(unconfiguredApp);
       initialiseProxy(unconfiguredApp);

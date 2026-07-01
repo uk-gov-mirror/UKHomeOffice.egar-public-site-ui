@@ -21,7 +21,6 @@ exports.API_VERSION = process.env.API_VERSION || 'v0.2.0';
 // Misc settings
 exports.CONNECTOR_URL = process.env.CONNECTOR_URL;
 exports.CONTACT_EMAIL = process.env.CONTACT_URL || 'supportegar@homeoffice.gov.uk';
-exports.WHITELIST_REQUIRED = process.env.WHITELIST_REQUIRED || 'true';
 
 // Application settings
 exports.NODE_ENV = process.env.NODE_ENV || 'DEV';
