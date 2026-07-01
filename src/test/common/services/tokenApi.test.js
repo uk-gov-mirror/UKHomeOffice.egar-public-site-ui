@@ -1,9 +1,5 @@
 const { expect } = require('chai');
 const chai = require('chai');
-const sinon = require('sinon');
-const sinonChai = require('sinon-chai');
-const proxyquire = require('proxyquire');
-const moment = require('moment');
 const nock = require('nock');
 
 require('../../global.test');
@@ -12,19 +8,6 @@ const endpoints = require('../../../common/config/endpoints');
 const tokenApi = require('../../../common/services/tokenApi');
 const genToken = require('../../../common/services/create-token');
 const config = require('../../../common/config/index');
-
-const { MFA_TOKEN_EXPIRY, MFA_TOKEN_MAX_ATTEMPTS } = config;
-const createStub = sinon.stub().resolves(true);
-const updateStub = sinon.stub().resolves(true);
-const findOneStub = sinon.stub().resolves({
-  get() {
-    return '2019-03-01 14:24:23.195+00';
-  },
-  increment() {
-    this.NumAttempts += 1;
-  },
-  NumAttempts: 0,
-});
 
 describe('TokenService', () => {
   const url = '/user/settoken';

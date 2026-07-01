@@ -1,8 +1,6 @@
 const request = require('request');
-const moment = require('moment');
 const logger = require('../utils/logger')(__filename);
 const endpoints = require('../config/endpoints');
-const config = require('../config/index');
 
 module.exports = {
   /**
@@ -107,16 +105,5 @@ module.exports = {
         }
       );
     });
-  },
-
-    /**
-   * Validates the number of verification attempts for a token.
-   *
-   * @param {Object} UserSession object
-   */
-  validNumAttempts(token) {
-    token.increment('NumAttempts', { by: 1 });
-    logger.info(`Token verification attempt number ${token.NumAttempts}`);
-    return token.NumAttempts <= config.MFA_TOKEN_MAX_ATTEMPTS;
   },
 };
