@@ -43,9 +43,7 @@ module.exports = (req, res) => {
           ];
           break;
         case 'number':
-          error = [
-            { message: 'The total file size of all uploaded documents must be less than 8MB', identifier: 'file' },
-          ];
+          error = [{ message: '8 is the maximum number of documents that can be uploaded', identifier: 'file' }];
           break;
         case 'deletefailed':
           error = [{ message: 'Failed to delete document. Try again' }];
