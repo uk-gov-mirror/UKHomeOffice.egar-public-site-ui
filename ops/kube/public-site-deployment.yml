@@ -4,6 +4,8 @@ kind: Deployment
 metadata:
   name: public-site
   namespace: {{ .KUBE_NAMESPACE }}
+  annotations:
+    {{ .DOWN_SCALER_ANNOTATIONS }}
 spec:
   selector:
     matchLabels:

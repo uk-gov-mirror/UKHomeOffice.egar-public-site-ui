@@ -119,6 +119,7 @@ steps:
     commands:
       - source ./ops/dev_deploy_vars.sh
       - source ./ops/deploy.sh
+      - source ./ops/notprod_values
     environment:
       INGRESS_CLASS: nginx-internal
       INSECURE_SKIP_TLS_VERIFY: true
@@ -156,6 +157,7 @@ steps:
     commands:
       - source ./ops/test_deploy_vars.sh
       - source ./ops/test_deploy.sh
+      - source ./ops/notprod_values
     environment:
       INGRESS_CLASS: nginx-internal
       INSECURE_SKIP_TLS_VERIFY: true
@@ -197,6 +199,7 @@ steps:
     commands:
       - source ./ops/sit_deploy_vars.sh
       - source ./ops/deploy.sh
+      - source ./ops/notprod_values
     environment:
       INGRESS_CLASS: nginx-internal
       INSECURE_SKIP_TLS_VERIFY: true
@@ -241,6 +244,7 @@ steps:
     commands:
       - source ./ops/staging_deploy_vars.sh
       - source ./ops/deploy.sh
+      - source ./ops/prod_values
     environment:
       DOCKER_REGISTRY_URL:
         from_secret: DOCKER_REGISTRY_URL
@@ -278,6 +282,7 @@ steps:
     commands:
       - source ./ops/prod_deploy_vars.sh
       - source ./ops/prod_deploy.sh
+      - source ./ops/prod_values
     environment:
       DOCKER_REGISTRY_URL:
         from_secret: DOCKER_REGISTRY_URL
