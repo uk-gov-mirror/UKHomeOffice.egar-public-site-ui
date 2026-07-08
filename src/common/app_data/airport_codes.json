@@ -22619,14 +22619,12 @@
     "crownDependency": false
   },
   {
-    "id": "959703b0c4b7b287abce20aea0b51fa3014497d95184c374f1ad0991ca6c1c74",
+    "id": "2c1faad720033b5d74e6ea3530d85e4ab2d7aa54c3c72ab58b8de1cc7b58786b",
     "name": "St. Louis Downtown Airport",
     "label": "",
     "iata": "CPS",
     "icao": "KCPS",
-    "otherCodes": [
-      "FALSE"
-    ],
+    "otherCodes": null,
     "value": "CPS",
     "designated": false,
     "british": false,
@@ -50130,6 +50128,20 @@
     "crownDependency": false
   },
   {
+    "id": "f3fc49e1e1f28ef9e7cfc9786d2ec15eda31ac6925241529623a66bed7d5b89c",
+    "name": "Name",
+    "label": "label",
+    "iata": "IATA",
+    "icao": "ICAO",
+    "otherCodes": [
+      "OTHERCODE"
+    ],
+    "value": "IATA",
+    "designated": false,
+    "british": false,
+    "crownDependency": false
+  },
+  {
     "id": "a3f08b8142e140ad1b5c5d3006087f163049219aa8f3f222bf66ebc7ac244565",
     "name": "Ibadan Airport",
     "label": "Ibadan Airport (IBA / DNIB)",
@@ -56438,14 +56450,12 @@
     "crownDependency": false
   },
   {
-    "id": "a0c9bd8aa7f38dd42acf4e97c1a866c98f984371e887cd648062a85a4ce6cc2c",
+    "id": "6f30b23c7a5a0d1b79a0c52d2682d92b25bb62b5d68f10dc0be1e64bea511de0",
     "name": "Canandaigua Airport",
     "label": "",
     "iata": null,
     "icao": "KIUA",
-    "otherCodes": [
-      "FALSE"
-    ],
+    "otherCodes": null,
     "value": "KIUA",
     "designated": false,
     "british": false,
