@@ -24,7 +24,6 @@ module.exports = async (req, res) => {
         garApi
           .patch(cookie.getGarId(), 'Draft', { people: selectedPeople })
           .then(() => {
-            console.debug({ people: selectedPeople });
             res.redirect('/garfile/manifest');
           })
           .catch((err) => {
