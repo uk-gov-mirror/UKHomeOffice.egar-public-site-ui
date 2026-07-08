@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const config = require('../../../common/config');
 
 const logger = require('../../../common/utils/logger')(__filename);
 
@@ -11,7 +12,7 @@ const paths = {
   index: indexPath,
 };
 const storage = multer.memoryStorage();
-const upload = multer({ storage, limits: { fileSize: 1024 ** 2 * 8 } }).single('file');
+const upload = multer({ storage, limits: { fileSize: config.SUPPORTING_DOCS_MAX_SIZE } }).single('file');
 
 router.post(
   paths.index,

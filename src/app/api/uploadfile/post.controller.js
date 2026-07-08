@@ -10,12 +10,13 @@ const config = require('../../../common/config/index');
 const { isValidFileMime } = require('../../../common/utils/validator');
 
 const exceedFileNumSizeLimit = (fileSize, garId) => {
-  logger.debug(`Entering exceed file number & size limit function, max size 8MB max number:${config.MAX_NUM_FILES}`);
+  logger.debug(`Entering exceed file number & size limit function, max size ${config.SUPPORTING_DOCS_MAX_SIZE} bytes,
+    max number:${config.MAX_NUM_FILES}`);
   return new Promise((resolve, reject) => {
     // Get supporting docs and add file size
     //check max number of files not more than 10.
     // Check if fileSize + total >= MAX_SIZE
-    const MAX_SIZE = 1024 ** 2 * 8;
+    const MAX_SIZE = config.SUPPORTING_DOCS_MAX_SIZE;
     const MAX_NUM = config.MAX_NUM_FILES;
     garApi
       .getSupportingDocs(garId)
