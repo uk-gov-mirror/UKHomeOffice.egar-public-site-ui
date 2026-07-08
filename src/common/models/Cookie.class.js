@@ -213,7 +213,6 @@ class Cookie {
   }
 
   getGarCraft() {
-    logger.info(JSON.stringify(this.session.gar.craft));
     return this.session.gar.craft;
   }
 
