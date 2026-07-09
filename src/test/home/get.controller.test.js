@@ -5,7 +5,6 @@ const sinonChai = require('sinon-chai');
 
 require('../global.test');
 const CookieModel = require('../../common/models/Cookie.class');
-const tokenApi = require('../../common/services/tokenApi');
 const garApi = require('../../common/services/garApi');
 
 const controller = require('../../app/home/get.controller');
@@ -13,7 +12,6 @@ const controller = require('../../app/home/get.controller');
 describe('Home Get Controller', () => {
   let req;
   let res;
-  let tokenApiStub;
   let garApiStub;
 
   beforeEach(() => {
@@ -21,7 +19,11 @@ describe('Home Get Controller', () => {
 
     req = {
       session: {
-        u: { dbId: 'abcde-12345', e: 'captain.kirk@enterprise.com', rl: 'Individual' },
+        u: {
+          dbId: 'abcde-12345',
+          e: 'captain.kirk@enterprise.com',
+          rl: 'Individual',
+        },
       },
       query: { status: 'Draft', page: 1 },
     };
@@ -29,7 +31,6 @@ describe('Home Get Controller', () => {
       render: sinon.spy(),
     };
 
-    tokenApiStub = sinon.stub(tokenApi, 'getLastLogin');
     garApiStub = sinon.stub(garApi, 'getGars');
   });
 
@@ -37,31 +38,7 @@ describe('Home Get Controller', () => {
     sinon.restore();
   });
 
-  it('should render the page with no session data if token api rejects', () => {
-    tokenApiStub.rejects('tokenApi.getLastLogin Example Reject');
-
-    const cookie = new CookieModel(req);
-
-    const callController = async () => {
-      await controller(req, res);
-    };
-
-    callController()
-      .then()
-      .then(() => {
-        expect(tokenApiStub).to.have.been.calledOnceWithExactly('captain.kirk@enterprise.com');
-        expect(garApiStub).to.not.have.been.called;
-        expect(res.render).to.have.been.calledOnceWithExactly('app/home/index', {
-          cookie,
-          userSession: [],
-        });
-      });
-  });
-
   it('should render the page with no session data if gar api rejects', () => {
-    tokenApiStub.resolves({
-      StatusChangedTimestamp: '2018-11-20',
-    });
     garApiStub.rejects('garApi.getGars Example Reject');
 
     const cookie = new CookieModel(req);
@@ -104,9 +81,7 @@ describe('Home Get Controller', () => {
     };
     req.session.successHeader = 'Windows XP';
     req.session.successMsg = 'Task failed successfully.';
-    tokenApiStub.resolves({
-      StatusChangedTimestamp: '2018-11-20',
-    });
+
     garApiStub.onCall(0).resolves(JSON.stringify(draftGarsApiResponse));
     garApiStub.onCall(1).resolves(JSON.stringify(submittedGarsApiResponse));
     garApiStub.onCall(2).resolves(JSON.stringify(cacelledGarsApiResponse));
@@ -124,7 +99,6 @@ describe('Home Get Controller', () => {
           cookie,
           successHeader: 'Windows XP',
           successMsg: 'Task failed successfully.',
-          userSession: { StatusChangedTimestamp: '2018-11-20' },
           statusTab: 'Draft',
           draftGars: draftGarsApiResponse,
           submittedGars: submittedGarsApiResponse,

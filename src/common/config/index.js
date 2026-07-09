@@ -1,13 +1,9 @@
 // Gov notify settings
 exports.NOTIFY_API_KEY = process.env.NOTIFY_API_KEY;
-exports.NOTIFY_TOKEN_TEMPLATE_ID = process.env.NOTIFY_TOKEN_TEMPLATE_ID;
-exports.NOTIFY_RECEIPT_TEMPLATE_ID = '3bc1e2ab-59d4-438e-b896-499f9c811fd6';
-exports.NOTIFY_INTERNAL_TEMPLATE_ID = '2bc9954d-e07f-44e7-a691-e53d8d1400fd';
-exports.NOTIFY_INVITE_TEMPLATE_ID = process.env.NOTIFY_INVITE_TEMPLATE_ID;
+
 exports.NOTIFY_TOKEN_SECRET = process.env.NOTIFY_TOKEN_SECRET;
 exports.NOTIFY_GAR_CANCEL_TEMPLATE_ID = process.env.NOTIFY_GAR_CANCEL_TEMPLATE_ID;
 exports.NOTIFY_GAR_SUBMISSION_TEMPLATE_ID = process.env.NOTIFY_GAR_SUBMISSION_TEMPLATE_ID;
-exports.NOTIFY_MFA_TEMPLATE_ID = process.env.NOTIFY_MFA_TEMPLATE_ID;
 exports.NOTIFY_ACCOUNT_DELETE_TEMPLATE_ID = process.env.NOTIFY_ACCOUNT_DELETE_TEMPLATE_ID;
 exports.NOTIFY_ORGANISATION_DELETE_TEMPLATE_ID = process.env.NOTIFY_ORGANISATION_DELETE_TEMPLATE_ID;
 
@@ -25,7 +21,6 @@ exports.API_VERSION = process.env.API_VERSION || 'v0.2.0';
 // Misc settings
 exports.CONNECTOR_URL = process.env.CONNECTOR_URL;
 exports.CONTACT_EMAIL = process.env.CONTACT_URL || 'supportegar@homeoffice.gov.uk';
-exports.WHITELIST_REQUIRED = process.env.WHITELIST_REQUIRED || 'true';
 
 // Application settings
 exports.NODE_ENV = process.env.NODE_ENV || 'DEV';
@@ -61,11 +56,6 @@ exports.PUBLIC_SITE_DB_CONNSTR = `postgres://${process.env.PUBLIC_SITE_DBUSER}:$
 
 // TLS settings
 exports.NODE_TLS_REJECT_UNAUTHORIZED = 1;
-
-// Token settings
-exports.MFA_TOKEN_LENGTH = parseInt(process.env.NOTIFY_MFA_TOKEN_LENGTH, 10) || 8;
-exports.MFA_TOKEN_EXPIRY = parseInt(process.env.NOTIFY_MFA_TOKEN_TTL, 10) || 5;
-exports.MFA_TOKEN_MAX_ATTEMPTS = parseInt(process.env.NOTIFY_MFA_TOKEN_MAX_ATTEMPTS, 10) || 5;
 
 //MAX NUMBER OF FILES
 exports.MAX_NUM_FILES = parseInt(process.env.MAX_NUM_FILES, 10) || 8;

@@ -14,15 +14,4 @@ module.exports = {
     const hash = crypto.createHmac('sha256', config.NOTIFY_TOKEN_SECRET).update(token).digest('hex');
     return hash;
   },
-
-  /**
-   * Generates a numeric MFA token.
-   *
-   * @returns {String} a MFA token
-   */
-  genMfaToken() {
-    logger.debug('Generating MFA token');
-    const tokenLength = config.MFA_TOKEN_LENGTH;
-    return Math.floor(10 ** (tokenLength - 1) + Math.random() * 9 * 10 ** (tokenLength - 1));
-  },
 };
