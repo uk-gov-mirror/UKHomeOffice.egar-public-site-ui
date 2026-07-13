@@ -86,13 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   departureDay.addEventListener('keyup', (e) => {
     e.target.value = sanitiseDateOrTime(e.target.value, 'day');
-    autoTab(departureDay, 'day', departureMonth);
     showDepartureDateWarningMessages(departureDate());
   });
 
   departureMonth.addEventListener('keyup', (e) => {
     e.target.value = sanitiseDateOrTime(e.target.value, 'month');
-    autoTab(departureMonth, 'month', departureYear);
     showDepartureDateWarningMessages(departureDate());
   });
 
@@ -103,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   departureHourTime.addEventListener('keyup', (e) => {
     e.target.value = sanitiseDateOrTime(e.target.value, 'hour');
-    autoTab(departureHourTime, 'hour', departureMinuteTime);
     showDepartureDateWarningMessages(departureDate());
   });
 
