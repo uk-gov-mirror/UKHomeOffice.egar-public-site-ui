@@ -35,6 +35,12 @@ Notes:
 - Do not manually edit `src/common/app_data/airport_codes.json`; it is derived from the CSV.
 - The generator enforces sorting and normalisation and will overwrite the JSON file.
 - The resulting JSON includes an additional `value` field (priority: IATA > ICAO > first otherCode).
+- when filling the airport_codes.csv, the "otherCodes" column should hold a comma separated list of airport codes that don't match IATA or ICAO.
+
+|name| ICAO                                          | IATA                                         | OtherCode                                   | crownDependency                        | designated                       | british                     | label                  | Comment |
+|---|-----------------------------------------------|----------------------------------------------|---------------------------------------------|----------------------------------------|----------------------------------|-----------------------------|------------------------|---|
+|Kautokeino Air Base| ENKA                                          | QKX                                          |                                             | FALSE                                  | FALSE                            | FALSE                       | Kautokeino Air Base (QKX / ENKA) | ICAO/IATA aircodes|
+ |Bedwell Hey Farm Ely Rd| | | E201| FALSE| TRUE| TRUE| Bedwell Hey Farm Ely Rd| Not IATA/ICAO airfield|
 
 ## Unit tests
 

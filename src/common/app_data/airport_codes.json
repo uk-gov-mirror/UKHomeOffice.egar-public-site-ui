@@ -22619,6 +22619,18 @@
     "crownDependency": false
   },
   {
+    "id": "2c1faad720033b5d74e6ea3530d85e4ab2d7aa54c3c72ab58b8de1cc7b58786b",
+    "name": "St. Louis Downtown Airport",
+    "label": "",
+    "iata": "CPS",
+    "icao": "KCPS",
+    "otherCodes": null,
+    "value": "CPS",
+    "designated": false,
+    "british": false,
+    "crownDependency": false
+  },
+  {
     "id": "77a06e1f41ba7006afa405acfc8dcf9673ac82b49694e3979923888bf334e3e1",
     "name": "Cape Town International Airport",
     "label": "Cape Town International Airport (CPT / FACT)",
@@ -43336,11 +43348,11 @@
     "crownDependency": false
   },
   {
-    "id": "a12413f75db0c5123b55c16c5e4cf0e3e2b6b9090e5be553e85c5f112675906e",
-    "name": "Giebelstadt Army Air Field",
-    "label": "Giebelstadt Army Air Field (GHF / ETEU)",
+    "id": "f603a07c6c82b7361966a412244ffc810f9e754d44298bfb25116159c45c27e8",
+    "name": "Giebelstadt Airport",
+    "label": "Giebelstadt Airport (Germany) (GHF / EDQG)",
     "iata": "GHF",
-    "icao": "ETEU",
+    "icao": "EDQG",
     "otherCodes": null,
     "value": "GHF",
     "designated": false,
@@ -56419,6 +56431,18 @@
     "icao": "LGKC",
     "otherCodes": null,
     "value": "KIT",
+    "designated": false,
+    "british": false,
+    "crownDependency": false
+  },
+  {
+    "id": "6f30b23c7a5a0d1b79a0c52d2682d92b25bb62b5d68f10dc0be1e64bea511de0",
+    "name": "Canandaigua Airport",
+    "label": "",
+    "iata": null,
+    "icao": "KIUA",
+    "otherCodes": null,
+    "value": "KIUA",
     "designated": false,
     "british": false,
     "crownDependency": false

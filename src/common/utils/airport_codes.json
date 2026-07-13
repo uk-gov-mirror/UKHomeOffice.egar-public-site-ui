@@ -5181,10 +5181,10 @@
   },
   {
     "id": "GHF",
-    "id2": "ETEU",
+    "id2": "EDQG",
     "british": false,
     "crownDependency": false,
-    "label": "Giebelstadt Army Air Field (Germany) (ETEU / GHF)"
+    "label": "Giebelstadt Airport (Germany) (EDQG/GHF) "
   },
   {
     "id": "ETHB",
@@ -56495,5 +56495,19 @@
     "british": false,
     "crownDependency": false,
     "label": "Pokhara International Airport (Nepal) (VNPR / PHH)"
+  },
+  {
+    "id": "KIUA",
+    "id2": "KIUA",
+    "british": false,
+    "crownDependency": false,
+    "label": "Canandaigua Airport (KIUA)"
+  },
+   {
+    "id": "CPS",
+    "id2": "KCPS",
+    "british": false,
+    "crownDependency": false,
+    "label": "St. Louis Downtown Airport (CPS / KCPS)"
   }
 ]
