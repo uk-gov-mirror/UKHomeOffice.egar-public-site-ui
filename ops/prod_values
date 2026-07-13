@@ -1,3 +1,2 @@
 #values for prod deployments
-export NUM_REPLICAS=3 
-export DOWN_SCALER_ANNOTATIONS="environment: 'egar-production'" 
+export NUM_REPLICAS=3  

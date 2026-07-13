@@ -4,8 +4,10 @@ kind: Deployment
 metadata:
   name: public-site
   namespace: {{ .KUBE_NAMESPACE }}
+{{ if ne .KUBE_NAMESPACE "egar-production" }}
   annotations:
-    {{ .DOWN_SCALER_ANNOTATIONS }}
+    downscaler/uptime: {{ .DOWN_SCALER_ANNOTATIONS }}
+{{ end }}
 spec:
   selector:
     matchLabels:
