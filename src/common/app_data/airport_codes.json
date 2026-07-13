@@ -50128,20 +50128,6 @@
     "crownDependency": false
   },
   {
-    "id": "f3fc49e1e1f28ef9e7cfc9786d2ec15eda31ac6925241529623a66bed7d5b89c",
-    "name": "Name",
-    "label": "label",
-    "iata": "IATA",
-    "icao": "ICAO",
-    "otherCodes": [
-      "OTHERCODE"
-    ],
-    "value": "IATA",
-    "designated": false,
-    "british": false,
-    "crownDependency": false
-  },
-  {
     "id": "a3f08b8142e140ad1b5c5d3006087f163049219aa8f3f222bf66ebc7ac244565",
     "name": "Ibadan Airport",
     "label": "Ibadan Airport (IBA / DNIB)",

@@ -10172,4 +10172,3 @@ Red Sea International Airport,OERS,RSI,,FALSE,FALSE,FALSE,Red Sea International 
 Misrata Airport ,HLMS,MRA,,FALSE,FALSE,FALSE,Misrata Airport (MRA / HLMS)
 Canandaigua Airport,KIUA,,,FALSE,FALSE,Canandaigua Airport(KIUA)
 St. Louis Downtown Airport,KCPS,CPS,,FALSE,FALSE,St. Louis Downtown Airport (CPS / KCPS)
-name,ICAO,IATA,OtherCode,crownDependency,designated,british,label
