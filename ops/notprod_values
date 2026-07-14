@@ -1,3 +1,3 @@
 #values for notprod deployments
 export NUM_REPLICAS=1
-export DOWN_SCALER_ANNOTATIONS="downscaler/uptime: 'Mon-Fri 06:00-20:00 Europe/London'"
+export DOWN_SCALER_ANNOTATIONS="Mon-Fri 06:00-20:00 Europe/London"
