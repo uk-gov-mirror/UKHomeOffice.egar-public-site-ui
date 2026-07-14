@@ -1,2 +1,2 @@
 #values for prod deployments
-export NUM_REPLICAS=3 
+export NUM_REPLICAS=3
