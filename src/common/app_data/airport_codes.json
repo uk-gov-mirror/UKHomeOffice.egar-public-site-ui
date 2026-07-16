@@ -12485,11 +12485,11 @@
     "crownDependency": false
   },
   {
-    "id": "193f657d4fbfff208f37f79f530a5a44fcc0c194e00202b305eee1a12046c967",
+    "id": "3afba8b5a342e9240f60835543b4e79b67177863aaf0e431e19fd168dfa3ec11",
     "name": "Bukhara Airport",
-    "label": "Bukhara Airport (BHK / UTSB)",
+    "label": "Bukhara Airport (BHK / UZSB)",
     "iata": "BHK",
-    "icao": "UTSB",
+    "icao": "UZSB",
     "otherCodes": null,
     "value": "BHK",
     "designated": false,
@@ -75584,11 +75584,11 @@
     "crownDependency": false
   },
   {
-    "id": "7b2c31c666a52c171ac916f20e451846d9bc353af60cb6ad089d7b4f847d46e6",
+    "id": "fc6ef81a877195fa0e120509a44909c41e08df2a269eaefa7c8ad2abda8c7b6c",
     "name": "Nukus Airport",
-    "label": "Nukus Airport (NCU / UTNN)",
+    "label": "Nukus Airport (NCU / UZNN)",
     "iata": "NCU",
-    "icao": "UTNN",
+    "icao": "UZNN",
     "otherCodes": null,
     "value": "NCU",
     "designated": false,
@@ -77436,11 +77436,11 @@
     "crownDependency": false
   },
   {
-    "id": "9ef763d5f1f0b37a9b57ea01b5f0dd113d52a4a735d8ba829a17bf7be54f62cb",
+    "id": "e197a38cc1d928a04c889c012521547eb810b15015d85e602de1f6f21cedce73",
     "name": "Navoi Airport",
-    "label": "Navoi Airport (NVI / UTSA)",
+    "label": "Navoi Airport (NVI / UZSA)",
     "iata": "NVI",
-    "icao": "UTSA",
+    "icao": "UZSA",
     "otherCodes": null,
     "value": "NVI",
     "designated": false,
@@ -93378,11 +93378,11 @@
     "crownDependency": false
   },
   {
-    "id": "6c2b0344151d3c7680baab60f41b6269a28c162945fe79ed9b7e3151cc23a1c4",
+    "id": "3928d01c418ef25acdb772880e669594719c7db582de477a8cbf0e74019464b1",
     "name": "Samarkand Airport",
-    "label": "Samarkand Airport (SKD / UTSS)",
+    "label": "Samarkand Airport (SKD / UZSS)",
     "iata": "SKD",
-    "icao": "UTSS",
+    "icao": "UZSS",
     "otherCodes": null,
     "value": "SKD",
     "designated": false,
@@ -100422,11 +100422,11 @@
     "crownDependency": false
   },
   {
-    "id": "1bef73c7787a5162c3a71df1836d1d7ca7d9478f7818400210b404a9a577dfbb",
+    "id": "8cabdfb5b55a61c2cfe9ed41ff3f1cbfaa1bda3b2c48ff521442b8a38b57bdbf",
     "name": "Tashkent International Airport",
-    "label": "Tashkent International Airport (TAS / UTTT)",
+    "label": "Tashkent International Airport (TAS / UZTT)",
     "iata": "TAS",
-    "icao": "UTTT",
+    "icao": "UZTT",
     "otherCodes": null,
     "value": "TAS",
     "designated": false,
@@ -102354,11 +102354,11 @@
     "crownDependency": false
   },
   {
-    "id": "fa3cfd7e19dff8e31e7cad720db68438aa7b97dce2dba2d16343fd9c2eafe164",
+    "id": "04979920715ba24d6ad009548b6841df2636eed25140062931299d07793d5537",
     "name": "Termez Airport",
-    "label": "Termez Airport (TMJ / UTST)",
+    "label": "Termez Airport (TMJ / UZST)",
     "iata": "TMJ",
-    "icao": "UTST",
+    "icao": "UZST",
     "otherCodes": null,
     "value": "TMJ",
     "designated": false,
@@ -104712,11 +104712,11 @@
     "crownDependency": false
   },
   {
-    "id": "2b3be2cd33f8302fad8726f62aaf8e4ecf5ee591b176f0e50ba8052b90e4ca9f",
+    "id": "dfa820b5feb5046abcaba3d9f2c63727fbfe1f91add81fdac78cfab859244fdd",
     "name": "Urgench Airport",
-    "label": "Urgench Airport (UGC / UTNU)",
+    "label": "Urgench Airport (UGC / UZNU)",
     "iata": "UGC",
-    "icao": "UTNU",
+    "icao": "UZNU",
     "otherCodes": null,
     "value": "UGC",
     "designated": false,
