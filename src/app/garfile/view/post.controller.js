@@ -1,33 +1,12 @@
 const logger = require('../../../common/utils/logger')(__filename);
+exports.logger = logger;
 const airportValidation = require('../../../common/utils/airportValidation');
 const CookieModel = require('../../../common/models/Cookie.class');
 const manifestFields = require('../../../common/seeddata/gar_manifest_fields.json');
 const garApi = require('../../../common/services/garApi');
 const dataAccessApi = require('../../../common/services/dataAccessApi');
 const { isAbleToCancelGar } = require('../../../common/utils/validator');
-
-/**
- * For a supplied GAR object, check that the user id or organisation id
- * match the given parameters. Returns true if there is a match or false
- * otherwise.
- *
- * @param {Object} parsedGar The GAR to check
- * @param {String} userId The user id to check against
- * @param {String} organisationId The organisation to check against
- */
-const checkGARUser = (parsedGar, userId, organisationId) => {
-  if (parsedGar === undefined || parsedGar === null) return false;
-
-  if (parsedGar.organisationId && organisationId && parsedGar.organisationId === organisationId) {
-    logger.info('GAR organisation id matches current user ID');
-    return true;
-  }
-  if (parsedGar.userId === userId) {
-    logger.info('GAR user id matches current user ID');
-    return true;
-  }
-  return false;
-};
+const checkGARUser = require('../../../common/utils/checkGARUser');
 
 module.exports = async (req, res) => {
   logger.debug('In garfile / view post controller');
