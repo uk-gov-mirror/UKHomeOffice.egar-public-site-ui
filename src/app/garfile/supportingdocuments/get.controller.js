@@ -51,6 +51,9 @@ module.exports = (req, res) => {
         case 'invalid':
           error = [{ message: 'Invalid file type selected', identifier: 'file' }];
           break;
+        case 'unauthorized':
+          error = [{ message: 'You are not authorized to manage supporting documents for this GAR' }];
+          break;
         default:
         // No need to set an error
       }
