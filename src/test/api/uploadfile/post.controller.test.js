@@ -146,7 +146,6 @@ describe('API upload file post controller', () => {
 
     it('should redirect with limit parameter if function returns true', () => {
       req.file.size = 1000000;
-
       garApiGetDocsStub.resolves(
         JSON.stringify({
           items: [
@@ -284,7 +283,6 @@ describe('API upload file post controller', () => {
     let formData;
 
     beforeEach(() => {
-      // Create form data for ClamAV
       formData = {
         name: req.file.originalname,
         file: {
@@ -295,13 +293,6 @@ describe('API upload file post controller', () => {
         },
       };
 
-      // Set the first four bytes of the buffer to convince fileType library it is a PDF
-      req.file.buffer.writeUInt8(0x25, 0);
-      req.file.buffer.writeUInt8(0x50, 1);
-      req.file.buffer.writeUInt8(0x44, 2);
-      req.file.buffer.writeUInt8(0x46, 3);
-
-      // To allow the exceedFileLimit function to return false
       garApiGetDocsStub.resolves(
         JSON.stringify({
           items: [{ fileName: 'FILE1.doc', size: '2MB' }],
@@ -352,7 +343,6 @@ describe('API upload file post controller', () => {
     let formData;
 
     beforeEach(() => {
-      // Create form data for ClamAV
       formData = {
         name: req.file.originalname,
         file: {
@@ -363,13 +353,6 @@ describe('API upload file post controller', () => {
         },
       };
 
-      // Set the first four bytes of the buffer to convince fileType library it is a PDF
-      req.file.buffer.writeUInt8(0x25, 0);
-      req.file.buffer.writeUInt8(0x50, 1);
-      req.file.buffer.writeUInt8(0x44, 2);
-      req.file.buffer.writeUInt8(0x46, 3);
-
-      // To allow the exceedFileLimit function to return false
       garApiGetDocsStub.resolves(
         JSON.stringify({
           items: [{ fileName: 'FILE1.doc', size: '2MB' }],
@@ -453,5 +436,4 @@ describe('API upload file post controller', () => {
         });
     });
   });
-  //
 });
