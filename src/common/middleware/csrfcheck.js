@@ -17,12 +17,6 @@ module.exports = (req, res, next) => {
 
   const token = req.csrfToken();
   res.locals._csrf = token;
-  // This might be needed, but leaving it in for now...
-  res.cookie('XSRF-TOKEN', token, {
-    httpOnly: true,
-    secure: secureFlag,
-    sameSite: true,
-  });
 
   // Previously, local development required the disabling of CSRF token handling
   // The below adds the csrfToken to the res.render function which should hopefully

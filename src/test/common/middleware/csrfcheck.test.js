@@ -11,49 +11,60 @@ describe('CSRF Check Middleware', () => {
   let req;
   let next;
   let proxiedMiddleware;
-  let csurfStub;
 
   beforeEach(() => {
-    chai.use(sinonChai);
+    req = {
+      csrfToken: () => {},
+    };
 
-    csurfStub = sinon.stub();
+    res = {
+      locals: {},
+      header: sinon.stub(),
+    };
     next = sinon.spy();
+    proxiedMiddleware = require('../../../common/middleware/csrfcheck');
   });
 
   afterEach(() => {
     sinon.restore();
   });
 
-  it('should call csurf with secure false', async () => {
-    proxiedMiddleware = proxyquire('../../../common/middleware/csrfcheck', {
-      csurf: csurfStub,
-    });
+  it('should not generate token if path is in exclusion list', async () => {
+    const requestPaths = [
+      '/',
+      '/user/details',
+      '/assets/.*',
+      '/javascripts/.*',
+      '/stylesheets/.*',
+      '/login',
+      '/help',
+      '/error/500',
+    ];
 
-    await proxiedMiddleware(req, res, next);
+    sinon.spy(req, 'csrfToken');
 
-    expect(csurfStub).to.have.been.calledOnceWithExactly({
-      cookie: {
-        httpOnly: true,
-        secure: false,
-      },
-    });
-    expect(next).to.have.been.called;
+    for (const path of requestPaths) {
+      req.path = path;
+
+      await proxiedMiddleware(req, res, next);
+
+      expect(req.csrfToken).to.not.have.been.called;
+      expect(next).to.have.been.called;
+    }
   });
 
-  it('should call csurf with secure true', async () => {
-    sinon.stub(process, 'env').value({ COOKIE_SECURE_FLAG: 'true' });
-    proxiedMiddleware = proxyquire('../../../common/middleware/csrfcheck', {
-      csurf: csurfStub,
-    });
+  it('should generate token if path is not in exclusion list', async () => {
+    const requestPaths = ['/home', '/organisation/assignrole', '/unknown_path'];
 
-    await proxiedMiddleware(req, res, next);
+    sinon.spy(req, 'csrfToken');
 
-    expect(csurfStub).to.have.been.calledOnceWithExactly({
-      cookie: {
-        httpOnly: true,
-        secure: true,
-      },
-    });
-    expect(next).to.have.been.called;
+    for (const path of requestPaths) {
+      req.path = path;
+
+      await proxiedMiddleware(req, res, next);
+
+      expect(req.csrfToken).to.have.be.called;
+      expect(next).to.have.been.called;
+    }
   });
 });
