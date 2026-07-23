@@ -30,6 +30,7 @@ const nunjucksFilters = require('./common/utils/templateFilters.js');
 const travelPermissionCodes = require('./common/utils/travel_permission_codes.json');
 const { IS_HTTPS_SERVER, SAME_SITE_VALUE } = require('./common/config');
 const airports = require('./common/utils/airports');
+const { canSkipCsrfGeneration } = require('./common/utils/utils');
 
 // Global constants
 const PORT = process.env.PORT || 3000;
@@ -128,6 +129,11 @@ function initialiseGlobalMiddleware(app) {
   app.use((req, res, next) => {
     res.locals.asset_path = '/public/';
     noCache(res);
+
+    if (canSkipCsrfGeneration(req)) {
+      return next();
+    }
+
     const token = req.csrfToken();
     res.locals._csrf = token;
     // This might be needed, but leaving it in for now...
@@ -146,7 +152,7 @@ function initialiseGlobalMiddleware(app) {
       _render.call(this, view, options, fn);
     };
 
-    next();
+    return next();
   });
 
   logger.info('Set CSRF Token');
