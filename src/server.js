@@ -13,7 +13,6 @@ const argv = require('minimist')(process.argv.slice(2));
 const compression = require('compression');
 const nunjucks = require('nunjucks');
 const helmet = require('helmet');
-const _ = require('lodash');
 const cookieParser = require('cookie-parser');
 const { v4: uuid } = require('uuid');
 const csrf = require('csurf');
