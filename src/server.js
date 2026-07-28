@@ -123,7 +123,6 @@ function initialiseGlobalMiddleware(app) {
     })
   );
 
-  logger.info('Set CSRF Token');
   app.use(
     helmet({
       contentSecurityPolicy: {
