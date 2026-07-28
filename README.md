@@ -86,3 +86,12 @@ In general you don't need to run `gateway-api` and `data-integr-cbp`, unless:
 - `public` folders contains frontend scripts, stylesheets and html that is sent to the user.
 - `locales` contains text used in the app.
 - `common` contains common functionalty used in app.
+
+
+## Managing Token Generation Exclusion
+
+In order to prevent unnecessary generation of token, we added an exclusion list. This list holds the path patterns for routes 
+that don't use CSRF tokens. This was introduced as part of the ticket [sGAR: CSRF
+](https://jira.bics-collaboration.homeoffice.gov.uk/browse/NMSW-3970).
+
+The list is maintained in this file `src/common/config/csrfExclusionList.js`
