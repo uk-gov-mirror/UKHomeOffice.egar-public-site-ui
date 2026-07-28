@@ -60,7 +60,7 @@ describe('CSRF Check Middleware', () => {
 
       await proxiedMiddleware(req, res, next);
 
-      expect(req.csrfToken).to.have.be.called;
+      expect(req.csrfToken).to.have.been.called;
       expect(next).to.have.been.called;
     }
   });
