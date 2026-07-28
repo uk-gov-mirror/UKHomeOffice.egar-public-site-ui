@@ -140,13 +140,14 @@ async function handleConfirmNameSubmission(req, _res) {
   return [Outcome.SUCCESS, {}, null];
 }
 
-function handleCompleteSubmission(req, _res) {
+function handleCompleteSubmission(req, res) {
+  delete req.session.id_token;
   delete req.session.access_token;
   delete req.session.step;
   delete req.session.step_data;
 
-  delete req.cookies.state;
-  delete req.cookies.nonce;
+  res.clearCookie('state');
+  res.clearCookie('nonce');
 
   return [Outcome.SUCCESS, null, '/home'];
 }
