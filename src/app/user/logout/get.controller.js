@@ -15,7 +15,8 @@ function logoutAndClearCookies(req, res, cookie, redirectUrl) {
 
 module.exports = (req, res) => {
   const cookie = new CookieModel(req);
-  let { state, id_token } = req.cookies || {};
+  let { state } = req.cookies || {};
+  const idToken = req.session?.id_token;
 
   // If returning from Onelogin with a "user-deleted" state after delete confirm
   if (req.query?.state === 'user-deleted') {
@@ -23,16 +24,13 @@ module.exports = (req, res) => {
   }
 
   // One login sign path
-  if (state && id_token) {
+  if (state && idToken) {
     if (req.query?.action === 'user-deleted') {
       state = 'user-deleted';
     }
 
-    const logoutUrl = getOneLoginLogoutUrl(req, id_token, state);
-
-    res.clearCookie('id_token');
-    res.clearCookie('state');
-    return res.redirect(logoutUrl);
+    const logoutUrl = getOneLoginLogoutUrl(req, idToken, state);
+    return logoutAndClearCookies(req, res, cookie, logoutUrl);
   }
 
   // Default logout path

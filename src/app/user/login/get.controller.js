@@ -156,8 +156,6 @@ const setUserCookies = (cookie, userData) => {
   cookie.setUserOrganisationId(organisation?.organisationId);
 };
 
-let global_id_token = null;
-
 /**
  * Main login controller
  */
@@ -183,14 +181,13 @@ module.exports = async (req, res) => {
   oneLoginApi
     .sendOneLoginTokenRequest(req, code, oneLoginUtil)
     .then(({ access_token, id_token }) => {
-      res.cookie('id_token', id_token);
-      global_id_token = id_token;
-
       if (!id_token) {
         // If for some reason, One Login service does not return a valid id_token, something is wrong with service.
         logger.error('Invalid ID Token error.');
         return res.redirect(redirectErrorPage(req, res, 'service-error'));
       }
+
+      req.session.id_token = id_token;
 
       return new Promise((resolve) => {
         oneLoginUtil.verifyJwt(id_token, req.cookies.nonce, resolve);
@@ -222,8 +219,8 @@ module.exports = async (req, res) => {
               }
 
               if (redirect === ROUTES.HOME) {
-                delete req.cookies.nonce;
-                delete req.cookies.state;
+                res.clearCookie('nonce');
+                res.clearCookie('state');
               } else if (redirect === ROUTES.REGISTER) {
                 req.session.access_token = access_token;
               }
@@ -264,5 +261,12 @@ async function checkUserInvite(req, res, email) {
 
 function redirectErrorPage(req, res, errorPage) {
   res.cookie('errorPage', errorPage);
-  return getOneLoginLogoutUrl(req, global_id_token, req.cookies.state);
+
+  // Ensure failed OIDC flows do not leave sensitive tokens in session.
+  const sessionToken = req.session?.id_token;
+  if (req.session) {
+    delete req.session.id_token;
+  }
+
+  return getOneLoginLogoutUrl(req, sessionToken, req.cookies.state);
 }

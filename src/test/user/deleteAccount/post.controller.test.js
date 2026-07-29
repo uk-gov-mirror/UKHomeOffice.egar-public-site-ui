@@ -111,4 +111,14 @@ describe('User Delete Account Post Controller', () => {
 
     expect(res.redirect).to.have.been.calledOnceWithExactly('/user/deleteconfirm');
   });
+
+  it('should redirect to logout route when session has OneLogin id token', async () => {
+    req.session.id_token = 'session-id-token';
+    deleteAccountStub.onFirstCall().resolves(JSON.stringify({}));
+    notifyUserStub.onFirstCall().resolves();
+
+    await controller(req, res);
+
+    expect(res.redirect).to.have.been.calledOnceWithExactly('/user/logout?action=user-deleted');
+  });
 });
