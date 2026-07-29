@@ -56503,11 +56503,18 @@
     "crownDependency": false,
     "label": "Canandaigua Airport (KIUA)"
   },
-   {
+  {
     "id": "CPS",
     "id2": "KCPS",
     "british": false,
     "crownDependency": false,
     "label": "St. Louis Downtown Airport (CPS / KCPS)"
+  },
+  {
+    "id": "EGKF",
+    "id2": "EGKF",
+    "british": true,
+    "crownDependency": false,
+    "label": "Kittyhawk Farm (United Kingdom) (EGKF)"
   }
 ]
