@@ -1,5 +1,6 @@
 const { customAlphabet } = require('nanoid');
 const documenttype = require('../../common/seeddata/egar_saved_people_travel_document_type.json');
+const { CSRF_EXCLUSION_LIST } = require('../config/csrfExclusionList');
 let allRoles = require('../../common/seeddata/egar_user_roles.json');
 
 function trimToDecimalPlaces(input, places) {
@@ -58,6 +59,12 @@ function getRolesForAssigning(currentUserRole) {
   return currentUserRole === 'Admin' ? allRoles : allRoles.filter((role) => role.name !== 'Admin');
 }
 
+const canSkipCsrfGeneration = (req) => {
+  const regexString = `^(${CSRF_EXCLUSION_LIST.join('|')})$`;
+  const pattern = new RegExp(regexString, 'i');
+  return pattern.test(req.path);
+};
+
 module.exports = {
   trimToDecimalPlaces,
   documentTypes,
@@ -65,4 +72,5 @@ module.exports = {
   getResponsiblePersonFromGar,
   nanoid,
   getRolesForAssigning,
+  canSkipCsrfGeneration,
 };

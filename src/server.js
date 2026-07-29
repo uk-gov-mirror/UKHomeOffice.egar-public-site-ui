@@ -13,7 +13,6 @@ const argv = require('minimist')(process.argv.slice(2));
 const compression = require('compression');
 const nunjucks = require('nunjucks');
 const helmet = require('helmet');
-const _ = require('lodash');
 const cookieParser = require('cookie-parser');
 const { v4: uuid } = require('uuid');
 const csrf = require('csurf');
@@ -24,7 +23,6 @@ const logger = require('./common/utils/logger')(__filename);
 const config = require('./common/config/index');
 const availability = require('./common/config/availability');
 const router = require('./app/router');
-const noCache = require('./common/utils/no-cache');
 const autocompleteUtil = require('./common/utils/autocomplete');
 const nunjucksFilters = require('./common/utils/templateFilters.js');
 const travelPermissionCodes = require('./common/utils/travel_permission_codes.json');
@@ -125,31 +123,6 @@ function initialiseGlobalMiddleware(app) {
     })
   );
 
-  app.use((req, res, next) => {
-    res.locals.asset_path = '/public/';
-    noCache(res);
-    const token = req.csrfToken();
-    res.locals._csrf = token;
-    // This might be needed, but leaving it in for now...
-    res.cookie('XSRF-TOKEN', token, {
-      httpOnly: true,
-      secure: secureFlag,
-      sameSite: true,
-    });
-
-    // Previously, local development required the disabling of CSRF token handling
-    // The below adds the csrfToken to the res.render function which should hopefully
-    // allow for local development without this hack
-    const _render = res.render;
-    res.render = function (view, options, fn) {
-      _.extend(options, { csrfToken: token });
-      _render.call(this, view, options, fn);
-    };
-
-    next();
-  });
-
-  logger.info('Set CSRF Token');
   app.use(
     helmet({
       contentSecurityPolicy: {
