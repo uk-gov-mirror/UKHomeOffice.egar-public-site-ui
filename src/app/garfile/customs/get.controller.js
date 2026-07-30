@@ -12,7 +12,7 @@ module.exports = (req, res) => {
   logger.info('In get controller for prohibited goods');
   const cookie = new CookieModel(req);
 
-  const garId = cookie.getGarId();
+  const garId = res.locals.gar.garId;
 
   const context = {
     freeCirculationOptions,

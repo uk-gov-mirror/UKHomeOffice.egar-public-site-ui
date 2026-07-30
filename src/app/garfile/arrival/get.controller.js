@@ -5,8 +5,9 @@ const garApi = require('../../../common/services/garApi');
 module.exports = (req, res) => {
   logger.debug('In garfile/arrival get controller');
   const cookie = new CookieModel(req);
+  console.log(res.locals.gar);
   garApi
-    .get(cookie.getGarId())
+    .get(res.locals.gar.garId)
     .then((apiResponse) => {
       const parsedResponse = JSON.parse(apiResponse);
       cookie.setGarArrivalVoyage(parsedResponse);

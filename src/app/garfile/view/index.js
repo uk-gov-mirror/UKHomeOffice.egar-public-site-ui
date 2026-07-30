@@ -10,6 +10,7 @@ const parseForm = require('../../../common/middleware/parseForm');
 // Local dependencies
 const postController = require('./post.controller');
 const getController = require('./get.controller');
+const garCheckOwnership = require('../../../common/middleware/garOwnership');
 
 // Initialisation
 const router = new express.Router();
@@ -18,9 +19,11 @@ const paths = {
   index: indexPath,
 };
 
+const ownershipCheck = garCheckOwnership({ isCbpId: true });
+
 // Routing
-router.post(paths.index, flagpole, usercheck, parseForm, csrfcheck, postController);
-router.get(paths.index, flagpole, usercheck, parseForm, csrfcheck, getController);
+router.post(paths.index, flagpole, usercheck, parseForm, csrfcheck, ownershipCheck, postController);
+router.get(paths.index, flagpole, usercheck, parseForm, csrfcheck, ownershipCheck, getController);
 
 // Export
 module.exports = {

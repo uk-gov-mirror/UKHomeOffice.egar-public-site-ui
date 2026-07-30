@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
       .getDetailsByIds(req.body.personId, cookie.getUserDbId())
       .then((selectedPeople) => {
         garApi
-          .patch(cookie.getGarId(), 'Draft', { people: selectedPeople })
+          .patch(res.locals.gar.getId, 'Draft', { people: selectedPeople })
           .then(() => {
             res.redirect('/garfile/manifest');
           })
@@ -58,7 +58,7 @@ module.exports = async (req, res) => {
     const addPeopleToGarIds = typeof req.body.garPeopleId === 'string' ? [req.body.garPeopleId] : req.body.garPeopleId;
 
     manifestUtil
-      .getgarPeopleIds(addPeopleToGarIds, cookie.getGarId())
+      .getgarPeopleIds(addPeopleToGarIds, res.locals.gar.garId)
       .then((selectedPeople) => {
         const people = selectedPeople.map(function (element) {
           return {
