@@ -7,7 +7,7 @@ module.exports = async (req, res) => {
   logger.debug('In garfile / amg get controller');
 
   const cookie = new CookieModel(req);
-  const garId = cookie.getGarId();
+  const garId = res.locals.gar.garId;
   const resubmitted = req.query.resubmitted || 'no';
   const template = req.query.template === 'pane' ? 'app/garfile/amg/checkin/pane' : 'app/garfile/amg/checkin/index';
   const initialSubmit = req.query.initialSubmit ? '&initialSubmit=yes' : '';

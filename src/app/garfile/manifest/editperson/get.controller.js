@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const apiResponse = await garApi.getPeople(cookie.getGarId());
+    const apiResponse = await garApi.getPeople(res.locals.gar.garId);
     const parsedResponse = JSON.parse(apiResponse).items;
     const person = parsedResponse.find((garPerson) => garPerson.garPeopleId === personId);
 
