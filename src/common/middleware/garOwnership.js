@@ -7,7 +7,6 @@ module.exports = ({ isCbpId = false } = {}) =>
   asyncHandler(async (req, res, next) => {
     const cookie = new CookieModel(req);
     const garId = (req.body && req.body.garId) || (req.query && req.query.garId) || cookie.getGarId();
-
     const { ok, gar } = await hasGarOwnership(cookie, garId, { isCbpId });
 
     if (!ok) {
@@ -17,8 +16,7 @@ module.exports = ({ isCbpId = false } = {}) =>
       cookie.clearGar();
       return res.redirect('/home');
     }
-
-    cookie.setGarId(garId);
+    cookie.setGarId(gar.garId);
     res.locals.gar = gar;
     next();
   });
