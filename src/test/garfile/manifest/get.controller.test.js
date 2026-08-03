@@ -98,6 +98,12 @@ describe('Manifest Get Controller', () => {
       personApiStub = sinon.stub(personApi, 'getPeople').resolves(JSON.stringify(savedPeople()));
       garApiStub = sinon.stub(dataAccessApi.garApi, 'getPeople').resolves({
         items: garPeople(),
+        _meta: {
+          totalItems: 2,
+          itemCount: 2,
+          itemsPerPage: 10,
+          totalPages: 1,
+        },
       });
     });
 
@@ -114,8 +120,16 @@ describe('Manifest Get Controller', () => {
         savedPeople: flaggedSavedPeople(),
         isInvalidSavedPeople: false,
         isUnableToAddPeople: false,
-        manifest: { items: garPeople() },
-        pages: undefined,
+        manifest: {
+          items: garPeople(),
+          _meta: {
+            totalItems: 2,
+            itemCount: 2,
+            itemsPerPage: 10,
+            totalPages: 1,
+          },
+        },
+        pages: { totalItems: 2, itemCount: 2, itemsPerPage: 10, totalPages: 1 },
         currentPage: 1,
         errors: [{ message: 'Example Error Message' }],
       });
@@ -141,9 +155,22 @@ describe('Manifest Get Controller', () => {
           savedPeople: flaggedSavedPeople(),
           isInvalidSavedPeople: false,
           isUnableToAddPeople: false,
-          manifest: { items: garPeople() },
+          manifest: {
+            items: garPeople(),
+            _meta: {
+              totalItems: 2,
+              itemCount: 2,
+              itemsPerPage: 10,
+              totalPages: 1,
+            },
+          },
           manifestInvalidPeople: [{ firstName: 'Jean-Luc', lastName: 'Picard' }],
-          pages: undefined,
+          pages: {
+            totalItems: 2,
+            itemCount: 2,
+            itemsPerPage: 10,
+            totalPages: 1,
+          },
           currentPage: 1,
           errors: [{ message: 'Wrong era' }],
         });
@@ -164,8 +191,13 @@ describe('Manifest Get Controller', () => {
         savedPeople: flaggedSavedPeople(),
         isInvalidSavedPeople: false,
         isUnableToAddPeople: false,
-        manifest: { items: garPeople() },
-        pages: undefined,
+        manifest: { items: garPeople(), _meta: { totalItems: 2, itemCount: 2, itemsPerPage: 10, totalPages: 1 } },
+        pages: {
+          totalItems: 2,
+          itemCount: 2,
+          itemsPerPage: 10,
+          totalPages: 1,
+        },
         currentPage: 1,
         successMsg: 'All present captain',
       });
@@ -186,8 +218,21 @@ describe('Manifest Get Controller', () => {
           savedPeople: flaggedSavedPeople(),
           isUnableToAddPeople: false,
           isInvalidSavedPeople: false,
-          manifest: { items: garPeople() },
-          pages: undefined,
+          manifest: {
+            items: garPeople(),
+            _meta: {
+              totalItems: 2,
+              itemCount: 2,
+              itemsPerPage: 10,
+              totalPages: 1,
+            },
+          },
+          pages: {
+            totalItems: 2,
+            itemCount: 2,
+            itemsPerPage: 10,
+            totalPages: 1,
+          },
           currentPage: 1,
         });
       });

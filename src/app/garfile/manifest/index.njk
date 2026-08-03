@@ -214,7 +214,7 @@
               {% endif %}
             </tbody>
           </table>
-          {% if manifest | length and pages %}
+          {% if manifest.items | length and pages %}
            {{ pagination.build(pages)}}
           {% endif %}
         </div>

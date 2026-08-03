@@ -53,7 +53,7 @@ module.exports = async (req, res) => {
 
   try {
     const savedPeopleJson = await personApi.getPeople(userId, 'individual');
-    const currentPage = Number(req.query.page) || 1;
+    const currentPage = Math.max(1, parseInt(req.query.page, 10) || 1);
     const garpeopleJson = await dataAccessApi.garApi.getPeople(garId, currentPage);
     const garfileJson = await garApi.get(garId);
     const paginationData = garpeopleJson._meta;
