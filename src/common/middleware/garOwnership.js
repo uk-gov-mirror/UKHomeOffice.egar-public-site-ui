@@ -14,6 +14,7 @@ module.exports = ({ isCbpId = false } = {}) =>
       logger.error(
         `Detected an attempt by user -di: ${cookie.getUserDbId()} to access GAR id: ${garId} which does not match userId or OrganisationId.`
       );
+      cookie.clearGar();
       return res.redirect('/home');
     }
 

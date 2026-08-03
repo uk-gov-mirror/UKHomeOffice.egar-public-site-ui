@@ -172,6 +172,10 @@ class Cookie {
     return this.session.gar;
   }
 
+  clearGar() {
+    this.session.gar = null;
+  }
+
   setGarId(id) {
     this.session.gar.id = id;
   }
