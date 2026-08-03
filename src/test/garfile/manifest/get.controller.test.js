@@ -37,6 +37,9 @@ describe('Manifest Get Controller', () => {
         gar: { id: '9001' },
         u: { dbId: 'USER-12345' },
       },
+      query: {
+        page: 1,
+      },
     };
 
     res = {
@@ -101,7 +104,6 @@ describe('Manifest Get Controller', () => {
     it('should render with errMsg populated', async () => {
       req.session.errMsg = { message: 'Example Error Message' };
       cookie = new CookieModel(req);
-
       await controller(req, res);
 
       expect(personApiStub).to.have.been.calledWith('USER-12345', 'individual');
@@ -113,6 +115,8 @@ describe('Manifest Get Controller', () => {
         isInvalidSavedPeople: false,
         isUnableToAddPeople: false,
         manifest: { items: garPeople() },
+        pages: undefined,
+        currentPage: 1,
         errors: [{ message: 'Example Error Message' }],
       });
     });
@@ -139,6 +143,8 @@ describe('Manifest Get Controller', () => {
           isUnableToAddPeople: false,
           manifest: { items: garPeople() },
           manifestInvalidPeople: [{ firstName: 'Jean-Luc', lastName: 'Picard' }],
+          pages: undefined,
+          currentPage: 1,
           errors: [{ message: 'Wrong era' }],
         });
       });
@@ -159,6 +165,8 @@ describe('Manifest Get Controller', () => {
         isInvalidSavedPeople: false,
         isUnableToAddPeople: false,
         manifest: { items: garPeople() },
+        pages: undefined,
+        currentPage: 1,
         successMsg: 'All present captain',
       });
     });
@@ -179,6 +187,8 @@ describe('Manifest Get Controller', () => {
           isUnableToAddPeople: false,
           isInvalidSavedPeople: false,
           manifest: { items: garPeople() },
+          pages: undefined,
+          currentPage: 1,
         });
       });
     });
