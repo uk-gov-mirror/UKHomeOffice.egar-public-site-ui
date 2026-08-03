@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 const i18n = require('i18n');
 const sinon = require('sinon');
 const { expect } = require('chai');
@@ -7,7 +5,6 @@ const chai = require('chai');
 const sinonChai = require('sinon-chai');
 
 require('../../global.test');
-const garApi = require('../../../common/services/garApi');
 const dataAccessApi = require('../../../common/services/dataAccessApi');
 const CookieModel = require('../../../common/models/Cookie.class');
 const manifestFields = require('../../../common/seeddata/gar_manifest_fields.json');

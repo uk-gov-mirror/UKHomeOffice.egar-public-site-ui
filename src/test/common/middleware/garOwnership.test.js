@@ -1,17 +1,9 @@
-/* eslint-disable no-undef */
-
 const sinon = require('sinon');
 const { expect } = require('chai');
 const chai = require('chai');
 const sinonChai = require('sinon-chai');
 const proxyquire = require('proxyquire');
-
-// dependency stubs
-// const asyncHandler = require('../../../common/utils/asyncHandler');
-const garOwnershipMiddleware = require('../../../common/middleware/garOwnership');
-
 require('../../global.test');
-const hasGarOwnershipStub = require('sinon');
 
 let middleware;
 
