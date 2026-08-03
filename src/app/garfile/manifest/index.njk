@@ -2,6 +2,7 @@
 
 {% import "common/templates/includes/macros.njk" as m %}
 {% import "common/templates/includes/banners.njk" as b %}
+{% import "common/templates/includes/pagination.njk" as pagination %}
 
 {% block pageTitle %}
 	Create GAR | Manifest
@@ -213,13 +214,16 @@
               {% endif %}
             </tbody>
           </table>
+          {% if manifest.items | length and pages %}
+           {{ pagination.build(pages)}}
+          {% endif %}
         </div>
         <div class="govuk-grid-column-full">
           <div class="govuk-form-group">
             <label class="govuk-label" for="totalPersonsOnBoard">
               {{__('total_persons_on_board')}}
             </label>
-            <input class="govuk-input govuk-input--width-3" id="totalPersonsOnBoard" name="name" readonly type="number" value="{{ manifest.items.length }}">
+            <input class="govuk-input govuk-input--width-3" id="totalPersonsOnBoard" name="name" readonly type="number" value="{{ pages.totalItems }}">
           </div>
           <button id="garPeopleId" type="submit" name="buttonClicked" value="Add to PEOPLE" class="govuk-button multi-submit-button" disabled="true" >
             {{__('button_add_to_people')}}
