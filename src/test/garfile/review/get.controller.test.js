@@ -8,6 +8,7 @@ const sinonChai = require('sinon-chai');
 
 require('../../global.test');
 const garApi = require('../../../common/services/garApi');
+const dataAccessApi = require('../../../common/services/dataAccessApi');
 const CookieModel = require('../../../common/models/Cookie.class');
 const manifestFields = require('../../../common/seeddata/gar_manifest_fields.json');
 const validator = require('../../../common/utils/validator');
@@ -47,12 +48,13 @@ describe('GAR Review Get Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: { gar: { garId: 'ABCDE' } },
     };
 
-    sessionSaveStub = sinon.stub(req.session, 'save').callsArg(0);
-    garApiGetStub = sinon.stub(garApi, 'get');
-    garApiGetPeopleStub = sinon.stub(garApi, 'getPeople');
-    garApiGetSupportingDocsStub = sinon.stub(garApi, 'getSupportingDocs');
+    sinon.stub(req.session, 'save').callsArg(0);
+    garApiGetStub = sinon.stub(dataAccessApi.garApi, 'get');
+    garApiGetPeopleStub = sinon.stub(dataAccessApi.garApi, 'getPeople');
+    garApiGetSupportingDocsStub = sinon.stub(dataAccessApi.garApi, 'getSupportingDocs');
 
     sinon.stub(i18n, '__').callsFake((key) => {
       switch (key) {
@@ -94,19 +96,16 @@ describe('GAR Review Get Controller', () => {
 
   it('should return error messages on validation', () => {
     const cookie = new CookieModel(req);
-    garApiGetStub.resolves(
-      JSON.stringify({
-        status: {
-          name: 'draft',
-        },
-      })
-    );
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [],
-      })
-    );
-    garApiGetSupportingDocsStub.resolves(JSON.stringify({}));
+    garApiGetStub.resolves({
+      status: {
+        name: 'draft',
+      },
+    });
+
+    garApiGetPeopleStub.resolves({
+      items: [],
+    });
+    garApiGetSupportingDocsStub.resolves({});
 
     const callController = async () => {
       await controller(req, res);
@@ -169,33 +168,27 @@ describe('GAR Review Get Controller', () => {
 
   it('should render the page but log out a message if API returns one', () => {
     const cookie = new CookieModel(req);
-    garApiGetStub.resolves(
-      JSON.stringify({
-        registration: 'Z-AFTC',
-        departureDate: '2012-12-13',
-        departureTime: '15:03:00',
-        arrivalDate: '2012-12-14',
-        arrivalTime: '16:04:00',
-        status: {
-          name: 'draft',
-        },
-        responsibleGivenName: 'James',
-        prohibitedGoods: 'No',
-        freeCirculation: 'No',
-        visitReason: 'No',
-        intentionValue: 'Yes',
-      })
-    );
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [{ peopleType: { name: 'Captain' }, firstName: 'James', lastName: 'Kirk' }],
-      })
-    );
-    garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        message: 'GAR not found',
-      })
-    );
+    garApiGetStub.resolves({
+      registration: 'Z-AFTC',
+      departureDate: '2012-12-13',
+      departureTime: '15:03:00',
+      arrivalDate: '2012-12-14',
+      arrivalTime: '16:04:00',
+      status: {
+        name: 'draft',
+      },
+      responsibleGivenName: 'James',
+      prohibitedGoods: 'No',
+      freeCirculation: 'No',
+      visitReason: 'No',
+      intentionValue: 'Yes',
+    });
+    garApiGetPeopleStub.resolves({
+      items: [{ peopleType: { name: 'Captain' }, firstName: 'James', lastName: 'Kirk' }],
+    });
+    garApiGetSupportingDocsStub.resolves({
+      message: 'GAR not found',
+    });
 
     const callController = async () => {
       await controller(req, res);
@@ -236,29 +229,25 @@ describe('GAR Review Get Controller', () => {
 
   it('should render the page as appropriate', () => {
     const cookie = new CookieModel(req);
-    garApiGetStub.resolves(
-      JSON.stringify({
-        registration: 'Z-AFTC',
-        departureDate: '2012-12-13',
-        departureTime: '15:04:00',
-        arrivalDate: '2012-12-14',
-        arrivalTime: '08:17:00',
-        intentionValue: 'Yes',
-        status: {
-          name: 'draft',
-        },
-        responsibleGivenName: 'James',
-        prohibitedGoods: 'No',
-        freeCirculation: 'No',
-        visitReason: 'No',
-      })
-    );
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [{ peopleType: { name: 'Captain' }, firstName: 'James', lastName: 'Kirk' }],
-      })
-    );
-    garApiGetSupportingDocsStub.resolves(JSON.stringify({}));
+    garApiGetStub.resolves({
+      registration: 'Z-AFTC',
+      departureDate: '2012-12-13',
+      departureTime: '15:04:00',
+      arrivalDate: '2012-12-14',
+      arrivalTime: '08:17:00',
+      intentionValue: 'Yes',
+      status: {
+        name: 'draft',
+      },
+      responsibleGivenName: 'James',
+      prohibitedGoods: 'No',
+      freeCirculation: 'No',
+      visitReason: 'No',
+    });
+    garApiGetPeopleStub.resolves({
+      items: [{ peopleType: { name: 'Captain' }, firstName: 'James', lastName: 'Kirk' }],
+    });
+    garApiGetSupportingDocsStub.resolves({});
 
     const callController = async () => {
       await controller(req, res);

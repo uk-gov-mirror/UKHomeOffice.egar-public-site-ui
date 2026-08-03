@@ -39,7 +39,7 @@ module.exports = (req, res) => {
     .validateChains(validations.validations(req))
     .then(() => {
       garApi
-        .updateGarPerson(res.locals.gar.garId, person)
+        .updateGarPerson(res?.locals?.gar?.garId, person)
         .then((apiResponse) => {
           const parsedResponse = JSON.parse(apiResponse);
           if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {

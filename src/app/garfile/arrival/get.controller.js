@@ -1,30 +1,27 @@
 const CookieModel = require('../../../common/models/Cookie.class');
 const logger = require('../../../common/utils/logger')(__filename);
-const garApi = require('../../../common/services/garApi');
+const dataAccessApi = require('../../../common/services/dataAccessApi');
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   logger.debug('In garfile/arrival get controller');
   const cookie = new CookieModel(req);
-  console.log(res.locals.gar);
-  garApi
-    .get(res?.locals?.gar?.garId)
-    .then((apiResponse) => {
-      const parsedResponse = JSON.parse(apiResponse);
-      cookie.setGarArrivalVoyage(parsedResponse);
-      return res.render('app/garfile/arrival/index', {
-        cookie,
-      });
-    })
-    .catch((err) => {
-      logger.error('Failed to get GAR details');
-      logger.error(err);
-      res.render('app/garfile/arrival/index', {
-        cookie,
-        errors: [
-          {
-            message: 'There was a problem getting GAR information',
-          },
-        ],
-      });
+
+  try {
+    const apiResponse = await dataAccessApi.garApi.get(res?.locals?.gar?.garId);
+    cookie.setGarArrivalVoyage(apiResponse);
+    return res.render('app/garfile/arrival/index', {
+      cookie,
     });
+  } catch (err) {
+    logger.error('Failed to get GAR details');
+    logger.error(err);
+    res.render('app/garfile/arrival/index', {
+      cookie,
+      errors: [
+        {
+          message: 'There was a problem getting GAR information',
+        },
+      ],
+    });
+  }
 };

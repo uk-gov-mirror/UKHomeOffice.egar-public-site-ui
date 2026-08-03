@@ -39,7 +39,7 @@ describe('Arrival Get Controller', () => {
 
   it('should display a message if gar api rejects', async () => {
     const cookie = new CookieModel(req);
-    res.locals.gar = {};
+    res.locals.gar = { garId: '12345' };
     sinon.stub(dataAccessApi.garApi, 'get').rejects('garApi.get Example Reject');
 
     const callController = async () => {
@@ -66,6 +66,8 @@ describe('Arrival Get Controller', () => {
     cookie.setGarId('12345');
     cookie.setGarArrivalVoyage(apiResponse);
     sinon.stub(dataAccessApi.garApi, 'get').resolves(apiResponse);
+
+    res.locals.gar = { garId: cookie.getGarId() };
 
     const callController = async () => {
       await controller(req, res);

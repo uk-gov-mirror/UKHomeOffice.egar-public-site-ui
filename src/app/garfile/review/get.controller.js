@@ -12,7 +12,7 @@ const ValidationRule = require('../../../common/models/ValidationRule.class');
 module.exports = (req, res) => {
   logger.debug('In garfile / review get controller');
   const cookie = new CookieModel(req);
-  const garId = res.locals.gar.garId;
+  const garId = res?.locals?.gar?.garId;
   const frmUpload = req.query?.from === 'uploadGar';
 
   Promise.all([

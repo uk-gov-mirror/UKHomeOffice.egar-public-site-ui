@@ -6,12 +6,9 @@ const asyncHandler = require('../utils/asyncHandler');
 module.exports = ({ isCbpId = false } = {}) =>
   asyncHandler(async (req, res, next) => {
     const cookie = new CookieModel(req);
-
     const garId = (req.body && req.body.garId) || (req.query && req.query.garId) || cookie.getGarId();
-    console.log(`access gar ${garId}`);
 
     const { ok, gar } = await hasGarOwnership(cookie, garId, { isCbpId });
-    console.log(`access gar ${garId} = ${ok}`);
 
     if (!ok) {
       logger.error(

@@ -40,6 +40,7 @@ describe('GAR Cancel Post Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: { gar: { garId: '12345' } },
     };
 
     garApiGetPeopleStub = sinon.stub(garApi, 'getPeople');
@@ -55,6 +56,7 @@ describe('GAR Cancel Post Controller', () => {
 
   it('should return an error message if api rejects', async () => {
     const cookie = new CookieModel(req);
+    res.locals.gar = { garId: cookie.getGarId() };
     garApiPatchStub.rejects('garApi.patch Example Reject');
     garApiGetPeopleStub.resolves('{"items": []}');
     submitGARForExceptionStub.resolves();
@@ -75,6 +77,7 @@ describe('GAR Cancel Post Controller', () => {
     emailServiceStub.resolves();
     garApiGetPeopleStub.resolves('{"items": []}');
     submitGARForExceptionStub.resolves();
+    res.locals.gar = { garId: '12345' };
 
     await controller(req, res);
 

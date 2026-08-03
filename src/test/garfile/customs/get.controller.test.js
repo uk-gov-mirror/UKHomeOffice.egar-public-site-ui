@@ -32,6 +32,7 @@ describe('GAR Customs Get Controller', () => {
     };
     res = {
       render: sinon.spy(),
+      locals: { gar: { garId: 'ABC123' } },
     };
   });
 
