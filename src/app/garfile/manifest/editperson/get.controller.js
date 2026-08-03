@@ -1,6 +1,7 @@
 const logger = require('../../../../common/utils/logger')(__filename);
 const CookieModel = require('../../../../common/models/Cookie.class');
 const garApi = require('../../../../common/services/garApi');
+const dataAccessApi = require('../../../../common/services/dataAccessApi');
 const documenttype = require('../../../../common/seeddata/egar_saved_people_travel_document_type.json');
 const persontype = require('../../../../common/seeddata/egar_type_of_saved_person');
 const genderchoice = require('../../../../common/seeddata/egar_gender_choice.json');
@@ -18,8 +19,8 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const apiResponse = await garApi.getPeople(cookie.getGarId());
-    const parsedResponse = JSON.parse(apiResponse).items;
+    const apiResponse = await dataAccessApi.garApi.getPeople(res?.locals?.gar?.garId);
+    const parsedResponse = apiResponse.items;
     const person = parsedResponse.find((garPerson) => garPerson.garPeopleId === personId);
 
     const requestToValidate = Manifest.turnPersonToRequest(person);

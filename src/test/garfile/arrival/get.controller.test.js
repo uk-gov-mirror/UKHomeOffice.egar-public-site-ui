@@ -7,9 +7,10 @@ const sinonChai = require('sinon-chai');
 
 require('../../global.test');
 const CookieModel = require('../../../common/models/Cookie.class');
-const garApi = require('../../../common/services/garApi');
+// const garApi = require('../../../common/services/garApi');
 
 const controller = require('../../../app/garfile/arrival/get.controller');
+const dataAccessApi = require('../../../common/services/dataAccessApi');
 
 describe('Arrival Get Controller', () => {
   let req;
@@ -28,6 +29,7 @@ describe('Arrival Get Controller', () => {
 
     res = {
       render: sinon.spy(),
+      locals: {},
     };
   });
 
@@ -37,7 +39,8 @@ describe('Arrival Get Controller', () => {
 
   it('should display a message if gar api rejects', async () => {
     const cookie = new CookieModel(req);
-    sinon.stub(garApi, 'get').rejects('garApi.get Example Reject');
+    res.locals.gar = { garId: '12345' };
+    sinon.stub(dataAccessApi.garApi, 'get').rejects('garApi.get Example Reject');
 
     const callController = async () => {
       await controller(req, res);
@@ -52,24 +55,26 @@ describe('Arrival Get Controller', () => {
   });
 
   it('should set cookie values on response', async () => {
-    apiResponse = JSON.stringify({
+    apiResponse = {
       arrivalDate: '2012-30-05',
       arrivalTime: '15:00',
       arrivalPort: 'LHR',
       arrivalLong: '',
       arrivalLat: '',
-    });
+    };
     const cookie = new CookieModel(req);
     cookie.setGarId('12345');
     cookie.setGarArrivalVoyage(apiResponse);
-    sinon.stub(garApi, 'get').resolves(apiResponse);
+    sinon.stub(dataAccessApi.garApi, 'get').resolves(apiResponse);
+
+    res.locals.gar = { garId: cookie.getGarId() };
 
     const callController = async () => {
       await controller(req, res);
     };
 
     callController().then(() => {
-      expect(garApi.get).to.have.been.calledWith('12345');
+      expect(dataAccessApi.garApi.get).to.have.been.calledWith('12345');
       expect(res.render).to.have.been.calledWith('app/garfile/arrival/index', { cookie });
     });
   });

@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
   logger.debug('In garfile / manifest get controller');
 
   const userId = cookie.getUserDbId();
-  const garId = cookie.getGarId();
+  const garId = res.locals.gar.garId;
 
   try {
     const savedPeopleJson = await personApi.getPeople(userId, 'individual');

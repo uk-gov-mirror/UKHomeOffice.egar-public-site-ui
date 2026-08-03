@@ -5,6 +5,7 @@ const express = require('express');
 const flagpole = require('../../../common/middleware/flagpole');
 const usercheck = require('../../../common/middleware/usercheck');
 const csrfcheck = require('../../../common/middleware/csrfcheck');
+const garCheckMiddleware = require('../../../common/middleware/garOwnership');
 
 // Local dependencies
 const getController = require('./get.controller');
@@ -16,8 +17,10 @@ const paths = {
   index: indexPath,
 };
 
+const ownershipCheck = garCheckMiddleware();
+
 // Routing
-router.get(paths.index, flagpole, usercheck, csrfcheck, getController);
+router.get(paths.index, flagpole, usercheck, csrfcheck, ownershipCheck, getController);
 
 // Export
 module.exports = {

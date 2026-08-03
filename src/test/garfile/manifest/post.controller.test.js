@@ -37,6 +37,7 @@ describe('Manifest Post Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: { gar: { garId: '9001' } },
     };
   });
 
@@ -87,7 +88,8 @@ describe('Manifest Post Controller', () => {
   it('should redirect if garApi rejects', () => {
     req.body.buttonClicked = 'Add to GAR';
     req.body.personId = 'ABCDEFG';
-    sinon.stub(garApi, 'patch').rejects('garApi.patch Example Reject');
+    res.locals.gar = { garId: '9001' };
+    const patch = sinon.stub(garApi, 'patch').rejects('garApi.patch Example Reject');
     sinon.stub(manifestUtil, 'getDetailsByIds').rejects('bulkAdd.getDetailsByIds Example Reject');
 
     const callController = async () => {
@@ -98,16 +100,16 @@ describe('Manifest Post Controller', () => {
       .then()
       .then(() => {
         expect(manifestUtil.getDetailsByIds).to.have.been.calledWith('ABCDEFG', 'USER-12345');
-        expect(garApi.patch).to.not.have.been.called;
+        expect(patch).to.not.have.been.called;
         expect(res.redirect).to.have.been.calledWith('/garfile/manifest');
       });
   });
 
   // TODO: It really should inform the user of an issue...
-  it('should redirect if garApi rejects', () => {
+  it('should redirect if garApi rejects - 1', () => {
     req.body.buttonClicked = 'Add to GAR';
     req.body.personId = 'ABCDEFG';
-    sinon.stub(garApi, 'patch').rejects('garApi.patch Example Reject');
+    const patchStub = sinon.stub(garApi, 'patch').rejects('garApi.patch Example Reject');
     sinon.stub(manifestUtil, 'getDetailsByIds').resolves([{ firstName: 'Random', lastName: 'Person' }]);
 
     const callController = async () => {
@@ -118,7 +120,7 @@ describe('Manifest Post Controller', () => {
       .then()
       .then(() => {
         expect(manifestUtil.getDetailsByIds).to.have.been.calledWith('ABCDEFG', 'USER-12345');
-        expect(garApi.patch).to.have.been.calledWith('9001', 'Draft', {
+        expect(patchStub).to.have.been.calledWith('9001', 'Draft', {
           people: [{ firstName: 'Random', lastName: 'Person' }],
         });
         expect(res.redirect).to.have.been.calledWith('/garfile/manifest');

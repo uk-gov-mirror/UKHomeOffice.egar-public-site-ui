@@ -7,7 +7,7 @@ module.exports = (req, res) => {
   const cookie = new CookieModel(req);
 
   garApi
-    .get(cookie.getGarId())
+    .get(res.locals.gar.garId)
     .then((apiResponse) => {
       const parsedResponse = JSON.parse(apiResponse);
       cookie.setGarDepartureVoyage(parsedResponse);

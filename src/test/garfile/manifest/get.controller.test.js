@@ -45,6 +45,7 @@ describe('Manifest Get Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: { gar: { garId: '9001' } },
     };
     sinon.stub(garApi, 'get').resolves(true);
   });

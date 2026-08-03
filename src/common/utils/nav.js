@@ -10,6 +10,7 @@ const pageAccess = require('../middleware/pageAccess');
 
 const logger = require('./logger')(__filename);
 const CookieModel = require('../models/Cookie.class');
+const garCheckMiddleware = require('../middleware/garOwnership');
 
 const buildRouterAndPaths = (path, getController, postController) => {
   // Initialisation
@@ -60,6 +61,19 @@ const simpleGetRender = (req, res, page) => {
   res.render(page, { cookie });
 };
 
+exports.buildGarRouterAndPaths = (path, getController, postController, { isCbpId = false } = {}) => {
+  const router = new express.Router();
+  const paths = { index: path };
+
+  const ownershipCheck = garCheckMiddleware({ isCbpId });
+
+  router.get(paths.index, flagpole, usercheck, csrfcheck, pageAccess, ownershipCheck, getController);
+  if (postController) {
+    router.post(paths.index, flagpole, usercheck, parseForm, csrfcheck, ownershipCheck, postController);
+  }
+
+  return { router, paths };
+};
 exports.simpleGetRender = simpleGetRender;
 exports.buildRouterAndPaths = buildRouterAndPaths;
 exports.buildRouterAndPathsNoUserCheck = buildRouterAndPathsNoUserCheck;
