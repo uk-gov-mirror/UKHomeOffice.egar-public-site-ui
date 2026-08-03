@@ -163,7 +163,7 @@ describe('GAR Supporting Documents Get Controller', () => {
         supportingDoc: apiResponse,
         max_num_files: 8,
         errors: [
-          { message: 'The total file size of all uploaded documents must be less than 8MB', identifier: 'file' },
+          { message: 'The total file size of all uploaded documents must be less than 7.5MB', identifier: 'file' },
         ],
       });
     });

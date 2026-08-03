@@ -39,7 +39,7 @@ module.exports = (req, res) => {
           break;
         case 'limit':
           error = [
-            { message: 'The total file size of all uploaded documents must be less than 8MB', identifier: 'file' },
+            { message: 'The total file size of all uploaded documents must be less than 7.5MB', identifier: 'file' },
           ];
           break;
         case 'number':
