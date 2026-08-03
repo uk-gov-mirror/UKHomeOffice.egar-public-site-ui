@@ -9,6 +9,7 @@ const organisationApi = require('../../../common/services/organisationApi');
 const verifyUserService = require('../../../common/services/verificationApi');
 const { parseUrlForNonProd } = require('../../../common/services/oneLoginApi');
 const { getOneLoginLogoutUrl } = require('../../../common/utils/oneLoginAuth');
+const { sessionRegenerateForAuthenticatedUser } = require('../../../common/utils/session_generator');
 
 // Constants
 const ROUTES = {
@@ -68,7 +69,7 @@ const sendAdminUpdateEmail = (userObj) => {
  * @param {Object} cookie - Cookie model instance
  * @returns {Promise<Object>} - User authentication result
  */
-const handleUserAuthentication = (req, res, userInfo, cookie) => {
+const handleUserAuthentication = (req, res, userInfo) => {
   const { email, sub: oneLoginSid } = userInfo;
   return userApi
     .userSearch(email, oneLoginSid)
@@ -125,6 +126,7 @@ const handleUserAuthentication = (req, res, userInfo, cookie) => {
 
       return userApi.getDetails(email).then((details) => {
         const { organisation } = details || {};
+        const cookie = new CookieModel(req);
 
         setUserCookies(cookie, {
           ...userData,
@@ -164,8 +166,6 @@ module.exports = async (req, res) => {
     return res.redirect(ROUTES.HOME);
   }
 
-  const cookie = new CookieModel(req);
-
   const { code } = req.query;
 
   if (!code) {
@@ -178,7 +178,7 @@ module.exports = async (req, res) => {
     return res.redirect(redirectErrorPage(req, res, 'service-error'));
   }
 
-  oneLoginApi
+  return oneLoginApi
     .sendOneLoginTokenRequest(req, code, oneLoginUtil)
     .then(({ access_token, id_token }) => {
       if (!id_token) {
@@ -206,8 +206,16 @@ module.exports = async (req, res) => {
 
           accountUrl = parseUrlForNonProd(req, accountUrl);
 
-          return handleUserAuthentication(req, res, userInfo, cookie)
+          return sessionRegenerateForAuthenticatedUser(req)
+            .then((isRegenerated) => {
+              if (!isRegenerated) {
+                return { redirect: redirectErrorPage(req, res, 'service-error') };
+              }
+
+              return handleUserAuthentication(req, res, userInfo);
+            })
             .then(({ redirect }) => {
+              const cookie = new CookieModel(req);
               const redirectUrl = cookie.getRedirectUrl();
               if (redirectUrl !== '') {
                 const baseUrl = `${HTTPS}${BASE_URL}`;
