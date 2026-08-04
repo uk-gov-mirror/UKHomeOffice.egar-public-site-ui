@@ -3,11 +3,11 @@ const { hasGarOwnership } = require('../../common/utils/garOwnership');
 const logger = require('../utils/logger')(__filename);
 const asyncHandler = require('../utils/asyncHandler');
 
-module.exports = ({ isCbpId = false } = {}) =>
+module.exports = () =>
   asyncHandler(async (req, res, next) => {
     const cookie = new CookieModel(req);
     const garId = (req.body && req.body.garId) || (req.query && req.query.garId) || cookie.getGarId();
-    const { ok, gar } = await hasGarOwnership(cookie, garId, { isCbpId });
+    const { ok, gar } = await hasGarOwnership(cookie, garId);
 
     if (!ok) {
       logger.error(

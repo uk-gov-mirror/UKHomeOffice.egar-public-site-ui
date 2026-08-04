@@ -10,7 +10,8 @@ const pageAccess = require('../middleware/pageAccess');
 
 const logger = require('./logger')(__filename);
 const CookieModel = require('../models/Cookie.class');
-const garCheckMiddleware = require('../middleware/garOwnership');
+const garAccessCheck = require('../middleware/garOwnership');
+const { paths } = require('../../app/help');
 
 const buildRouterAndPaths = (path, getController, postController) => {
   // Initialisation
@@ -61,19 +62,70 @@ const simpleGetRender = (req, res, page) => {
   res.render(page, { cookie });
 };
 
-exports.buildGarRouterAndPaths = (path, getController, postController, { isCbpId = false } = {}) => {
+const defaultMiddleware = [flagpole, usercheck, csrfcheck, pageAccess];
+exports.defaultMiddleware = defaultMiddleware;
+
+const defaultPostMiddlewares = [flagpole, usercheck, parseForm, csrfcheck];
+exports.defaultPostMiddlewares = defaultPostMiddlewares;
+
+exports.garMiddlewares = ({ isCbpId = false } = {}, initialMiddleware = []) => {
+  const ownershipCheck = garCheckMiddleware({ isCbpId });
+
+  let middlewares = defaultMiddleware;
+
+  if (initialMiddleware) {
+    middlewares = [...initialMiddleware];
+  }
+
+  middlewares.push(ownershipCheck);
+  return middlewares;
+};
+
+/**
+ *  A utility function for building route with the ability to dynamically add middlewares are needed.
+ *
+ * @param router express.Router
+ * @param path string
+ * @param method string
+ * @param middlewares Array - list of middleware to pass before controller
+ * @param controller function - controller to instantiate
+ */
+let buildRoute = (router, path, method, middlewares, controller) => {
+  let middlewareConfig = middlewares || defaultMiddleware;
+
+  switch (method.toUpperCase()) {
+    case 'GET':
+      router.get(path, ...middlewareConfig, controller);
+      break;
+    case 'POST':
+      router.post(path, ...middlewareConfig, controller);
+      break;
+    case 'DELETE':
+      router.delete(path, ...middlewareConfig, controller);
+      break;
+    default:
+      throw new Error(`Unsupported method ${method.toUpperCase()}`);
+  }
+
+  return router;
+};
+
+exports.buildGarRouterAndPaths = (path, getController, postController, middlewares = []) => {
   const router = new express.Router();
   const paths = { index: path };
 
-  const ownershipCheck = garCheckMiddleware({ isCbpId });
+  const getMiddlewares = [flagpole, usercheck, csrfcheck, pageAccess, garAccessCheck, ...middlewares];
+  const postMiddlewares = [flagpole, usercheck, parseForm, csrfcheck, garAccessCheck, ...middlewares];
 
-  router.get(paths.index, flagpole, usercheck, csrfcheck, pageAccess, ownershipCheck, getController);
+  buildRoute(router, paths.index, 'GET', getMiddlewares, getController);
+
   if (postController) {
-    router.post(paths.index, flagpole, usercheck, parseForm, csrfcheck, ownershipCheck, postController);
+    buildRoute(router, paths.index, 'POST', postMiddlewares, postController);
   }
 
   return { router, paths };
 };
+
 exports.simpleGetRender = simpleGetRender;
 exports.buildRouterAndPaths = buildRouterAndPaths;
 exports.buildRouterAndPathsNoUserCheck = buildRouterAndPathsNoUserCheck;

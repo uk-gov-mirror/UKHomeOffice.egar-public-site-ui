@@ -30,14 +30,13 @@ const checkGARUser = (parsedGar, userId, organisationId) => {
  *
  * @param cookie  CookieModel
  * @param garId   string
- * @param param2  object - {isCbpId: false}
  * @returns {Promise<{ok: boolean, gar: null}>}
  */
-const hasGarOwnership = async (cookie, garId, { isCbpId = false } = {}) => {
+const hasGarOwnership = async (cookie, garId) => {
   if (!garId) return { ok: false, gar: null };
 
   try {
-    const gar = await dataAccessApi.garApi.get(garId, isCbpId);
+    const gar = await dataAccessApi.garApi.get(garId);
     const ok = checkGARUser(gar, cookie.getUserDbId(), cookie.getOrganisationId());
     return { ok, gar };
   } catch (err) {
