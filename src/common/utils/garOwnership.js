@@ -15,12 +15,14 @@ const logger = require('./logger')(__filename);
 const checkGARUser = (parsedGar, userId, organisationId) => {
   if (parsedGar === undefined || parsedGar === null) return false;
 
-  const isSameOrganisation = parsedGar.organisationId !== null && parsedGar.organisationId === organisationId;
+  if (parsedGar.organisationId) {
+    const isSameOrganisation = organisationId !== null && parsedGar.organisationId === organisationId;
 
-  // if a gar has an org, then we can just check if the user and gar from the same Organisation
-  if (!isSameOrganisation) {
-    logger.info('GAR Organisation does not match the organisation ID of user');
-    return false;
+    // if a gar has an org, then we can just check if the user and gar from the same Organisation
+    if (!isSameOrganisation) {
+      logger.info('GAR Organisation does not match the organisation ID of user');
+      return false;
+    }
   }
 
   // organisationId is null for individual users, so we check the userId match.
