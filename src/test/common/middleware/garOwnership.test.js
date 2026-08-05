@@ -9,7 +9,6 @@ const dataAccessApi = require('../../../common/services/dataAccessApi');
 
 require('../../global.test');
 const { hasGarOwnership } = require('../../../common/utils/garOwnership');
-const ownershipMiddleware = require('../../../common/middleware/garOwnership');
 
 let middleware, garApiStub;
 let mockGarResponse = {
@@ -70,8 +69,7 @@ describe('middleware/garOwnership', () => {
     ownerShipStub.resolves({ ok: true, gar: { garId: '123' } });
     req.body.garId = '123';
 
-    const fn = middleware();
-    await fn(req, res, next);
+    await middleware(req, res, next);
 
     expect(cookieInstance.setGarId).to.have.been.calledWith('123');
     expect(res.locals.gar).to.deep.equal({ garId: '123' });
@@ -83,8 +81,7 @@ describe('middleware/garOwnership', () => {
 
     ownerShipStub.resolves({ ok: false, gar: null });
 
-    const fn = middleware();
-    await fn(req, res, next);
+    await middleware(req, res, next);
 
     expect(cookieInstance.clearGar).to.have.been.called;
     expect(res.redirect).to.have.been.calledWith('/home');
@@ -139,21 +136,10 @@ describe('middleware/garOwnership', () => {
     req.body.garId = '123';
     req.session.u.orgId = 'differentOrg';
 
+    ownerShipStub.resolves({ ok: false, gar: null });
     garApiStub.resolves(mockGarResponse);
 
-    await ownershipMiddleware()(req, res, next);
-
-    expect(res.redirect).to.have.been.calledWith('/home');
-    expect(next).to.not.have.been.called;
-  });
-
-  it('A user belonging to a different org is redirected to /home when access is revoked', async () => {
-    req.body.garId = '123';
-    req.session.u.orgId = 'differentOrg';
-
-    garApiStub.resolves(mockGarResponse);
-
-    await ownershipMiddleware()(req, res, next);
+    await middleware(req, res, next);
 
     expect(res.redirect).to.have.been.calledWith('/home');
     expect(next).to.not.have.been.called;
@@ -167,9 +153,10 @@ describe('middleware/garOwnership', () => {
       i: 'org1',
     };
 
+    ownerShipStub.resolves({ ok: true, gar: mockGarResponse });
     garApiStub.resolves(mockGarResponse);
 
-    await ownershipMiddleware()(req, res, next);
+    await middleware(req, res, next);
 
     expect(res.redirect).to.not.have.been.called;
     expect(next).to.be.called;
@@ -181,9 +168,10 @@ describe('middleware/garOwnership', () => {
     req.session.u.dbId = 'individualUser';
     req.session.org = { id: null };
 
+    ownerShipStub.resolves({ ok: false, gar: null });
     garApiStub.resolves(mockGarResponse);
 
-    await ownershipMiddleware()(req, res, next);
+    await middleware(req, res, next);
 
     expect(res.redirect).to.have.been.calledWith('/home');
     expect(next).to.not.have.been.called;

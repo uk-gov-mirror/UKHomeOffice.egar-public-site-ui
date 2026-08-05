@@ -17,7 +17,7 @@ const paths = {
   index: indexPath,
 };
 
-const ownershipCheck = garCheckMiddleware();
+const ownershipCheck = garCheckMiddleware;
 
 // Routing
 router.get(paths.index, flagpole, usercheck, csrfcheck, ownershipCheck, getController);

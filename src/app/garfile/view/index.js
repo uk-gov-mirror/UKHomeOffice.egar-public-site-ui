@@ -19,11 +19,11 @@ const paths = {
   index: indexPath,
 };
 
-const ownershipCheck = garCheckOwnership({ isCbpId: true });
+const ownershipCheck = garCheckOwnership;
 
 // Routing
-router.post(paths.index, flagpole, usercheck, parseForm, csrfcheck, ownershipCheck, postController);
-router.get(paths.index, flagpole, usercheck, parseForm, csrfcheck, ownershipCheck, getController);
+router.post(paths.index, flagpole, usercheck, parseForm, csrfcheck, postController);
+router.get(paths.index, flagpole, usercheck, parseForm, csrfcheck, garCheckOwnership, getController);
 
 // Export
 module.exports = {

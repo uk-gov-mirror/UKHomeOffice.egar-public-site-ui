@@ -98,8 +98,7 @@ class GarApi {
       const url = `/gar/${garId}/supportingdocs`;
 
       logger.debug(`Calling get supporting docs endpoint ${url}`);
-      const result = this.client.get(`/gar/${garId}/supportingdocs`, { query });
-      console.log(result);
+      const result = await this.client.get(`/gar/${garId}/supportingdocs`, { query });
       return result;
     } catch (err) {
       logger.error('Failed to call GAR get supporting documents API endpoint');
