@@ -69,15 +69,13 @@ const defaultPostMiddlewares = [flagpole, usercheck, parseForm, csrfcheck];
 exports.defaultPostMiddlewares = defaultPostMiddlewares;
 
 exports.garMiddlewares = ({ isCbpId = false } = {}, initialMiddleware = []) => {
-  const ownershipCheck = garCheckMiddleware({ isCbpId });
-
   let middlewares = defaultMiddleware;
 
   if (initialMiddleware) {
     middlewares = [...initialMiddleware];
   }
 
-  middlewares.push(ownershipCheck);
+  middlewares.push(garAccessCheck);
   return middlewares;
 };
 
