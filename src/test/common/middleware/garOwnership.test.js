@@ -9,6 +9,7 @@ const dataAccessApi = require('../../../common/services/dataAccessApi');
 
 require('../../global.test');
 const { hasGarOwnership } = require('../../../common/utils/garOwnership');
+const ownershipMiddleware = require('../../../common/middleware/garOwnership');
 
 let middleware, garApiStub;
 let mockGarResponse = {
@@ -132,5 +133,59 @@ describe('middleware/garOwnership', () => {
 
     const resp = await hasGarOwnership(cookie, '123');
     expect(resp.ok).to.equal(true);
+  });
+
+  it('A user belonging to a different org is redirected to /home when access is revoked', async () => {
+    req.body.garId = '123';
+    req.session.u.orgId = 'differentOrg';
+
+    garApiStub.resolves(mockGarResponse);
+
+    await ownershipMiddleware()(req, res, next);
+
+    expect(res.redirect).to.have.been.calledWith('/home');
+    expect(next).to.not.have.been.called;
+  });
+
+  it('A user belonging to a different org is redirected to /home when access is revoked', async () => {
+    req.body.garId = '123';
+    req.session.u.orgId = 'differentOrg';
+
+    garApiStub.resolves(mockGarResponse);
+
+    await ownershipMiddleware()(req, res, next);
+
+    expect(res.redirect).to.have.been.calledWith('/home');
+    expect(next).to.not.have.been.called;
+  });
+
+  it('A user belonging to same org but not owner of GAR (userId not matching) is granted access', async () => {
+    req.body.garId = '123';
+    // different user but same organisation.
+    req.session.u.dbId = 'differentUser';
+    req.session.org = {
+      i: 'org1',
+    };
+
+    garApiStub.resolves(mockGarResponse);
+
+    await ownershipMiddleware()(req, res, next);
+
+    expect(res.redirect).to.not.have.been.called;
+    expect(next).to.be.called;
+  });
+
+  it('An individual user cannot view Gar not belonging to them', async () => {
+    req.body.garId = '123';
+    // different user but same organisation.
+    req.session.u.dbId = 'individualUser';
+    req.session.org = { id: null };
+
+    garApiStub.resolves(mockGarResponse);
+
+    await ownershipMiddleware()(req, res, next);
+
+    expect(res.redirect).to.have.been.calledWith('/home');
+    expect(next).to.not.have.been.called;
   });
 });
