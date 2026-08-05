@@ -3,9 +3,20 @@ const { expect } = require('chai');
 const chai = require('chai');
 const sinonChai = require('sinon-chai');
 const proxyquire = require('proxyquire');
-require('../../global.test');
+const CookieModel = require('../../../common/models/Cookie.class');
 
-let middleware;
+const dataAccessApi = require('../../../common/services/dataAccessApi');
+
+require('../../global.test');
+const { hasGarOwnership } = require('../../../common/utils/garOwnership');
+
+let middleware, garApiStub;
+let mockGarResponse = {
+  garId: '123',
+  carrierCode: 'BA',
+  organisationId: 'org1',
+  userId: 'user1',
+};
 
 describe('middleware/garOwnership', () => {
   let res, req, next, cookieInstance, ownerShipStub, cookieMock;
@@ -16,7 +27,12 @@ describe('middleware/garOwnership', () => {
     req = {
       body: {},
       query: {},
-      session: {},
+      session: {
+        u: {
+          dbId: 'user1',
+          orgId: 'org1',
+        },
+      },
     };
 
     res = {
@@ -41,6 +57,8 @@ describe('middleware/garOwnership', () => {
         hasGarOwnership: ownerShipStub,
       },
     });
+
+    garApiStub = sinon.stub(dataAccessApi.garApi, 'get');
   });
 
   afterEach(() => {
@@ -69,5 +87,50 @@ describe('middleware/garOwnership', () => {
 
     expect(cookieInstance.clearGar).to.have.been.called;
     expect(res.redirect).to.have.been.calledWith('/home');
+  });
+
+  it("A user's access is revoked if they don't own a Gar", async () => {
+    req.body.garId = 'gar123';
+    req.session.org = {
+      i: 'differentOrg',
+      name: 'otherOrg',
+    };
+
+    const cookie = new CookieModel(req);
+    cookie.setUserDbId('wrong-user');
+
+    garApiStub.resolves(mockGarResponse);
+    ownerShipStub.resolves({ ok: false, gar: null });
+
+    const resp = await hasGarOwnership(cookie, 'gar123');
+    expect(resp.ok).to.equal(false);
+  });
+
+  it("A user's access is revoked if they do not belong to the same organisation as GAR", async () => {
+    req.body.garId = 'gar123';
+    req.session.org = {
+      i: 'differentOrg',
+      name: 'otherOrg',
+    };
+
+    const cookie = new CookieModel(req);
+
+    garApiStub.resolves(mockGarResponse);
+    ownerShipStub.resolves({ ok: false, gar: null });
+
+    const resp = await hasGarOwnership(cookie, 'gar123');
+    expect(resp.ok).to.equal(false);
+  });
+
+  it("A user's access is granted if they belong to same org as GAR", async () => {
+    req.body.garId = '123';
+    const cookie = new CookieModel(req);
+    cookie.setOrganisationId('org1');
+
+    garApiStub.resolves(mockGarResponse);
+    ownerShipStub.resolves({ ok: false, gar: null });
+
+    const resp = await hasGarOwnership(cookie, '123');
+    expect(resp.ok).to.equal(true);
   });
 });
