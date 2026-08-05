@@ -46,7 +46,7 @@ const hasGarOwnership = async (cookie, garId) => {
   try {
     const gar = await dataAccessApi.garApi.get(garId);
     const ok = checkGARUser(gar, cookie.getUserDbId(), cookie.getOrganisationId());
-    console.log(ok, gar, cookie);
+
     return { ok, gar };
   } catch (err) {
     logger.error(`Failed to verify GAR ownership for ${garId}`);
