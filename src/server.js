@@ -17,6 +17,9 @@ const cookieParser = require('cookie-parser');
 const { v4: uuid } = require('uuid');
 const csrf = require('csurf');
 const PgSession = require('connect-pg-simple')(session);
+const {
+  correlationIdMiddleware,
+} = require('./common/utils/correlationContext');
 
 // Local dependencies
 const logger = require('./common/utils/logger')(__filename);
@@ -98,6 +101,7 @@ function initialiseGlobalMiddleware(app) {
     favicon(path.join(__dirname, 'node_modules', 'govuk-frontend', 'dist', 'govuk', 'assets', 'images', 'favicon.ico'))
   );
   app.use(compression());
+  app.use(correlationIdMiddleware);
 
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
     app.use(
