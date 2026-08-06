@@ -3,9 +3,7 @@ const { expect } = require('chai');
 require('../../global.test');
 
 const { HttpClient } = require('../../../common/services/httpClient');
-const {
-  correlationIdMiddleware,
-} = require('../../../common/utils/correlationContext');
+const { correlationIdMiddleware } = require('../../../common/utils/correlationContext');
 
 describe('HttpClient correlation id', () => {
   it('reuses the same correlation id for all requests in one request context', async () => {
@@ -43,8 +41,6 @@ describe('HttpClient correlation id', () => {
 
     expect(requests).to.have.length(2);
     expect(requests[0].headers['X-Correlation-ID']).to.be.a('string');
-    expect(requests[1].headers['X-Correlation-ID']).to.equal(
-      requests[0].headers['X-Correlation-ID'],
-    );
+    expect(requests[1].headers['X-Correlation-ID']).to.equal(requests[0].headers['X-Correlation-ID']);
   });
 });
