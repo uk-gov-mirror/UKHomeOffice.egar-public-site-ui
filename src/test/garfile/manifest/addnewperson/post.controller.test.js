@@ -50,6 +50,7 @@ describe('GAR Manifest Add Person Post Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: {},
     };
 
     person = {
@@ -105,6 +106,7 @@ describe('GAR Manifest Add Person Post Controller', () => {
   it('should redirect back if api rejects', () => {
     const cookie = new CookieModel(req);
     garApiStub.rejects('garApi.patch Example Reject');
+    res.locals.gar = { garId: 'GAR-ID-1' };
 
     const callController = async () => {
       await controller(req, res);
@@ -130,6 +132,7 @@ describe('GAR Manifest Add Person Post Controller', () => {
 
   it('should render message if api returns one', () => {
     const cookie = new CookieModel(req);
+    res.locals.gar = { garId: 'GAR-ID-1' };
 
     garApiStub.resolves(
       JSON.stringify({
@@ -160,6 +163,7 @@ describe('GAR Manifest Add Person Post Controller', () => {
 
   it('should redirect on success', () => {
     garApiStub.resolves(JSON.stringify({}));
+    res.locals.gar = { garId: 'GAR-ID-1' };
 
     const callController = async () => {
       await controller(req, res);

@@ -7,7 +7,7 @@ const airportValidation = require('../../../common/utils/airportValidation');
 
 const performAPICall = (cookie, buttonClicked, res) => {
   garApi
-    .patch(cookie.getGarId(), cookie.getGarStatus(), cookie.getGarArrivalVoyage())
+    .patch(res.locals.gar.garId, cookie.getGarStatus(), cookie.getGarArrivalVoyage())
     .then((apiResponse) => {
       const parsedResponse = JSON.parse(apiResponse);
       if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {
@@ -126,7 +126,7 @@ module.exports = async (req, res) => {
 
   const validations = buildValidations(voyage);
 
-  const gar = await garApi.get(cookie.getGarId());
+  const gar = await garApi.get(res.locals.gar.garId);
   const departurePort = JSON.parse(gar).departurePort;
 
   validations.push([

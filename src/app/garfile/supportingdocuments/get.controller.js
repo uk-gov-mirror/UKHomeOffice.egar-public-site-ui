@@ -8,7 +8,7 @@ module.exports = (req, res) => {
   const max_num_files = config.MAX_NUM_FILES;
   logger.debug('In garfile / supporting documents get controller');
   garApi
-    .getSupportingDocs(cookie.getGarId())
+    .getSupportingDocs(res.locals.gar.garId)
     .then((apiResponse) => {
       const parsedResponse = JSON.parse(apiResponse);
       if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {

@@ -68,7 +68,7 @@ exports.defaultMiddleware = defaultMiddleware;
 const defaultPostMiddlewares = [flagpole, usercheck, parseForm, csrfcheck];
 exports.defaultPostMiddlewares = defaultPostMiddlewares;
 
-exports.garMiddlewares = ({ isCbpId = false } = {}, initialMiddleware = []) => {
+exports.garMiddlewares = (initialMiddleware = []) => {
   let middlewares = defaultMiddleware;
 
   if (initialMiddleware) {

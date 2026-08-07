@@ -51,6 +51,7 @@ describe('GAR Craft Post Controller', () => {
     res = {
       redirect: sinon.stub(),
       render: sinon.stub(),
+      locals: {},
     };
     paginationStub = sinon.stub(pagination, 'setCurrentPage');
     saveSessionStub = sinon.stub(req.session, 'save').callsArg(0);
@@ -156,6 +157,7 @@ describe('GAR Craft Post Controller', () => {
     it('should return an error if api rejects', () => {
       cookie = new CookieModel(req);
       garApiPatchStub.rejects('garApi.patch Example Reject');
+      res.locals.gar = { garId: 'GAR1-ID' };
 
       const callController = async () => {
         await controller(req, res);
@@ -183,6 +185,7 @@ describe('GAR Craft Post Controller', () => {
           message: 'Craft does not exist',
         })
       );
+      res.locals.gar = { garId: 'GAR1-ID' };
 
       const callController = async () => {
         await controller(req, res);
@@ -207,6 +210,7 @@ describe('GAR Craft Post Controller', () => {
       req.body.buttonClicked = 'Save and continue';
       cookie = new CookieModel(req);
       garApiPatchStub.resolves(JSON.stringify({}));
+      res.locals.gar = { garId: 'GAR1-ID' };
 
       const callController = async () => {
         await controller(req, res);
@@ -228,6 +232,8 @@ describe('GAR Craft Post Controller', () => {
       req.body.addCraft = 'ExampleCraft';
       req.body.buttonClicked = 'Save and continue';
       cookie = new CookieModel(req);
+      res.locals.gar = { garId: 'GAR1-ID' };
+
       garApiPatchStub.resolves(JSON.stringify({}));
 
       const callController = async () => {
@@ -249,6 +255,7 @@ describe('GAR Craft Post Controller', () => {
     it('should go to the dashboard if buttonClicked is not set', () => {
       cookie = new CookieModel(req);
       garApiPatchStub.resolves(JSON.stringify({}));
+      res.locals.gar = { garId: 'GAR1-ID' };
 
       const callController = async () => {
         await controller(req, res);
