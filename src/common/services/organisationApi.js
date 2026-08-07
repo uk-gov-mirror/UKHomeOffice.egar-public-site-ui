@@ -1,4 +1,4 @@
-const request = require('request');
+const request = require('../utils/requestWithCorrelationId');
 const logger = require('../../common/utils/logger')(__filename);
 const endpoints = require('../config/endpoints');
 

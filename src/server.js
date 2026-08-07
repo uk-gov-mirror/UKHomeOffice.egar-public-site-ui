@@ -17,7 +17,7 @@ const cookieParser = require('cookie-parser');
 const { v4: uuid } = require('uuid');
 const csrf = require('csurf');
 const PgSession = require('connect-pg-simple')(session);
-const { correlationIdMiddleware } = require('./common/utils/correlationContext');
+const { correlationIdMiddleware, getCorrelationId } = require('./common/utils/correlationContext');
 
 // Local dependencies
 const logger = require('./common/utils/logger')(__filename);
@@ -78,10 +78,12 @@ function initialisExpressSession(app) {
 
 function setupLoggingContext() {
   token('session-id', (req) => req.sessionID || '');
+  token('correlation-id', (req) => req.correlationId || getCorrelationId() || '');
 }
 
 function initialiseGlobalMiddleware(app) {
   logger.info('Initalising global middleware');
+  app.use(correlationIdMiddleware);
 
   if (availability.ENABLE_UNAVAILABLE_PAGE.toLowerCase() === 'true') {
     logger.info('Enabling service unavailable middleware');
@@ -99,13 +101,12 @@ function initialiseGlobalMiddleware(app) {
     favicon(path.join(__dirname, 'node_modules', 'govuk-frontend', 'dist', 'govuk', 'assets', 'images', 'favicon.ico'))
   );
   app.use(compression());
-  app.use(correlationIdMiddleware);
 
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
     app.use(
       /\/((?!images|public|stylesheets|javascripts).)*/,
       loggingMiddleware(
-        ':remote-addr - :remote-user [:date[clf]] ":session-id :method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'
+        ':remote-addr - :remote-user [:date[clf]] ":session-id correlationId=:correlation-id :method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'
       )
     );
   }

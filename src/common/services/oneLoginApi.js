@@ -1,6 +1,6 @@
 const logger = require('../utils/logger')(__filename);
 const config = require('../config/index');
-const request = require('request');
+const request = require('../utils/requestWithCorrelationId');
 const qs = require('querystring');
 
 /**
