@@ -103,10 +103,13 @@ function initialiseGlobalMiddleware(app) {
   app.use(compression());
 
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
+    const staticAssetPrefixes = ['/images/', '/public/', '/stylesheets/', '/javascripts/'];
     app.use(
-      /\/((?!images|public|stylesheets|javascripts).)*/,
       loggingMiddleware(
-        ':remote-addr - :remote-user [:date[clf]] ":session-id correlationId=:correlation-id :method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms'
+        ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version sessionId=:session-id correlationId=:correlation-id" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms',
+        {
+          skip: (req) => staticAssetPrefixes.some((prefix) => req.path.startsWith(prefix)),
+        }
       )
     );
   }
