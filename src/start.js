@@ -51,7 +51,7 @@ function start() {
 function onInterrupt() {
   logger.info('Ensuring all child processes are cleaned up');
   pid = fs.readFileSync(pidFile, fileOptions);
-  fs.unlink(pidFile);
+  fs.unlinkSync(pidFile);
   logger.info('Cleaning up child processed');
   logger.info(`closing process:${pid}`);
   process.kill(pid, 'SIGTERM');
