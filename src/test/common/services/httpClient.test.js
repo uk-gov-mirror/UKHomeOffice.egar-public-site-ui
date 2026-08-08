@@ -24,7 +24,7 @@ describe('HttpClient correlation id', () => {
 
     try {
       await new Promise((resolve, reject) => {
-        correlationIdMiddleware({}, {}, async () => {
+        correlationIdMiddleware({}, { setHeader: () => {} }, async () => {
           try {
             const client = new HttpClient({ baseUrl: 'http://example.com' });
             await client.get('/first');
