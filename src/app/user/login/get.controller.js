@@ -178,7 +178,7 @@ module.exports = async (req, res) => {
     return res.redirect(redirectErrorPage(req, res, 'service-error'));
   }
 
-  oneLoginApi
+  return oneLoginApi
     .sendOneLoginTokenRequest(req, code, oneLoginUtil)
     .then(({ access_token, id_token }) => {
       if (!id_token) {

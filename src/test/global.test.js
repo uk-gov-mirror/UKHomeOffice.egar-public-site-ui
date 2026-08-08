@@ -1,6 +1,8 @@
 const chai = require('chai');
 const { before, after } = require('mocha');
 
+process.env.NOTIFY_API_KEY = process.env.NOTIFY_API_KEY || 'test-notify-key';
+
 const unhandledRejectionHandler = (reason, promise) => {
   chai.assert.fail(`Unhandled rejection encountered: ${reason} for promise: ${promise}`);
 };

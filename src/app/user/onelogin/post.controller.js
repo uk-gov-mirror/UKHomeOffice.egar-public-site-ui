@@ -8,7 +8,7 @@ const validator = require('../../../common/utils/validator');
 const { USER_GIVEN_NAME_CHARACTER_COUNT, USER_SURNAME_CHARACTER_COUNT } = require('../../../common/config');
 const sendEmail = require('../../../common/services/sendEmail');
 const config = require('../../../common/config');
-const { getUserInviteToken } = require('../../../common/services/verificationApi');
+const verificationApi = require('../../../common/services/verificationApi');
 
 const Outcome = {
   SUCCESS: 'success',
@@ -102,7 +102,7 @@ async function handleConfirmNameSubmission(req, _res) {
   let resp = {};
 
   try {
-    const { tokenId } = await getUserInviteToken(email);
+    const { tokenId } = await verificationApi.getUserInviteToken(email);
 
     resp = await userApi.createUser(email, firstName, lastName, sub, 'verified', tokenId);
   } catch (error) {

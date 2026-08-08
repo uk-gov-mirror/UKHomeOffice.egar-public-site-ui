@@ -7,6 +7,7 @@ require('../../global.test');
 const CookieModel = require('../../../common/models/Cookie.class');
 const oneLoginApi = require('../../../common/services/oneLoginApi');
 const userApi = require('../../../common/services/userManageApi');
+const sendEmail = require('../../../common/services/sendEmail');
 const validator = require('../../../common/utils/validator');
 const {
   PHASE_GIVEN_NAME,
@@ -18,7 +19,7 @@ const {
 const postController = require('../../../app/user/onelogin/post.controller');
 const getUserInviteToken = require('../../../common/services/verificationApi');
 
-describe.skip('User OneLogin Post Controller', () => {
+describe('User OneLogin Post Controller', () => {
   let req;
   let res;
   let validateChainsStub;
@@ -34,22 +35,23 @@ describe.skip('User OneLogin Post Controller', () => {
         save: sinon.spy(),
         step: PHASE_GIVEN_NAME,
         step_data: {},
-      },
-      body: {},
-      cookies: {
         access_token: 'mock_access_token',
       },
+      body: {},
+      cookies: {},
     };
 
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      clearCookie: sinon.spy(),
     };
 
     validateChainsStub = sinon.stub(validator, 'validateChains');
     getUserInfoStub = sinon.stub(oneLoginApi, 'getUserInfoFromOneLogin');
     createUserStub = sinon.stub(userApi, 'createUser');
     getUserInviteTokenStub = sinon.stub(getUserInviteToken, 'getUserInviteToken');
+    sinon.stub(sendEmail, 'send').resolves({});
   });
 
   afterEach(() => {
@@ -116,7 +118,7 @@ describe.skip('User OneLogin Post Controller', () => {
       expect(req.session.step).to.equal(PHASE_GIVEN_NAME);
       expect(res.render).to.have.been.calledWith('app/user/onelogin/index', {
         step: `app/user/onelogin/partials/${PHASE_GIVEN_NAME}.njk`,
-        firstName: '',
+        firstName: 'John',
         lastName: 'Doe',
         errors: validationErrors,
       });
@@ -147,6 +149,7 @@ describe.skip('User OneLogin Post Controller', () => {
       req.body = {
         nameConfirmDeclaration: 'on',
       };
+      getUserInviteTokenStub.resolves({ tokenId: '123' });
     });
 
     it('should create user and proceed to next step on success', async () => {
@@ -204,19 +207,17 @@ describe.skip('User OneLogin Post Controller', () => {
     it('should clean up session and redirect to home', async () => {
       req.session.id_token = 'id_token';
       req.session.access_token = 'access_token';
-      req.session.state = 'state';
-      req.session.nonce = 'nonce';
       req.session.step_data = { data: 'value' };
 
       await postController(req, res);
 
       expect(req.session.id_token).to.be.undefined;
       expect(req.session.access_token).to.be.undefined;
-      expect(req.session.state).to.be.undefined;
-      expect(req.session.nonce).to.be.undefined;
       expect(req.session.step).to.be.undefined;
       expect(req.session.step_data).to.be.undefined;
       expect(req.session.save).to.have.been.called;
+      expect(res.clearCookie).to.have.been.calledWith('state');
+      expect(res.clearCookie).to.have.been.calledWith('nonce');
       expect(res.redirect).to.have.been.calledWith('/home');
     });
   });
