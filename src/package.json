@@ -33,7 +33,13 @@
     "serialize-javascript": "7.0.5",
     "ip-address": "10.3.1",
     "diff": "8.0.3",
-    "picomatch": "4.0.4"
+    "picomatch": "4.0.4",
+    "brace-expansion": "5.0.9",
+    "nyc": {
+      "istanbul-lib-processinfo": {
+        "uuid": "$uuid"
+      }
+    }
   },
   "author": "",
   "license": "ISC",
