@@ -43,10 +43,15 @@ export default defineConfig([
         ...globals.browser, // window, document, etc.
         $: 'readonly', // jQuery global
         jQuery: 'readonly',
+        dialogPolyfill: 'readonly',
+        autoTab: 'readonly',
+        sanitiseDateOrTime: 'readonly',
+        isTwoHoursPriorDeparture: 'readonly',
+        dateNotMoreThanTwoDaysInFuture: 'readonly',
       },
     },
     rules: {
-      'no-unused-vars': ['warn', { args: 'none' }],
+      'no-unused-vars': ['error', { args: 'none' }],
       'no-undef': 'off',
       'no-console': 'off',
       'no-alert': 'off',
