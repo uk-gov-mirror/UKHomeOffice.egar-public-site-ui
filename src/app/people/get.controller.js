@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
 
     if (!isValidPeople) {
       logger.error(`User ${cookie.getUserDbId()} users are invalid`);
-      logger.info('Manifest validation failed, redirecting with error msg');
+      logger.warn(`Manifest validation failed userId=${cookie.getUserDbId()}`);
 
       return res.render('app/people/index', {
         cookie,

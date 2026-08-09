@@ -67,7 +67,8 @@ module.exports = async (req, res) => {
           });
       })
       .catch((err) => {
-        logger.info('GAR responsible person validation failed', err);
+        logger.warn(`GAR responsible person validation failed garId=${cookie.getGarId()}`);
+        logger.debug(err);
         cookie.setGarResponsiblePerson(responsiblePerson);
         res.render('app/garfile/resperson/index', {
           cookie,

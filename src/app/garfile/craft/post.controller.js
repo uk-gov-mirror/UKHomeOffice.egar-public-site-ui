@@ -86,7 +86,7 @@ module.exports = (req, res) => {
           });
       })
       .catch((err) => {
-        logger.info('GAR aircraft validation failed');
+        logger.warn(`GAR aircraft validation failed garId=${cookie.getGarId()}`);
         logger.debug(err);
         res.render('app/garfile/craft/index', { cookie, errors: err });
       });

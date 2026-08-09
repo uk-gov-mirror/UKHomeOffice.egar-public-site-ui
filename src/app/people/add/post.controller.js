@@ -62,7 +62,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.info('Validation errors creating a new person');
+      logger.warn('Person validation failed');
       logger.debug(JSON.stringify(err));
       res.render('app/people/add/index', {
         cookie,

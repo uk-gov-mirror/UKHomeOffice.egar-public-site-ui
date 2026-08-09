@@ -38,7 +38,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.info('Validation error when editing the organisation');
+      logger.warn(`Organisation validation failed organisationId=${cookie.getOrganisationId()}`);
       res.render('app/organisation/editorganisation/index', { cookie, orgName, errors: err });
     });
 };

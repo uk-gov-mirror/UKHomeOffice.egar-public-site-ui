@@ -40,7 +40,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.info('Failed validations editing an organisation user');
+      logger.warn(`Org user validation failed userId=${orgUser.userId}`);
       res.render('app/organisation/editusers/index', {
         cookie,
         orgUser,

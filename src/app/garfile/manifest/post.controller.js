@@ -149,7 +149,7 @@ module.exports = async (req, res) => {
         return res.redirect('/garfile/resperson');
       }
 
-      logger.info('Manifest validation failed, redirecting with error msg');
+      logger.warn(`Manifest validation failed garId=${cookie.getGarId()}`);
       req.session.manifestErr = manifest.genErrValidations();
       req.session.manifestInvalidPeople = manifest.invalidPeople;
       return res.redirect('/garfile/manifest');

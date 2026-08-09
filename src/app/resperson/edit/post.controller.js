@@ -44,7 +44,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.info('Validation errors creating a new responsible person');
+      logger.warn(`Responsible person validation failed responsiblePersonId=${resPersonId}`);
       logger.debug(JSON.stringify(err));
       res.render('app/resperson/edit/index', {
         cookie,

@@ -157,7 +157,7 @@ module.exports = async (req, res) => {
       performAPICall(cookie, res, buttonClicked);
     })
     .catch((err) => {
-      logger.info('GAR departure validation failed');
+      logger.warn(`GAR departure validation failed garId=${cookie.getGarId()}`);
       res.render('app/garfile/departure/index', { cookie, errors: err });
     });
 };

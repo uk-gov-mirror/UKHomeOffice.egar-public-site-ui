@@ -100,7 +100,7 @@ module.exports = async (req, res) => {
     }
 
     if (!isValidGarPeople || !isValidSavedPeople) {
-      logger.info('Manifest validation failed, redirecting with error msg');
+      logger.warn(`Manifest validation failed garId=${garId}`);
       const invalidGarPeople = garPeopleManifest.genErrValidations();
 
       return res.render('app/garfile/manifest/index', {

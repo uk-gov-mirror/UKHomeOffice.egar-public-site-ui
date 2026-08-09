@@ -60,7 +60,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.info('Gar creation validation failed');
+      logger.warn(`GAR creation validation failed userId=${cookie.getUserDbId()}`);
       logger.debug(err);
       res.render('app/garfile/home/index', {
         cookie,

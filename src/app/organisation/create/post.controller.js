@@ -44,7 +44,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.info('There was a validation problem with creating the organisation');
+      logger.warn(`Organisation validation failed userId=${cookie.getUserDbId()}`);
       res.render('app/organisation/create/index', { cookie, errors: err });
     });
 };
