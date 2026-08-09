@@ -17,7 +17,6 @@ module.exports = {
             reject(error);
             return;
           }
-          logger.debug('Successfully called responsible person creation endpoint');
           resolve(body);
         }
       );
@@ -38,7 +37,6 @@ module.exports = {
             reject(error);
             return;
           }
-          logger.debug('Successfully called get responsible details API endpoint');
           resolve(body);
         }
       );
@@ -58,7 +56,6 @@ module.exports = {
             reject(error);
             return;
           }
-          logger.debug('Successfully called get person details API endpoint');
           resolve(body);
         }
       );
@@ -80,7 +77,6 @@ module.exports = {
             reject(error);
             return;
           }
-          logger.debug('Successfully called update person details API endpoint');
           resolve(body);
         }
       );
@@ -100,7 +96,6 @@ module.exports = {
             reject(error);
             return;
           }
-          logger.debug('Successfully called delete responsible person endpoint');
           resolve(body);
         }
       );

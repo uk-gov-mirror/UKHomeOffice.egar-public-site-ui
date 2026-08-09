@@ -72,7 +72,6 @@ module.exports = {
             reject(JSON.parse(error));
             return;
           }
-          logger.debug('Successfully called one login API endpoint');
           resolve(JSON.parse(body));
         }
       );
@@ -102,7 +101,6 @@ module.exports = {
             reject(error);
             return;
           }
-          logger.info(`Successfully called oneLogin user info API`);
           resolve(JSON.parse(body));
         }
       );

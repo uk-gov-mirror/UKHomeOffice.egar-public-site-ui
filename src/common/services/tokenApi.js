@@ -27,7 +27,6 @@ module.exports = {
             logger.debug(error);
             reject(error);
           }
-          logger.debug('Successfully called settoken API');
           resolve(body);
         }
       );
@@ -58,7 +57,6 @@ module.exports = {
             reject(error);
             return;
           }
-          logger.info('Successfully called updateToken API');
           resolve(body);
         }
       );
@@ -100,7 +98,6 @@ module.exports = {
             reject(error);
             return;
           }
-          logger.info('Successfully called setInviteUserToken API');
           resolve(body);
         }
       );
