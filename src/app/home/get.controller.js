@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
     });
   } catch (error) {
     logger.error('Failed to get GARS from API');
-    logger.error(error);
+    logger.debug(error);
     res.render('app/home/index', {
       cookie,
       successMsg,

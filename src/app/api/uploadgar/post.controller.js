@@ -189,16 +189,16 @@ module.exports = async (req, res) => {
                 req.session.save(() => res.redirect('/garfile/review?from=uploadGar'));
               })
               .catch((err) => {
-                logger.error('Failed to update API with GAR information');
-                logger.error(err);
+                logger.error(`Failed to update GAR with excel data garId=${garId}`);
+                logger.debug(err);
                 req.session.failureMsg = 'Failed to update GAR. Try again';
                 req.session.failureIdentifier = 'file';
                 res.redirect('garfile/garupload');
               });
           })
           .catch((err) => {
-            logger.error('Failed to create API with GAR information');
-            logger.error(err);
+            logger.error('Failed to create GAR from excel data');
+            logger.debug(err);
             req.session.failureMsg = 'Failed to create GAR. Try again';
             req.session.failureIdentifier = 'file';
             res.redirect('garfile/garupload');
@@ -212,7 +212,7 @@ module.exports = async (req, res) => {
       });
   } catch (error) {
     logger.error('Failed to upload GAR information, check the original template file rows');
-    logger.error(error);
+    logger.debug(error);
     req.session.failureMsg = 'Failed to upload GAR information. Try again';
     req.session.failureIdentifier = 'file';
     res.redirect('garfile/garupload');

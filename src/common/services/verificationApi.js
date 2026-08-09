@@ -31,7 +31,7 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.error(err);
+      logger.debug(err);
     });
   },
 
@@ -59,7 +59,7 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.error(err);
+      logger.debug(err);
     });
   },
 
@@ -85,7 +85,7 @@ module.exports = {
         );
       });
     } catch (err) {
-      logger.error(err);
+      logger.debug(err);
     }
   },
 };

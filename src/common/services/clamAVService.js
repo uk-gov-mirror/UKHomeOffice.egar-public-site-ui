@@ -18,8 +18,8 @@ module.exports = {
         },
         (error, response, body) => {
           if (error) {
-            logger.error('Virus scan failed');
-            logger.error(error);
+            logger.error('Failed to scan file for virus');
+            logger.debug(error);
             return reject(error);
           }
           logger.debug(`ClamAV response: ${JSON.stringify(response)}`);
@@ -38,7 +38,7 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.error(err);
+      logger.debug(err);
     });
   },
 };

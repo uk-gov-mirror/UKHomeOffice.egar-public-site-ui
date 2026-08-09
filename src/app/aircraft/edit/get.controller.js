@@ -19,7 +19,8 @@ module.exports = (req, res) => {
       return res.render('app/aircraft/edit/index', { cookie });
     })
     .catch((err) => {
-      logger.error(err);
+      logger.error(`Failed to get craft details craftId=${craftId}`);
+      logger.debug(err);
       return res.redirect('/aircraft');
     });
 };

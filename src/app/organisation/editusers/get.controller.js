@@ -26,7 +26,8 @@ module.exports = (req, res) => {
       return res.render('app/organisation/editusers/index', { cookie, orgUser, roles });
     })
     .catch((err) => {
-      logger.error(err);
+      logger.error(`Failed to find org user details userId=${userId}`);
+      logger.debug(err);
       req.session.errMsg = { message: 'Failed to find user details. Try again' };
       return res.redirect('/organisation');
     });

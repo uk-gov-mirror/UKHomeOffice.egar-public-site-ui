@@ -61,8 +61,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('Unexpected error updating aircraft');
-          logger.error(err);
+          logger.error(`Failed to update aircraft craftId=${craftId}`);
+          logger.debug(err);
           res.render('app/aircraft/edit/index', {
             cookie,
             errors: [{ message: 'An error has occurred. Try again later' }],

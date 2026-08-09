@@ -41,8 +41,8 @@ module.exports = (req, res) => {
       });
     })
     .catch((err) => {
-      logger.error('There was an error fetching craft / people data for an individual');
-      logger.error(err);
+      logger.error('Failed to fetch craft / people data');
+      logger.debug(err);
       res.render(`app/user/viewDetails/index`, {
         cookie,
         errors: [{ message: 'There was a problem fetching data' }],

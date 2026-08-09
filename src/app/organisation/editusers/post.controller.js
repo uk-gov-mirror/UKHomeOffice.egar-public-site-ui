@@ -34,7 +34,7 @@ module.exports = (req, res) => {
         })
         .catch((err) => {
           logger.error('Failed to update org user details');
-          logger.error(err);
+          logger.debug(err);
           req.session.errMsg = { message: 'Failed to update user details. Try again' };
           return req.session.save(() => res.redirect('/organisation'));
         });

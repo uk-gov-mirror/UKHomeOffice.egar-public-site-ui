@@ -30,7 +30,8 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.error(err);
+      logger.error(`Failed to upload supporting document garId=${garId}`);
+      logger.debug(err);
     });
   },
 };

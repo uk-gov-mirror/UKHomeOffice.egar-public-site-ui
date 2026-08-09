@@ -38,8 +38,8 @@ module.exports = async (req, res) => {
       });
     }
   } catch (err) {
-    logger.error('API failed to retrieve GAR');
-    logger.error(err);
+    logger.error(`Failed to retrieve GAR garId=${garId}`);
+    logger.debug(err);
     const payload = {
       ...context,
       errors: [

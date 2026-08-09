@@ -98,7 +98,7 @@ module.exports = {
         (error, _response, body) => {
           if (error) {
             logger.error('Failed to fetch userinfo from oneLogin');
-            logger.error(`${error}`);
+            logger.debug(error);
             reject(error);
             return;
           }

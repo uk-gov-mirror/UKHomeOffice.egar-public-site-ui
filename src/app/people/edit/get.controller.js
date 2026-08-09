@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
     })
     .catch((err) => {
       logger.error('Failed to get saved person details');
-      logger.error(err);
+      logger.debug(err);
       res.redirect('/people');
     });
 };

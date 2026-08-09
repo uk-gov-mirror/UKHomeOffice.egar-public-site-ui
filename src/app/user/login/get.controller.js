@@ -55,8 +55,8 @@ const sendAdminUpdateEmail = (userObj) => {
           organisationName: userObj.organisation.organisationName,
         });
       } catch (error) {
-        logger.error('Exception when sending email to admin');
-        logger.error(error);
+        logger.error('Failed to send email to admin');
+        logger.debug(error);
       }
     });
   });
@@ -239,7 +239,8 @@ module.exports = async (req, res) => {
     })
     .catch((error) => {
       if (error) {
-        logger.error(`Login process failed ${error}`);
+        logger.error('Failed login process');
+        logger.debug(error);
       }
     });
 };
@@ -254,7 +255,8 @@ async function checkUserInvite(req, res, email) {
 
     return ROUTES.REGISTER;
   } catch (error) {
-    logger.error(`Invite link to register failed ${error}`);
+    logger.error('Failed to register invite link');
+    logger.debug(error);
     return redirectErrorPage(req, res, 'login-error');
   }
 }

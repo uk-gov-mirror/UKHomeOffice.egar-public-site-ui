@@ -38,8 +38,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('Failed to create organisation');
-          logger.error(err);
+          logger.error(`Failed to create organisation userId=${cookie.getUserDbId()}`);
+          logger.debug(err);
           res.render('app/organisation/create/index', { cookie, errors: [err] });
         });
     })

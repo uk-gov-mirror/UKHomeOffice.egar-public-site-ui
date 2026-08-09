@@ -27,7 +27,8 @@ module.exports = (req, res) => {
       return res.render('app/organisation/index', { cookie, orgUsers, searchUserName });
     })
     .catch((err) => {
-      logger.error(err);
+      logger.error(`Failed to search org users organisationId=${cookie.getOrganisationId()}`);
+      logger.debug(err);
       req.session.errMsg = errMsg;
       return res.redirect('/organisation');
     });

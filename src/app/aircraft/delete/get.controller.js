@@ -36,7 +36,8 @@ module.exports = (req, res) => {
       });
     })
     .catch((err) => {
-      logger.error(err);
+      logger.error(`Failed to delete craft craftId=${craftId}`);
+      logger.debug(err);
       req.session.errMsg = errMsg;
       return req.session.save(() => {
         res.redirect(redirectUrl);

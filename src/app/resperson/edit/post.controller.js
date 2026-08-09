@@ -33,8 +33,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('There was a problem adding person to saved people');
-          logger.error(err);
+          logger.error('Failed to update responsible person');
+          logger.debug(err);
           res.render('app/resperson/edit/index', {
             cookie,
             responsiblePerson,

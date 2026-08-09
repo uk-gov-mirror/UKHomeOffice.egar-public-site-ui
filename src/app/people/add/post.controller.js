@@ -50,8 +50,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('There was a problem adding person to saved people');
-          logger.error(err);
+          logger.error('Failed to add person to saved people');
+          logger.debug(err);
           res.render('app/people/add/index', {
             cookie,
             persontype,

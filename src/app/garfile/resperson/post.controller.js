@@ -15,8 +15,8 @@ module.exports = async (req, res) => {
     try {
       res.redirect('/garfile/resperson?resPersonId=' + resPersonId);
     } catch (err) {
-      logger.error('API failed to retrieve gar responsible person');
-      logger.error(err);
+      logger.error(`Failed to retrieve GAR responsible person garId=${cookie.getGarId()}`);
+      logger.debug(err);
       res.render('app/garfile/resperson/index', {
         cookie,
         fixedBasedOperatorOptions,
@@ -55,8 +55,8 @@ module.exports = async (req, res) => {
             }
           })
           .catch((err) => {
-            logger.error('API failed to update GAR');
-            logger.error(err);
+            logger.error(`Failed to update GAR garId=${cookie.getGarId()}`);
+            logger.debug(err);
             res.render('app/garfile/resperson/index', {
               cookie,
               responsiblePerson,

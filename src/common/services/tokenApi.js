@@ -23,8 +23,8 @@ module.exports = {
         },
         (error, _response, body) => {
           if (error) {
-            logger.error('There was a problem calling the settoken API');
-            logger.error(error);
+            logger.error('Failed to call settoken API');
+            logger.debug(error);
             reject(error);
           }
           logger.debug('Successfully called settoken API');

@@ -51,8 +51,8 @@ module.exports = (req, res) => {
           });
         })
         .catch((err) => {
-          logger.error('Failed to create GAR');
-          logger.error(err);
+          logger.error(`Failed to create GAR userId=${cookie.getUserDbId()}`);
+          logger.debug(err);
           res.render('app/garfile/home/index', {
             cookie,
             garoptions,

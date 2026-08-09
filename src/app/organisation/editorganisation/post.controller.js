@@ -32,8 +32,8 @@ module.exports = (req, res) => {
           });
         })
         .catch((err) => {
-          logger.error('There was a problem updating the organisation');
-          logger.error(err);
+          logger.error(`Failed to update organisation organisationId=${cookie.getOrganisationId()}`);
+          logger.debug(err);
           res.render('app/organisation/editorganisation/index', { cookie, orgName, errors: [err] });
         });
     })

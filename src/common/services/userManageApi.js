@@ -179,7 +179,7 @@ module.exports = {
         (error, _response, body) => {
           if (error) {
             logger.error('Failed to call create user endpoint');
-            logger.error(error);
+            logger.debug(error);
             reject(error);
             return;
           }

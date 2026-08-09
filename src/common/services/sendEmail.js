@@ -23,7 +23,8 @@ module.exports = {
         .sendEmail(templateId, email, { personalisation })
         .then((response) => resolve(response))
         .catch((err) => {
-          logger.error(err);
+          logger.error(`Failed to send email templateId=${templateId}`);
+          logger.debug(err);
           reject(err);
         });
     });

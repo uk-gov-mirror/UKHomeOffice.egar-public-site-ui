@@ -55,8 +55,8 @@ module.exports = (req, res) => {
       });
     })
     .catch((err) => {
-      logger.error('There was an error fetching users for the organisation');
-      logger.error(err);
+      logger.error('Failed to fetch organisation users');
+      logger.debug(err);
       res.render('app/organisation/index', {
         cookie,
         errors: [{ message: 'There was a problem fetching organisation users' }],

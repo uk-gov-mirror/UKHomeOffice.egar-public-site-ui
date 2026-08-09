@@ -65,8 +65,8 @@ module.exports = (req, res) => {
       });
     })
     .catch((err) => {
-      logger.info('Add craft postcontroller - There was a problem with adding the saved craft');
-      logger.info(err);
+      logger.error('Failed to add craft');
+      logger.debug(err);
       res.render('app/aircraft/add/index', {
         cookie,
         craftObj,

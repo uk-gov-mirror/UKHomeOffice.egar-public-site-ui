@@ -30,7 +30,8 @@ module.exports = async (req, res) => {
 
     return res.render('app/verify/organisationinvite/index', { oneLoginAuthUrl });
   } catch (error) {
-    logger.error(`Invite link to register failed ${error}`);
+    logger.error('Failed to register invite link');
+    logger.debug(error);
     return res.redirect('/error/404');
   }
 };

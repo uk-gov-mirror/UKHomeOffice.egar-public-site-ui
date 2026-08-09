@@ -28,10 +28,10 @@ module.exports = async (req, res) => {
             res.redirect('/garfile/manifest');
           })
           .catch((err) => {
-            logger.error(err);
             logger.error(
-              `user_id: ${cookie.getUserDbId()}, gar_id: ${cookie.getGarId()} > Failed to patch GAR with updated manifest`
+              `Failed to patch GAR with updated manifest userId=${cookie.getUserDbId()} garId=${cookie.getGarId()}`
             );
+            logger.debug(err);
             req.session.manifestErr = [
               {
                 message: 'Failed to patch GAR with updated manifest',
@@ -101,8 +101,8 @@ module.exports = async (req, res) => {
     try {
       await garApi.patch(cookie.getGarId(), cookie.getGarStatus(), { isMilitaryFlight });
     } catch (err) {
-      logger.error('Failed to update GAR');
-      logger.error(err);
+      logger.error(`Failed to update GAR garId=${cookie.getGarId()}`);
+      logger.debug(err);
       req.session.manifestErr = [
         {
           message: 'Failed to update GAR',
@@ -117,8 +117,8 @@ module.exports = async (req, res) => {
     try {
       apiResponse = await garApi.getPeople(cookie.getGarId());
     } catch (err) {
-      logger.error('Failed to get manifest');
-      logger.error(err);
+      logger.error(`Failed to get manifest garId=${cookie.getGarId()}`);
+      logger.debug(err);
       req.session.manifestErr = [
         {
           message: 'Failed to get manifest',

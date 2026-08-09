@@ -39,8 +39,8 @@ const exceedFileNumSizeLimit = (fileSize, garId) => {
         resolve('SUCCESS');
       })
       .catch((err) => {
-        logger.error('Unknown error whilst determining GAR supporting documents file sizes');
-        logger.error(err);
+        logger.error(`Failed to determine supporting document file sizes garId=${garId}`);
+        logger.debug(err);
         reject(err);
       });
   });
@@ -64,7 +64,7 @@ const handleDeleteDocument = (req, res) => {
     })
     .catch((deleteSupportingDocErr) => {
       logger.error('Failed to delete supporting document');
-      logger.error(deleteSupportingDocErr);
+      logger.debug(deleteSupportingDocErr);
       res.redirect('/garfile/supportingdocuments?query=deletefailed');
     });
   return true;
@@ -142,8 +142,8 @@ module.exports = (req, res) => {
                 res.redirect('/garfile/supportingdocuments');
               })
               .catch((err) => {
-                logger.error('Failed to upload File.');
-                logger.error(err);
+                logger.error(`Failed to upload file garId=${req.body.garid}`);
+                logger.debug(err);
                 res.redirect('/garfile/supportingdocuments');
               });
           } else {
@@ -151,8 +151,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('Error occurred attempting to scan the file');
-          logger.error(err);
+          logger.error(`Failed to scan file garId=${req.body.garid}`);
+          logger.debug(err);
           res.redirect('/garfile/supportingdocuments?query=e');
         });
     })

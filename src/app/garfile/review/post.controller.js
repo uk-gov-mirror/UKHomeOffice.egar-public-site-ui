@@ -144,8 +144,8 @@ module.exports = async (req, res) => {
       showChangeLinks: true,
     };
   } catch (err) {
-    logger.error('Error retrieving GAR for review');
-    logger.error(err);
+    logger.error(`Failed to retrieve GAR for review garId=${garId}`);
+    logger.debug(err);
     return res.render('app/garfile/review/index', {
       cookie,
       errors: [{ message: 'There was an error retrieving the GAR. Try again later' }],
@@ -175,8 +175,8 @@ module.exports = async (req, res) => {
   try {
     await garApi.submitGARForCheckin(garId);
   } catch (err) {
-    logger.error('Api failed to submit GAR people for AMG checkin');
-    logger.error(err);
+    logger.error(`Failed to submit GAR people for AMG check-in garId=${garId}`);
+    logger.debug(err);
     return res.render('app/garfile/review/index.njk', {
       cookie,
     });

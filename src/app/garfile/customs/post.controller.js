@@ -71,8 +71,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('API failed to update GAR');
-          logger.error(err);
+          logger.error(`Failed to update GAR garId=${cookie.getGarId()}`);
+          logger.debug(err);
           context.errors = [{ message: 'Failed to save customs information. Try again' }];
           res.render('app/garfile/customs/index', context);
         });

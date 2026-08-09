@@ -42,8 +42,8 @@ module.exports = (req, res) => {
       });
     })
     .catch((err) => {
-      logger.error('Failed to get person details');
-      logger.error(err);
+      logger.error(`Failed to get person details personId=${personId}`);
+      logger.debug(err);
       return res.redirect('/garfile/manifest');
     });
 };

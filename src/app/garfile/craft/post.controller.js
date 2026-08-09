@@ -29,7 +29,8 @@ module.exports = (req, res) => {
         req.session.save(() => res.redirect('/garfile/craft'));
       })
       .catch((err) => {
-        logger.error(err);
+        logger.error(`Failed to add craft to GAR userId=${userId}`);
+        logger.debug(err);
         res.redirect('/garfile/craft');
       });
   } else {
@@ -76,8 +77,8 @@ module.exports = (req, res) => {
             }
           })
           .catch((err) => {
-            logger.error('Api failed to update GAR');
-            logger.error(err);
+            logger.error(`Failed to update GAR garId=${cookie.getGarId()}`);
+            logger.debug(err);
             res.render('app/garfile/craft/index', {
               cookie,
               errors: [{ message: 'Failed to add aircraft to GAR' }],

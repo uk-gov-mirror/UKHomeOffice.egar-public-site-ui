@@ -13,8 +13,8 @@ module.exports = async (req, res) => {
       cookie,
     });
   } catch (err) {
-    logger.error('Failed to get GAR details');
-    logger.error(err);
+    logger.error(`Failed to get GAR details garId=${res?.locals?.gar?.garId}`);
+    logger.debug(err);
     res.render('app/garfile/arrival/index', {
       cookie,
       errors: [

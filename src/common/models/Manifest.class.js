@@ -21,7 +21,7 @@ class Manifest {
         typeof this._apiResponse == 'object' ? this._apiResponse.items : JSON.parse(this._apiResponse).items;
     } catch (err) {
       logger.error('Failed to parse GAR manifest');
-      logger.error(err);
+      logger.debug(err);
       throw err;
     }
   }

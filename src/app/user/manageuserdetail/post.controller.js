@@ -89,14 +89,14 @@ module.exports = (req, res) => {
           req.session.save((err) => {
             if (err) {
               logger.error('Failed to save session');
-              logger.error(err);
+              logger.debug(err);
             }
             return res.redirect('/user/details');
           });
         })
         .catch((err) => {
           logger.error('Failed to update user details');
-          logger.error(err);
+          logger.debug(err);
           res.render('app/user/manageuserdetail/index', {
             cookie,
             errors: [{ message: 'Failed to update. Try again' }],

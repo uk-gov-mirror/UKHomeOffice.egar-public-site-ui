@@ -28,8 +28,8 @@ const performAPICall = (cookie, buttonClicked, res) => {
       }
     })
     .catch((err) => {
-      logger.error('Api failed to update GAR');
-      logger.error(err);
+      logger.error(`Failed to update GAR garId=${cookie.getGarId()}`);
+      logger.debug(err);
       res.render('app/garfile/arrival/index', {
         cookie,
         errors: [

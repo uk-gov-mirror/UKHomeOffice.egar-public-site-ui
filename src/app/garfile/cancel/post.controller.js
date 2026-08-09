@@ -24,7 +24,8 @@ module.exports = async (req, res) => {
       return;
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(`Failed to cancel GAR garId=${garId}`);
+    logger.debug(err);
     res.render('app/garfile/cancel/index', {
       cookie,
       errors: [{ identifier: '', message: 'Failed to cancel GAR' }],

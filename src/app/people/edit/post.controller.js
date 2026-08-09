@@ -52,8 +52,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('There was a problem with calling the API');
-          logger.error(err);
+          logger.error('Failed to update saved person');
+          logger.debug(err);
           res.render('app/people/edit/index', {
             cookie,
             req,
@@ -65,8 +65,8 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.error('There was a problem with adding person to saved people');
-      logger.error(JSON.stringify(err));
+      logger.error('Failed to add person to saved people');
+      logger.debug(err);
       res.render('app/people/edit/index', {
         cookie,
         req,

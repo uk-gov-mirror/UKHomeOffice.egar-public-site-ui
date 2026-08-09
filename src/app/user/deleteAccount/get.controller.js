@@ -15,8 +15,8 @@ module.exports = async (req, res) => {
     res.locals.text = deleteAccountOptions.text();
     res.render('app/user/deleteAccount/index', { cookie });
   } catch (err) {
-    logger.error('user delete account get controller failed');
-    logger.error(err);
+    logger.error('Failed to load delete account page');
+    logger.debug(err);
     res.render('app/user/deleteAccount/index', { cookie, errors: [errObj] });
   }
 };

@@ -26,7 +26,8 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.error(err);
+      logger.error(`Failed to create GAR userId=${userId}`);
+      logger.debug(err);
     });
   },
 };

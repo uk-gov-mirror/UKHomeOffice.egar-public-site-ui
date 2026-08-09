@@ -256,8 +256,8 @@ function initialise() {
       initialisePublic(unconfiguredApp);
       initialiseErrorHandling(unconfiguredApp);
     } catch (e) {
-      logger.error('Prepping the database failed.');
-      logger.error(e);
+      logger.error('Failed to prepare database');
+      logger.debug(e);
     }
   }
   prepDb();
