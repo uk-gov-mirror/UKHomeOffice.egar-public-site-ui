@@ -1,6 +1,5 @@
 const logger = require('../../../../common/utils/logger')(__filename);
 const CookieModel = require('../../../../common/models/Cookie.class');
-const garApi = require('../../../../common/services/garApi');
 const dataAccessApi = require('../../../../common/services/dataAccessApi');
 const documenttype = require('../../../../common/seeddata/egar_saved_people_travel_document_type.json');
 const persontype = require('../../../../common/seeddata/egar_type_of_saved_person');

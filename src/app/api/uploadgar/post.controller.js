@@ -1,6 +1,5 @@
 const i18n = require('i18n');
 const XLSX = require('xlsx');
-const stream = require('stream');
 
 const logger = require('../../../common/utils/logger')(__filename);
 const garApi = require('../../../common/services/garApi');

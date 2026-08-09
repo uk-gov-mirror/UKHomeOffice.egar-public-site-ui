@@ -1,4 +1,3 @@
-const garApi = require('../services/garApi');
 const dataAccessApi = require('../services/dataAccessApi');
 const logger = require('./logger')(__filename);
 
