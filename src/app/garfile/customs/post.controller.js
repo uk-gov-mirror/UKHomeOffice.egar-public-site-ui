@@ -80,7 +80,6 @@ module.exports = (req, res) => {
     .catch((validationErrs) => {
       logger.debug('Failed validations submitting declarations');
       context.errors = validationErrs;
-      logger.info(JSON.stringify(validationErrs));
       res.render('app/garfile/customs/index', context);
     });
 };

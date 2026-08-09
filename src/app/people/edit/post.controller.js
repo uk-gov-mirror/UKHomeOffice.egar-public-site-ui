@@ -26,9 +26,6 @@ module.exports = (req, res) => {
     documentDesc: req.body.travelDocumentOther,
   };
 
-  logger.info(person.documentType);
-  logger.info(person.documentDesc);
-
   cookie.updateEditPerson(person);
 
   // Validate chains

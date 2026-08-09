@@ -71,8 +71,6 @@ const handleDeleteDocument = (req, res) => {
 };
 
 module.exports = (req, res) => {
-  logger.info('Entering upload file post controller');
-
   if (handleDeleteDocument(req, res)) {
     return;
   }
@@ -97,7 +95,6 @@ module.exports = (req, res) => {
       }
       logger.debug(`In Upload File Service. Uploaded File: ${req.file.originalname}`);
       const mimeType = fileType(req.file.buffer);
-      logger.info(`Detected uploaded file mimetype as: ${JSON.stringify(mimeType)}`);
 
       if (!mimeType || !isValidFileMime(req.file.originalname, mimeType.mime)) {
         logger.info('Rejecting file due to disallowed mimetype');

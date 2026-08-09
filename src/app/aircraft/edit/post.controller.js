@@ -71,7 +71,6 @@ module.exports = (req, res) => {
     })
     .catch((err) => {
       logger.info('Edit SavedCraft postcontroller - There was a problem with editing the saved craft');
-      logger.info(JSON.stringify(err));
       res.render('app/aircraft/edit/index', { cookie, errors: err });
     });
 };

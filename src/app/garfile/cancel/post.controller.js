@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
   try {
     await garApi.submitGARForException(garId);
     await garApi.patch(cookie.getGarId(), 'Cancelled', {});
+    logger.info(`Cancelled GAR garId=${garId}`);
 
     if (!cookie.getCbpId()) {
       req.session.successMsg = 'The GAR has been successfully cancelled';

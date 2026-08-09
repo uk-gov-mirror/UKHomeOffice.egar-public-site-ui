@@ -21,10 +21,8 @@ const parseUrlForNonProd = (req, url) => {
 
   if (currentAddress?.match(notInternalRegex) && url.match(internalRegex)) {
     returnUrl = url.replace('.internal.egar-notprod', '.egar-notprod');
-    logger.info(`We would change URL: '${url}' to '${returnUrl}'`);
   } else if (currentAddress?.match(internalRegex) && url.match(notInternalRegex)) {
     returnUrl = url.replace('.egar-notprod', '.internal.egar-notprod');
-    logger.info(`We would change URL: '${url}' to '${returnUrl}'`);
   }
   logger.info(`return URL ${returnUrl}`);
   return returnUrl;

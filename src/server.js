@@ -73,7 +73,6 @@ function initialisExpressSession(app) {
       },
     })
   );
-  logger.info('Set express session');
 }
 
 function setupLoggingContext() {
@@ -82,11 +81,9 @@ function setupLoggingContext() {
 }
 
 function initialiseGlobalMiddleware(app) {
-  logger.info('Initalising global middleware');
   app.use(correlationIdMiddleware);
 
   if (availability.ENABLE_UNAVAILABLE_PAGE.toLowerCase() === 'true') {
-    logger.info('Enabling service unavailable middleware');
     const validRoutes = ['unavailable', 'public', 'javascripts', 'stylesheets'];
     app.use((req, res, next) => {
       if (!validRoutes.some((el) => req.url.includes(el))) {
@@ -143,8 +140,6 @@ function initialiseGlobalMiddleware(app) {
       },
     })
   );
-
-  logger.info('Set global middleware');
 }
 
 function initialiseI18n(app) {
@@ -155,14 +150,11 @@ function initialiseI18n(app) {
     defaultLocale: 'en',
     register: global,
   });
-  logger.info('Initialised i18n');
   app.use(i18n.init);
-  logger.info('Set i18n');
 }
 
 function initialiseProxy(app) {
   app.enable('trust proxy');
-  logger.info('Proxy Enabled');
 }
 
 function initialiseTemplateEngine(app) {
@@ -177,7 +169,6 @@ function initialiseTemplateEngine(app) {
     watch: false, // Reload templates when they are changed (server-side). To use watch, make sure optional dependency chokidar is installed
     noCache: NODE_ENV !== 'production', // Never use a cache and recompile templates each time (server-side)
   };
-  logger.info('Set template engine');
 
   // Initialise nunjucks environment
   const nunjucksEnvironment = nunjucks.configure(APP_VIEWS, nunjucksConfiguration);
@@ -186,7 +177,6 @@ function initialiseTemplateEngine(app) {
 
   // Set view engine
   app.set('view engine', 'njk');
-  logger.info('Set view engine');
 
   nunjucksEnvironment.addGlobal('govukRebrand', true);
   nunjucksEnvironment.addGlobal('g4_id', G4_ID);
@@ -224,7 +214,6 @@ function initialiseTemplateEngine(app) {
   );
 
   nunjucksEnvironment.addGlobal('expiryDate', new Date().toISOString().replace(/T.*/, '').split('-').join('-'));
-  logger.info('Set global settings for nunjucks');
 }
 
 function initialisePublic(app) {
@@ -233,20 +222,16 @@ function initialisePublic(app) {
   app.use('/assets', express.static(path.join(__dirname, '/common/assets/')));
   app.use('/stylesheets', express.static(path.join(__dirname, '/public/stylesheets/')));
   app.use('/javascripts', express.static(path.join(__dirname, '/public/javascripts/')));
-  logger.info('Initialised public assets');
 }
 
 function initialiseRoutes(app) {
-  logger.info('Initialised router');
   router.bind(app);
-  logger.info('Initialised routes');
 }
 
 function initialiseErrorHandling(app) {
   app.use((req, res) => {
     res.redirect('/error/404');
   });
-  logger.info('Initialised error handling');
 }
 
 /**
@@ -270,7 +255,6 @@ function initialise() {
       initialiseRoutes(unconfiguredApp);
       initialisePublic(unconfiguredApp);
       initialiseErrorHandling(unconfiguredApp);
-      logger.info('Initialised app: ');
     } catch (e) {
       logger.error('Prepping the database failed.');
       logger.error(e);
@@ -284,7 +268,6 @@ function initialise() {
 function listen() {
   const app = initialise();
   app.listen(PORT);
-  logger.info('App initialised');
   logger.info(`Listening on port ${PORT}`);
 }
 

@@ -103,8 +103,8 @@ const performAPICall = (cookie, res, buttonClicked) => {
       }
     })
     .catch((err) => {
-      logger.error('Api failed to update GAR');
-      logger.error(err);
+      logger.error(`Failed to update GAR garId=${cookie.getGarId()}`);
+      logger.debug(err);
       res.render('app/garfile/departure/index', {
         cookie,
         errors: [
@@ -158,7 +158,6 @@ module.exports = async (req, res) => {
     })
     .catch((err) => {
       logger.info('GAR departure validation failed');
-      logger.debug(JSON.stringify(err));
       res.render('app/garfile/departure/index', { cookie, errors: err });
     });
 };

@@ -33,9 +33,8 @@ module.exports = async (req, res) => {
       });
     }
     return res.render('app/resperson/index', { cookie, resPersons });
-  } catch (err) {
+  } catch {
     logger.info('Failed to get saved responsible persons');
-    logger.info(err);
     return res.render('app/resperson/index', { cookie, errors: [errMessage] });
   }
 };

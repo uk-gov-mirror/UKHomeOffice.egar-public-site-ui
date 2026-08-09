@@ -51,9 +51,8 @@ module.exports = async (req, res) => {
       });
     }
     return res.render('app/people/index', { cookie, people });
-  } catch (err) {
+  } catch {
     logger.info('Failed to get saved people');
-    logger.info(err);
     return res.render('app/people/index', { cookie, errors: [errMSg] });
   }
 };

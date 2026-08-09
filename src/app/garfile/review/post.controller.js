@@ -35,8 +35,8 @@ const performAPICall = async (garId, cookie, req, res) => {
       cookie,
     });
   } catch (err) {
-    logger.error('Api failed to update GAR');
-    logger.error(err);
+    logger.error(`Failed to update GAR garId=${garId}`);
+    logger.debug(err);
     res.render('app/garfile/submit/failure/index', {
       cookie,
     });
@@ -89,7 +89,6 @@ const buildValidations = async (garfile, garpeople, manifest) => {
 };
 
 module.exports = async (req, res) => {
-  logger.debug('In garfile / review post controller');
   const cookie = new CookieModel(req);
   const garId = cookie.getGarId();
   const resubmit = req.body.resubmitFor0T;
@@ -157,7 +156,6 @@ module.exports = async (req, res) => {
     await validator.validateChains(validations);
   } catch (err) {
     logger.info('Failed to submit incomplete GAR - validation failed');
-    logger.debug(JSON.stringify(err));
     renderObj.errors = err;
     return res.render('app/garfile/review/index', renderObj);
   }
@@ -195,7 +193,7 @@ module.exports = async (req, res) => {
     res.redirect(`/garfile/view?resubmitted=${resubmit0TLink}`);
   } else {
     if (isRequiresPassengerCheck && !isAnAllMilitaryFlight) {
-      logger.info('Submiited GAR people to AMG checkin');
+      logger.info(`Submitted GAR people to AMG check-in garId=${garId}`);
       res.redirect(`/garfile/amg/checkin?resubmitted=${resubmit0TLink}${initialSubmit}`);
     } else {
       performAPICall(garId, cookie, req, res);

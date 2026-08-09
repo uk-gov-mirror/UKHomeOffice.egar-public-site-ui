@@ -29,6 +29,7 @@ export default defineConfig([
       'unicorn/prefer-module': 'off', // allow require()
       'unicorn/prevent-abbreviations': 'off', // optional
       'no-unused-vars': ['error', { vars: 'local' }],
+      'no-console': 'error', // use the Winston logger wrapper instead of console.*
     },
     languageOptions: {
       globals: {
