@@ -41,6 +41,7 @@ module.exports = (fileName) => {
   const logPrefix = `${fileName.replace('/public-site/', '')}: `;
   const loggerWithFilename = {
     error: (text, metadata) => logger.error(logPrefix + getCorrelationPrefix() + formatValue(text), metadata),
+    warn: (text, metadata) => logger.warn(logPrefix + getCorrelationPrefix() + formatValue(text), metadata),
     debug: (text, metadata) => logger.debug(logPrefix + getCorrelationPrefix() + formatValue(text), metadata),
     info: (text, metadata) => logger.info(logPrefix + getCorrelationPrefix() + formatValue(text), metadata),
   };
