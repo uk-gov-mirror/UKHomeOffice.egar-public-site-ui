@@ -37,20 +37,20 @@ window.sendAnalytics = (e, message, event) => {
   // Adding here so we can reintegrate with GA if necessary.
 };
 
-function isNumeric(input) {
+window.isNumeric = (input) => {
   if (typeof input === 'string') {
     return input - parseFloat(input) + 1 >= 0;
   }
   return false;
-}
+};
 
-function sanitiseDateOrTime(input, type) {
+window.sanitiseDateOrTime = (input, type) => {
   const regex = type === 'year' ? '[0-9]{1,4}' : '[0-9]{1,2}';
 
   return input.match(regex) === null ? '' : input.match(regex)[0];
-}
+};
 
-function autoTab(field1, dayMonthOrYear, field2) {
+window.autoTab = (field1, dayMonthOrYear, field2) => {
   let len = dayMonthOrYear === 'year' ? 4 : 2;
 
   let field1Value = sanitiseDateOrTime(field1.value, dayMonthOrYear);
@@ -58,25 +58,25 @@ function autoTab(field1, dayMonthOrYear, field2) {
   if (field1Value.length == len) {
     field2.focus();
   }
-}
+};
 
 /**
  * Converts a date to UTC using the browser's timezone offset.
  * @param {Date} date
  * @return {Date}
  */
-function convertDateToUTC(date) {
+window.convertDateToUTC = (date) => {
   const UTCOffsetMinutes = new Date().getTimezoneOffset();
   const UTCOffsetMilliseconds = UTCOffsetMinutes * 60 * 1000;
 
   return new Date(date.getTime() + UTCOffsetMilliseconds);
-}
+};
 
 /**
  * @param {Date} providedDate
  * @return {Boolean}
  */
-function isTwoHoursPriorDeparture(providedDate) {
+window.isTwoHoursPriorDeparture = (providedDate) => {
   if (!(providedDate instanceof Date)) {
     return false;
   }
@@ -86,13 +86,13 @@ function isTwoHoursPriorDeparture(providedDate) {
   const twoHoursPriorDepartureDate = new Date(today.getTime() + TWO_HOURS_MILLISECONDS);
 
   return Boolean(providedDate) && providedDate.getTime() >= twoHoursPriorDepartureDate.getTime();
-}
+};
 
 /**
  * @param {Date} providedDate
  * @return {Boolean}
  */
-function dateNotMoreThanTwoDaysInFuture(providedDate) {
+window.dateNotMoreThanTwoDaysInFuture = (providedDate) => {
   if (!(providedDate instanceof Date)) {
     return false;
   }
@@ -102,4 +102,4 @@ function dateNotMoreThanTwoDaysInFuture(providedDate) {
   const maxDepartureDate = new Date(now.getTime() + TWO_DAYS_MILLISECONDS);
 
   return Boolean(providedDate) && providedDate.getTime() <= maxDepartureDate.getTime();
-}
+};
