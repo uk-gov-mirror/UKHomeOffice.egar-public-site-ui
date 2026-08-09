@@ -5,7 +5,6 @@ const permissionLevels = require('../../../common/utils/permissionLevels');
 
 module.exports = (req, res) => {
   const cookie = new CookieModel(req);
-  logger.debug('In organisation / search organisation user controller');
   const errMsg = { message: 'Failed to fetch user. Try again' };
   const userPermissions = permissionLevels[cookie.getUserRole()];
   const { searchUserName } = req.query;

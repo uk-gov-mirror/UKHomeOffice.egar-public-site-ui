@@ -5,7 +5,6 @@ const userApi = require('../../../common/services/userManageApi');
 
 module.exports = async (req, res) => {
   const cookie = new CookieModel(req);
-  logger.debug('In organisation / delete get controller');
   const errMsg = { message: 'Failed to delete user. Try again' };
 
   try {

@@ -4,7 +4,6 @@ const craftApi = require('../../../common/services/craftApi');
 
 module.exports = (req, res) => {
   const cookie = new CookieModel(req);
-  logger.debug('In User / saved craft delete get controller');
 
   const errMsg = { message: 'Failed to delete craft. Try again' };
   const craftId = req.session.deleteCraftId;

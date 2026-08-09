@@ -5,8 +5,6 @@ const oneLoginUtil = require('../../../common/utils/oneLoginAuth');
 const verifyUserService = require('../../../common/services/verificationApi');
 
 module.exports = async (req, res) => {
-  logger.debug('In verify / invite get controller');
-
   // Start by clearing cookies and initialising
   const cookie = new CookieModel(req);
   cookie.reset();

@@ -4,7 +4,6 @@ const personApi = require('../../../common/services/personApi');
 const { ONE_LOGIN_ACCOUNT_URL } = require('../../../common/config');
 
 module.exports = (req, res) => {
-  logger.debug('In user / viewDetails get controller');
   const cookie = new CookieModel(req);
   const userId = cookie.getUserDbId();
 

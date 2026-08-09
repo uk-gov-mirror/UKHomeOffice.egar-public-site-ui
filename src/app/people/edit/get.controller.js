@@ -9,7 +9,6 @@ const validations = require('../validations');
 const validator = require('../../../common/utils/validator');
 
 module.exports = async (req, res) => {
-  logger.debug('In people / edit get controller');
   const cookie = new CookieModel(req);
 
   const id = req.session.editPersonId;

@@ -10,7 +10,6 @@ const validator = require('../../../../common/utils/validator');
 
 module.exports = async (req, res) => {
   const cookie = new CookieModel(req);
-  logger.debug('In garfile / manifest / edit person get controller');
   const personId = req.session.editPersonId;
 
   if (personId === undefined) {

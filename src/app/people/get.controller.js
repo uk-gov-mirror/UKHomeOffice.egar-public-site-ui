@@ -4,7 +4,6 @@ const CookieModel = require('../../common/models/Cookie.class');
 const { Manifest } = require('../../common/models/Manifest.class');
 
 module.exports = async (req, res) => {
-  logger.debug('In people get controller');
   const cookie = new CookieModel(req);
   const errMSg = { message: 'Failed to get saved people' };
 

@@ -8,7 +8,6 @@ const transformer = require('../../../../common/utils/transformers');
 
 module.exports = (req, res) => {
   const cookie = new CookieModel(req);
-  logger.debug('In garfile / manifest / addperson post controller');
 
   const personId = req.session.addPersonId;
   let person = {};

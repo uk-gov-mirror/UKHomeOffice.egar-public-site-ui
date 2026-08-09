@@ -5,7 +5,6 @@ const { permissionLevels } = require('../../common/utils/permissionLevels');
 const NUM_OF_USERS = 5;
 
 module.exports = (req, res) => {
-  logger.debug('In organisation get controller');
   const cookie = new CookieModel(req);
   const userPermissions = permissionLevels[cookie.getUserRole()];
 

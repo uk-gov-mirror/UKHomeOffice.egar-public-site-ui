@@ -3,8 +3,6 @@ const logger = require('../../common/utils/logger')(__filename);
 const craftApi = require('../../common/services/craftApi');
 
 module.exports = (req, res) => {
-  logger.debug('In user aircraft get controller');
-
   const cookie = new CookieModel(req);
   const currentPage = Number(req.query.page) || 1;
 

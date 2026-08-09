@@ -6,7 +6,6 @@ const orgApi = require('../../../common/services/organisationApi');
 const { getRolesForAssigning } = require('../../../common/utils/utils');
 
 module.exports = (req, res) => {
-  logger.debug('In organisation / editusers post controller');
   const cookie = new CookieModel(req);
 
   const orgUser = {

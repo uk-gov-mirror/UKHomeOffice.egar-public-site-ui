@@ -117,8 +117,6 @@ const performAPICall = (cookie, res, buttonClicked) => {
 };
 
 module.exports = async (req, res) => {
-  logger.debug('In garfile / arrival post controller');
-
   const cookie = new CookieModel(req);
   const { buttonClicked } = req.body;
 

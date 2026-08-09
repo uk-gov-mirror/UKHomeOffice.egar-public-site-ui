@@ -6,7 +6,6 @@ const config = require('../../../common/config/index');
 module.exports = (req, res) => {
   const cookie = new CookieModel(req);
   const max_num_files = config.MAX_NUM_FILES;
-  logger.debug('In garfile / supporting documents get controller');
   garApi
     .getSupportingDocs(cookie.getGarId())
     .then((apiResponse) => {

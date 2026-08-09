@@ -4,8 +4,6 @@ const craftApi = require('../../../common/services/craftApi');
 const garApi = require('../../../common/services/garApi');
 
 module.exports = (req, res) => {
-  logger.debug('In garfile/craft get controller');
-
   // Clear existing editcraft
   const cookie = new CookieModel(req);
   const currentPage = Number(req.query.page) || 1;

@@ -10,8 +10,6 @@ const genderchoice = require('../../../../common/seeddata/egar_gender_choice.jso
 const validations = require('../../../people/validations');
 
 module.exports = (req, res) => {
-  logger.debug('In Manifest/Edit Person post controller');
-
   const cookie = new CookieModel(req);
 
   const birthdate = `${req.body.dobYear}-${req.body.dobMonth}-${req.body.dobDay}`;

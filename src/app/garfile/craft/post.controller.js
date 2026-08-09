@@ -7,8 +7,6 @@ const validationList = require('./validations');
 const pagination = require('../../../common/utils/pagination');
 
 module.exports = (req, res) => {
-  logger.debug('In garfile / craft post controller');
-
   const { buttonClicked } = req.body;
   const cookie = new CookieModel(req);
   const userId = cookie.getUserDbId();

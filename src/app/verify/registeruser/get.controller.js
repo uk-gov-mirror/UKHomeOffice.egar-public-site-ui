@@ -4,8 +4,6 @@ const tokenService = require('../../../common/services/create-token');
 const verifyUserService = require('../../../common/services/verificationApi');
 
 module.exports = (req, res) => {
-  logger.debug('In verify / registeruser get controller');
-
   // Start by clearing cookies and initialising
   const cookie = new CookieModel(req);
   cookie.reset();

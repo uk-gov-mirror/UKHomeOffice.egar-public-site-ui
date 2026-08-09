@@ -3,7 +3,6 @@ const logger = require('../../../common/utils/logger')(__filename);
 const dataAccessApi = require('../../../common/services/dataAccessApi');
 
 module.exports = async (req, res) => {
-  logger.debug('In garfile/arrival get controller');
   const cookie = new CookieModel(req);
 
   try {

@@ -6,7 +6,6 @@ const PAGE_ONE = 1;
 const PER_PAGE = 10;
 
 module.exports = async (req, res) => {
-  logger.debug('In home  get controller');
   const cookie = new CookieModel(req);
 
   const userId = cookie.getUserDbId();

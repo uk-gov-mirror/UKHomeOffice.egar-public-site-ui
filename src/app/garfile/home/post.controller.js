@@ -6,8 +6,6 @@ const garoptions = require('../../../common/seeddata/egar_create_gar_options.jso
 const createGarApi = require('../../../common/services/createGarApi.js');
 
 module.exports = (req, res) => {
-  logger.debug('In garfile / home post controller');
-
   const garStatus = 'Draft';
   const cookie = new CookieModel(req);
 

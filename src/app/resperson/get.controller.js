@@ -3,7 +3,6 @@ const CookieModel = require('../../common/models/Cookie.class');
 const resPersonApi = require('../../common/services/resPersonApi');
 
 module.exports = async (req, res) => {
-  logger.debug('In responsible person get controller');
   const cookie = new CookieModel(req);
   const errMessage = { message: 'Failed to get saved responsible persons' };
   try {

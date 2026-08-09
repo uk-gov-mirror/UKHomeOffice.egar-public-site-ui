@@ -6,7 +6,6 @@ module.exports = (req, res) => {
   const cookie = new CookieModel(req);
   const errMsg = { message: 'Failed to delete responsible person. Try again' };
   const responsiblePersonId = req.query.deleteResponsiblePerson;
-  logger.debug('In responsible person / delete get controller');
 
   if (responsiblePersonId === undefined) {
     res.redirect('/resperson');

@@ -3,8 +3,6 @@ const CookieModel = require('../../../common/models/Cookie.class');
 const { deleteAccount } = require('./utils');
 
 const postController = async (req, res) => {
-  logger.debug('In user / deleteAccount postcontroller');
-
   const cookie = new CookieModel(req);
   const userRole = cookie.getUserRole();
 

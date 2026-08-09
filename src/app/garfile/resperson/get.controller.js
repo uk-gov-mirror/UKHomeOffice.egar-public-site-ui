@@ -6,7 +6,6 @@ const fixedBasedOperatorOptions = require('../../../common/seeddata/fixed_based_
 const utils = require('../../../common/utils/utils');
 
 module.exports = async (req, res) => {
-  logger.debug('In garfile/responsible person get controller');
   const cookie = new CookieModel(req);
   const garId = cookie.getGarId();
   const context = {

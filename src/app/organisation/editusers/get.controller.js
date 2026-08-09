@@ -7,8 +7,6 @@ module.exports = (req, res) => {
   const cookie = new CookieModel(req);
   const userId = req.session.editUserId;
 
-  logger.debug('In organisation / editusers get controller');
-
   if (userId === undefined) {
     res.redirect('/organisation');
     return;

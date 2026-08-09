@@ -9,8 +9,6 @@ module.exports = async (req, res) => {
   const cookie = new CookieModel(req);
   const { buttonClicked } = req.body;
 
-  logger.debug('In garfile / manifest post controller');
-
   if (req.body.editSavedPerson) {
     req.session.editPersonId = req.body.editSavedPerson;
     req.session.save(() => res.redirect('/people/edit'));

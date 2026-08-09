@@ -5,7 +5,6 @@ const emailService = require('../../../common/services/sendEmail');
 const config = require('../../../common/config');
 
 module.exports = async (req, res) => {
-  logger.debug('In garfile / cancel post controller');
   const cookie = new CookieModel(req);
   const garId = res.locals.gar.garId;
 

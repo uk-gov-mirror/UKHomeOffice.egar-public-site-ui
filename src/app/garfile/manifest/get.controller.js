@@ -46,7 +46,6 @@ function isAllPeopleUnableToAdd(savedPeople) {
 
 module.exports = async (req, res) => {
   const cookie = new CookieModel(req);
-  logger.debug('In garfile / manifest get controller');
 
   const userId = cookie.getUserDbId();
   const garId = res.locals.gar.garId;
