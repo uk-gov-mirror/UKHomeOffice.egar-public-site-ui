@@ -13,7 +13,6 @@ export default defineConfig([
       'public/javascripts/paginator.js',
       'public/javascripts/service-header.js',
       'public/javascripts/init-service-header.js',
-      'public/javascripts/common.js',
     ],
     plugins: {
       js,
