@@ -10,8 +10,12 @@ const config = require('../../../common/config/index');
 const { isValidFileMime } = require('../../../common/utils/validator');
 
 const exceedFileNumSizeLimit = (fileSize, garId) => {
-  logger.debug(`Entering exceed file number & size limit function, max size ${config.SUPPORTING_DOCS_MAX_SIZE} bytes,
-    max number:${config.MAX_NUM_FILES}`);
+  logger.debug('Checking supporting document limits', {
+    garId,
+    maxSizeBytes: config.SUPPORTING_DOCS_MAX_SIZE,
+    maxNumFiles: config.MAX_NUM_FILES,
+    uploadSizeBytes: fileSize,
+  });
   return new Promise((resolve, reject) => {
     // Get supporting docs and add file size
     //check max number of files not more than 10.
@@ -24,23 +28,38 @@ const exceedFileNumSizeLimit = (fileSize, garId) => {
         let total = 0;
         const parsedGars = JSON.parse(gars);
         if (parsedGars.items.length >= MAX_NUM) {
-          logger.info(`Number of supporting docs exceeds the limit: ${MAX_NUM}, gar:${garId}`);
+          logger.info('Number of supporting docs exceeds maximum allowed', {
+            garId,
+            maxNumFiles: MAX_NUM,
+            existingNumFiles: parsedGars.items.length,
+          });
           resolve('EXCEEDS_MAX_NUMBER');
         }
         // Get total size from gars.items.size
         parsedGars.items.forEach((gar) => {
           total += transformers.strToBytes(gar.size);
         });
-        logger.info(`Total size of supporting documents for gar:${garId}`);
+        logger.info('Computed total supporting document size', {
+          garId,
+          existingTotalBytes: total,
+          uploadSizeBytes: fileSize,
+        });
         if (fileSize + total > MAX_SIZE) {
-          logger.info(`Total size of supporting documents exceeds max size GAR: ${fileSize + total} bytes`);
+          logger.info('Total supporting document size exceeds maximum allowed', {
+            garId,
+            maxSizeBytes: MAX_SIZE,
+            attemptedTotalBytes: fileSize + total,
+          });
           resolve('EXCEEDS_MAX_SIZE');
         }
         resolve('SUCCESS');
       })
       .catch((err) => {
-        logger.error(`Failed to determine supporting document file sizes garId=${garId}`);
-        logger.debug(err);
+        logger.error('Failed to determine supporting document file sizes', {
+          garId,
+          errorMessage: err?.message,
+          stack: err?.stack,
+        });
         reject(err);
       });
   });
@@ -50,7 +69,10 @@ const handleDeleteDocument = (req, res) => {
   if (!req.body.deleteDocId) {
     return false;
   }
-  logger.info('Found delete supporting document request');
+  logger.info('Handling supporting document delete request', {
+    garId: req.body.garid,
+    deleteDocId: req.body.deleteDocId,
+  });
   garApi
     .deleteGarSupportingDoc(req.body.garid, req.body.deleteDocId)
     .then((apiResponse) => {
@@ -63,8 +85,12 @@ const handleDeleteDocument = (req, res) => {
       res.redirect('/garfile/supportingdocuments');
     })
     .catch((deleteSupportingDocErr) => {
-      logger.error('Failed to delete supporting document');
-      logger.debug(deleteSupportingDocErr);
+      logger.error('Failed to delete supporting document', {
+        garId: req.body.garid,
+        deleteDocId: req.body.deleteDocId,
+        errorMessage: deleteSupportingDocErr?.message,
+        stack: deleteSupportingDocErr?.stack,
+      });
       res.redirect('/garfile/supportingdocuments?query=deletefailed');
     });
   return true;
@@ -76,12 +102,16 @@ module.exports = (req, res) => {
   }
 
   if (!req.file) {
-    logger.debug('No file selected for upload');
+    logger.debug('No file selected for upload', {
+    });
     res.redirect('/garfile/supportingdocuments?query=0');
     return;
   }
 
-  logger.debug('About to check file size');
+  logger.debug('About to check file size', {
+    garId: req.body.garid,
+    uploadSizeBytes: req.file.size,
+  });
   exceedFileNumSizeLimit(req.file.size, req.body.garid)
     .then((result) => {
       if (result === 'EXCEEDS_MAX_SIZE') {
@@ -93,15 +123,27 @@ module.exports = (req, res) => {
         res.redirect('/garfile/supportingdocuments?query=number');
         return;
       }
-      logger.debug(`In Upload File Service. Uploaded File: ${req.file.originalname}`);
+      logger.debug('Uploading supporting document', {
+        garId: req.body.garid,
+        fileName: req.file.originalname,
+        fileSizeBytes: req.file.size,
+      });
       const mimeType = fileType(req.file.buffer);
 
       if (!mimeType || !isValidFileMime(req.file.originalname, mimeType.mime)) {
-        logger.info('Rejecting file due to disallowed mimetype');
+        logger.info('Rejecting file due to disallowed mimetype', {
+          garId: req.body.garid,
+          fileName: req.file.originalname,
+          detectedMimeType: mimeType?.mime || null,
+        });
         res.redirect('/garfile/supportingdocuments?query=invalid');
         return;
       }
-      logger.info('Valid mimetype, proceeding');
+      logger.info('Valid mimetype, proceeding', {
+        garId: req.body.garid,
+        fileName: req.file.originalname,
+        detectedMimeType: mimeType.mime,
+      });
 
       logger.debug('About to create a Stream of the file buffer');
       const readStream = new stream.Readable();
@@ -132,18 +174,27 @@ module.exports = (req, res) => {
                 const parsedResponse = JSON.parse(response);
                 if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {
                   // API returned error
-                  logger.debug('Api returned message key');
-                  logger.debug(JSON.stringify(parsedResponse));
+                  logger.debug('Upload API returned message payload', {
+                    garId: req.body.garid,
+                    apiMessage: parsedResponse.message,
+                  });
                   req.session.errMsg = parsedResponse;
                   res.redirect('/garfile/supportingdocuments?query=e');
                   return;
                 }
-                logger.debug('File uploaded');
+                logger.info('Supporting document uploaded', {
+                  garId: req.body.garid,
+                  fileName: req.file.originalname,
+                });
                 res.redirect('/garfile/supportingdocuments');
               })
               .catch((err) => {
-                logger.error(`Failed to upload file garId=${req.body.garid}`);
-                logger.debug(err);
+                logger.error('Failed to upload supporting document', {
+                  garId: req.body.garid,
+                  fileName: req.file.originalname,
+                  errorMessage: err?.message,
+                  stack: err?.stack,
+                });
                 res.redirect('/garfile/supportingdocuments');
               });
           } else {
@@ -151,13 +202,19 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error(`Failed to scan file garId=${req.body.garid}`);
-          logger.debug(err);
+          logger.error('Failed to scan supporting document', {
+            garId: req.body.garid,
+            fileName: req.file.originalname,
+            errorMessage: err?.message,
+            stack: err?.stack,
+          });
           res.redirect('/garfile/supportingdocuments?query=e');
         });
     })
     .catch(() => {
-      logger.debug('Error occurred during scanning the file');
+      logger.debug('Error occurred during scan/upload flow', {
+        garId: req.body.garid,
+      });
       res.redirect('/garfile/supportingdocuments?query=e');
     });
 };

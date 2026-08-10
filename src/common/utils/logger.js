@@ -4,16 +4,30 @@ const { getCorrelationId } = require('./correlationContext');
 
 const logger = winston.createLogger({
   level: config.LOG_LEVEL.toLowerCase(),
-  format: winston.format.json(),
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
 });
 
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
-      format: winston.format.simple(),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
     })
   );
 }
+
+const getCallerLineNumber = () => {
+  const stack = new Error().stack?.split('\n') ?? [];
+  const callerFrame = stack.find(
+    (line) => (line.includes('.js:') || line.includes('.ts:')) && !line.includes('common/utils/logger'),
+  );
+
+  if (!callerFrame) {
+    return undefined;
+  }
+
+  const match = callerFrame.match(/:(\d+):\d+\)?$/);
+  return match ? Number(match[1]) : undefined;
+};
 
 const formatValue = (value) => {
   if (value instanceof Error) {
@@ -31,19 +45,54 @@ const formatValue = (value) => {
   return String(value);
 };
 
-const getCorrelationPrefix = () => {
+const buildMetadata = (fileName, metadata) => {
   const correlationId = getCorrelationId();
-  return correlationId ? `correlationId=${correlationId} ` : '';
+  const logMetadata = {
+    fileName,
+  };
+
+  if (correlationId) {
+    logMetadata.correlationId = correlationId;
+  }
+
+  const lineNumber = getCallerLineNumber();
+  if (lineNumber !== undefined) {
+    logMetadata.lineNumber = lineNumber;
+  }
+
+  if (metadata === undefined) {
+    return logMetadata;
+  }
+
+  if (metadata instanceof Error) {
+    return {
+      ...logMetadata,
+      errorMessage: metadata.message,
+      stack: metadata.stack,
+    };
+  }
+
+  if (typeof metadata === 'object' && metadata !== null) {
+    return {
+      ...logMetadata,
+      ...metadata,
+    };
+  }
+
+  return {
+    ...logMetadata,
+    metadata: formatValue(metadata),
+  };
 };
 
 module.exports = (fileName) => {
   // Dockerfile stores and sets working dir to public-site, so remove it from file path
-  const logPrefix = `${fileName.replace('/public-site/', '')}: `;
+  const normalisedFileName = fileName.replace('/public-site/', '/');
   const loggerWithFilename = {
-    error: (text, metadata) => logger.error(logPrefix + getCorrelationPrefix() + formatValue(text), metadata),
-    warn: (text, metadata) => logger.warn(logPrefix + getCorrelationPrefix() + formatValue(text), metadata),
-    debug: (text, metadata) => logger.debug(logPrefix + getCorrelationPrefix() + formatValue(text), metadata),
-    info: (text, metadata) => logger.info(logPrefix + getCorrelationPrefix() + formatValue(text), metadata),
+    error: (text, metadata) => logger.error(formatValue(text), buildMetadata(normalisedFileName, metadata)),
+    warn: (text, metadata) => logger.warn(formatValue(text), buildMetadata(normalisedFileName, metadata)),
+    debug: (text, metadata) => logger.debug(formatValue(text), buildMetadata(normalisedFileName, metadata)),
+    info: (text, metadata) => logger.info(formatValue(text), buildMetadata(normalisedFileName, metadata)),
   };
 
   return loggerWithFilename;

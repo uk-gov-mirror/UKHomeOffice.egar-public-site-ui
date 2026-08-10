@@ -49,13 +49,10 @@ describe('Server request logging', () => {
           addFilter: sinon.spy(),
         }),
       },
-      helmet: Object.assign(
-        sinon.stub().returns(sinon.spy()),
-        {
-          noCache: sinon.stub().returns(sinon.spy()),
-          frameguard: sinon.stub().returns(sinon.spy()),
-        }
-      ),
+      helmet: Object.assign(sinon.stub().returns(sinon.spy()), {
+        noCache: sinon.stub().returns(sinon.spy()),
+        frameguard: sinon.stub().returns(sinon.spy()),
+      }),
       'cookie-parser': sinon.stub().returns(sinon.spy()),
       uuid: { v4: sinon.stub().returns('uuid') },
       csurf: sinon.stub().returns(sinon.spy()),
@@ -109,15 +106,21 @@ describe('Server request logging', () => {
     server.getApp();
 
     sinon.assert.calledOnce(morganStub);
-    expect(morganStub.firstCall.args[0]).to.equal(
-      ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" sessionId=:session-id correlationId=:correlation-id ":referrer" ":user-agent"'
-    );
+    expect(morganStub.firstCall.args[0]).to.be.a('function');
     expect(morganStub.firstCall.args[1]).to.deep.include({ immediate: true });
     expect(morganStub.firstCall.args[1].skip({ path: '/assets/rebrand/manifest.json' })).to.equal(true);
     expect(morganStub.firstCall.args[1].skip({ path: '/.well-known/appspecific/com.chrome.devtools.json' })).to.equal(
       true
     );
     expect(morganStub.firstCall.args[1].skip({ path: '/welcome/index' })).to.equal(false);
+    morganStub.firstCall.args[1].stream.write(
+      '{"method":"GET","url":"/welcome/index","correlationId":"corr-123"}'
+    );
+    expect(loggerMethods.info).to.have.been.calledWith('http request start', {
+      method: 'GET',
+      url: '/welcome/index',
+      correlationId: 'corr-123',
+    });
 
     loggerMethods.info.resetHistory();
     const fallbackHandler = app.use.lastCall.args[0];
@@ -136,8 +139,10 @@ describe('Server request logging', () => {
       },
       res
     );
-
-    expect(loggerMethods.info).to.have.been.calledOnceWithExactly('404 fallback for GET /welcome/index');
+    expect(loggerMethods.info).to.have.been.calledOnceWithExactly('404 fallback for request', {
+      method: 'GET',
+      url: '/welcome/index',
+    });
     expect(res.status).to.have.been.calledOnceWithExactly(404);
     expect(res.render).to.have.been.calledOnceWithExactly('app/error/404');
   });
@@ -161,7 +166,7 @@ describe('Server request logging', () => {
       info: sinon.spy(),
     };
 
-    proxyquire('../server', {
+    const server = proxyquire('../server', {
       express: Object.assign(() => app, {
         static: sinon.stub().returns(sinon.spy()),
       }),
@@ -183,13 +188,10 @@ describe('Server request logging', () => {
           addFilter: sinon.spy(),
         }),
       },
-      helmet: Object.assign(
-        sinon.stub().returns(sinon.spy()),
-        {
-          noCache: sinon.stub().returns(sinon.spy()),
-          frameguard: sinon.stub().returns(sinon.spy()),
-        }
-      ),
+      helmet: Object.assign(sinon.stub().returns(sinon.spy()), {
+        noCache: sinon.stub().returns(sinon.spy()),
+        frameguard: sinon.stub().returns(sinon.spy()),
+      }),
       'cookie-parser': sinon.stub().returns(sinon.spy()),
       uuid: { v4: sinon.stub().returns('uuid') },
       csurf: sinon.stub().returns(sinon.spy()),
@@ -240,6 +242,7 @@ describe('Server request logging', () => {
         findByCode: sinon.spy(),
       },
     });
+    server.getApp();
 
     const fallbackHandler = app.use.lastCall.args[0];
     const res = {

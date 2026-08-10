@@ -41,6 +41,29 @@ let secureFlag = process.env.COOKIE_SECURE_FLAG === 'true';
 
 logger.debug('Secure Flag for Cookie set to: ' + secureFlag);
 
+const STATIC_ASSET_PREFIXES = [
+  '/assets/',
+  '/images/',
+  '/public/',
+  '/stylesheets/',
+  '/javascripts/',
+  '/.well-known/', // Chrome/devtools probe and similar browser discovery requests
+];
+
+const STATIC_OR_PROBE_EXTENSION = /\.(map|css|js|png|svg|ico|woff2?|json)$/i;
+
+function getRequestPath(req) {
+  return req.path || req.originalUrl || req.url || '';
+}
+
+function isStaticOrProbeRequest(req) {
+  const requestPath = getRequestPath(req);
+  return (
+    STATIC_ASSET_PREFIXES.some((prefix) => requestPath.startsWith(prefix)) ||
+    STATIC_OR_PROBE_EXTENSION.test(requestPath)
+  );
+}
+
 // Define app views
 const APP_VIEWS = [
   path.join(__dirname, '/govuk_modules/govuk_template/views/layouts'),
@@ -99,23 +122,58 @@ function initialiseGlobalMiddleware(app) {
   );
   app.use(compression());
 
+  app.use((req, res, next) => {
+    if (isStaticOrProbeRequest(req)) {
+      next();
+      return;
+    }
+
+    const startTimeMs = Date.now();
+    res.on('finish', () => {
+      logger.info('http request complete', {
+        method: req.method,
+        url: getRequestPath(req),
+        statusCode: res.statusCode,
+        durationMs: Date.now() - startTimeMs,
+        sessionId: req.sessionID || null,
+        correlationId: req.correlationId || getCorrelationId() || null,
+      });
+    });
+    next();
+  });
+
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
-    const staticAssetPrefixes = [
-      '/assets/',
-      '/images/',
-      '/public/',
-      '/stylesheets/',
-      '/javascripts/',
-      '/.well-known/', // Chrome/devtools probe and similar browser discovery requests
-    ];
+    const requestLogFormatter = (tokens, req, res) =>
+      JSON.stringify({
+        remoteAddr: tokens['remote-addr'](req, res),
+        remoteUser: tokens['remote-user'](req, res),
+        date: tokens.date(req, res, 'clf'),
+        method: tokens.method(req, res),
+        url: tokens.url(req, res),
+        httpVersion: tokens['http-version'](req, res),
+        sessionId: tokens['session-id'](req, res),
+        correlationId: tokens['correlation-id'](req, res),
+        referrer: tokens.referrer(req, res),
+        userAgent: tokens['user-agent'](req, res),
+      });
+
     app.use(
-      loggingMiddleware(
-        ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" sessionId=:session-id correlationId=:correlation-id ":referrer" ":user-agent"',
-        {
-          immediate: true,
-          skip: (req) => staticAssetPrefixes.some((prefix) => req.path.startsWith(prefix)),
-        }
-      )
+      loggingMiddleware(requestLogFormatter, {
+        immediate: true,
+        skip: (req) => isStaticOrProbeRequest(req),
+        stream: {
+          write: (message) => {
+            try {
+              const parsedLog = JSON.parse(message);
+              logger.info('http request start', parsedLog);
+            } catch {
+              logger.warn('Failed to parse request log line', {
+                rawLogLine: message,
+              });
+            }
+          },
+        },
+      })
     );
   }
   app.use(bodyParser.json());
@@ -238,16 +296,15 @@ function initialiseRoutes(app) {
 
 function initialiseErrorHandling(app) {
   app.use((req, res) => {
-    const requestPath = req.path || req.originalUrl || req.url || '';
-    const isStaticOrProbeRequest =
-      requestPath.startsWith('/.well-known/') || /\.(map|css|js|png|svg|ico|woff2?|json)$/i.test(requestPath);
-
-    if (isStaticOrProbeRequest) {
+    if (isStaticOrProbeRequest(req)) {
       return res.sendStatus(404);
     }
 
     if (req.accepts('html')) {
-      logger.info(`404 fallback for ${req.method} ${req.originalUrl || req.url}`);
+      logger.info('404 fallback for request', {
+        method: req.method,
+        url: getRequestPath(req),
+      });
       return res.status(404).render('app/error/404');
     }
 
