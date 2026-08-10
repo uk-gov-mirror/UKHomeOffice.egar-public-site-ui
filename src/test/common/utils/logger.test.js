@@ -23,11 +23,11 @@ describe('Logger utility', () => {
     const loggerFactory = proxyquire('../../../common/utils/logger', {
       winston: {
         createLogger: sinon.stub().returns(loggerMethods),
-        format: {
+        format: Object.assign(sinon.stub().returns(sinon.stub()), {
           combine: sinon.stub().returns('combined-format'),
           timestamp: sinon.stub().returns('timestamp-format'),
           json: sinon.stub().returns('json-format'),
-        },
+        }),
         transports: {
           Console: sinon.stub().returns({}),
         },

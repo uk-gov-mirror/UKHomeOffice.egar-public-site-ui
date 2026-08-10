@@ -2,15 +2,22 @@ const winston = require('winston');
 const config = require('../config/index');
 const { getCorrelationId } = require('./correlationContext');
 
+const LEVEL_NAME_MAP = { warn: 'WARNING' };
+
+const uppercaseLevelFormat = winston.format((info) => {
+  info.level = LEVEL_NAME_MAP[info.level] || info.level.toUpperCase();
+  return info;
+});
+
 const logger = winston.createLogger({
   level: config.LOG_LEVEL.toLowerCase(),
-  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+  format: winston.format.combine(winston.format.timestamp(), uppercaseLevelFormat(), winston.format.json()),
 });
 
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
-      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+      format: winston.format.combine(winston.format.timestamp(), uppercaseLevelFormat(), winston.format.json()),
     })
   );
 }

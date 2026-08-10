@@ -100,7 +100,6 @@ function initialisExpressSession(app) {
 
 function setupLoggingContext() {
   token('session-id', (req) => req.sessionID || '');
-  token('correlation-id', (req) => req.correlationId || getCorrelationId() || '');
 }
 
 function initialiseGlobalMiddleware(app) {
@@ -143,36 +142,22 @@ function initialiseGlobalMiddleware(app) {
   });
 
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
-    const requestLogFormatter = (tokens, req, res) =>
-      JSON.stringify({
+    const requestLogFormatter = (tokens, req, res) => {
+      logger.info('http request start', {
         remoteAddr: tokens['remote-addr'](req, res),
-        remoteUser: tokens['remote-user'](req, res),
-        date: tokens.date(req, res, 'clf'),
         method: tokens.method(req, res),
         url: tokens.url(req, res),
         httpVersion: tokens['http-version'](req, res),
         sessionId: tokens['session-id'](req, res),
-        correlationId: tokens['correlation-id'](req, res),
         referrer: tokens.referrer(req, res),
         userAgent: tokens['user-agent'](req, res),
       });
+    };
 
     app.use(
       loggingMiddleware(requestLogFormatter, {
         immediate: true,
         skip: (req) => isStaticOrProbeRequest(req),
-        stream: {
-          write: (message) => {
-            try {
-              const parsedLog = JSON.parse(message);
-              logger.info('http request start', parsedLog);
-            } catch {
-              logger.warn('Failed to parse request log line', {
-                rawLogLine: message,
-              });
-            }
-          },
-        },
       })
     );
   }

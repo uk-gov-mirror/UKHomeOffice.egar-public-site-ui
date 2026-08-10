@@ -113,13 +113,25 @@ describe('Server request logging', () => {
       true
     );
     expect(morganStub.firstCall.args[1].skip({ path: '/welcome/index' })).to.equal(false);
-    morganStub.firstCall.args[1].stream.write(
-      '{"method":"GET","url":"/welcome/index","correlationId":"corr-123"}'
-    );
+    const requestLogFormatter = morganStub.firstCall.args[0];
+    const tokens = {
+      'remote-addr': sinon.stub().returns('127.0.0.1'),
+      method: sinon.stub().returns('GET'),
+      url: sinon.stub().returns('/welcome/index'),
+      'http-version': sinon.stub().returns('1.1'),
+      'session-id': sinon.stub().returns('sess-123'),
+      referrer: sinon.stub().returns('-'),
+      'user-agent': sinon.stub().returns('test-agent'),
+    };
+    requestLogFormatter(tokens, {}, {});
     expect(loggerMethods.info).to.have.been.calledWith('http request start', {
+      remoteAddr: '127.0.0.1',
       method: 'GET',
       url: '/welcome/index',
-      correlationId: 'corr-123',
+      httpVersion: '1.1',
+      sessionId: 'sess-123',
+      referrer: '-',
+      userAgent: 'test-agent',
     });
 
     loggerMethods.info.resetHistory();
