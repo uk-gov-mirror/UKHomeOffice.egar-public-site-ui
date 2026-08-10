@@ -100,11 +100,19 @@ function initialiseGlobalMiddleware(app) {
   app.use(compression());
 
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
-    const staticAssetPrefixes = ['/images/', '/public/', '/stylesheets/', '/javascripts/'];
+    const staticAssetPrefixes = [
+      '/assets/',
+      '/images/',
+      '/public/',
+      '/stylesheets/',
+      '/javascripts/',
+      '/.well-known/', // Chrome/devtools probe and similar browser discovery requests
+    ];
     app.use(
       loggingMiddleware(
-        ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version sessionId=:session-id correlationId=:correlation-id" :status :res[content-length] ":referrer" ":user-agent" - total time :response-time ms',
+        ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" sessionId=:session-id correlationId=:correlation-id ":referrer" ":user-agent"',
         {
+          immediate: true,
           skip: (req) => staticAssetPrefixes.some((prefix) => req.path.startsWith(prefix)),
         }
       )
@@ -230,7 +238,20 @@ function initialiseRoutes(app) {
 
 function initialiseErrorHandling(app) {
   app.use((req, res) => {
-    res.redirect('/error/404');
+    const requestPath = req.path || req.originalUrl || req.url || '';
+    const isStaticOrProbeRequest =
+      requestPath.startsWith('/.well-known/') || /\.(map|css|js|png|svg|ico|woff2?|json)$/i.test(requestPath);
+
+    if (isStaticOrProbeRequest) {
+      return res.sendStatus(404);
+    }
+
+    if (req.accepts('html')) {
+      logger.info(`404 fallback for ${req.method} ${req.originalUrl || req.url}`);
+      return res.status(404).render('app/error/404');
+    }
+
+    return res.sendStatus(404);
   });
 }
 
