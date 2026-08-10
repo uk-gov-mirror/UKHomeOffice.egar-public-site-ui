@@ -31,7 +31,7 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.debug(err);
+      logger.warn('Token verification request failed', { errorMessage: err?.message });
     });
   },
 
@@ -59,7 +59,7 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.debug(err);
+      logger.warn('Token verification request failed', { errorMessage: err?.message });
     });
   },
 
@@ -85,7 +85,7 @@ module.exports = {
         );
       });
     } catch (err) {
-      logger.debug(err);
+      logger.warn('Token verification request failed', { errorMessage: err?.message });
     }
   },
 };

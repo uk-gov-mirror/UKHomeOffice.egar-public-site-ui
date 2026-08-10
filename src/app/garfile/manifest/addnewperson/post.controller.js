@@ -66,8 +66,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.info('There was a problem adding person to saved people');
-      logger.debug(JSON.stringify(err));
+      logger.error('Failed to add person to saved people', { errorMessage: err?.message });
       res.render('app/garfile/manifest/addnewperson/index', {
         req,
         cookie,

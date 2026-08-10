@@ -38,7 +38,7 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.debug(err);
+      logger.warn('Virus scan request failed', { errorMessage: err?.message });
     });
   },
 };

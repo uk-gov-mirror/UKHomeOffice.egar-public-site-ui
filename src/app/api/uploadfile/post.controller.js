@@ -211,9 +211,10 @@ module.exports = (req, res) => {
           res.redirect('/garfile/supportingdocuments?query=e');
         });
     })
-    .catch(() => {
-      logger.debug('Error occurred during scan/upload flow', {
+    .catch((err) => {
+      logger.error('Error occurred during scan/upload flow', {
         garId: req.body.garid,
+        errorMessage: err?.message,
       });
       res.redirect('/garfile/supportingdocuments?query=e');
     });
