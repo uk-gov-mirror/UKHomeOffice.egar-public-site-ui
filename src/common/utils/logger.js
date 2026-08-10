@@ -9,17 +9,44 @@ const uppercaseLevelFormat = winston.format((info) => {
   return info;
 });
 
+const EMAIL_REGEX = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+
+const maskEmail = (email) => {
+  const [prefix, domain] = email.split('@');
+  if (prefix.length <= 2) {
+    return `${prefix[0]}***@${domain}`;
+  }
+  return `${prefix[0]}***${prefix.slice(-1)}@${domain}`;
+};
+
+const emailMaskingFormat = winston.format((info) => {
+  try {
+    if (typeof info.message === 'string') {
+      info.message = info.message.replace(EMAIL_REGEX, (email) => maskEmail(email));
+    }
+    return info;
+  } catch (error) {
+    return info;
+  }
+});
+
 const logger = winston.createLogger({
   level: config.LOG_LEVEL.toLowerCase(),
-  format: winston.format.combine(winston.format.timestamp(), uppercaseLevelFormat(), winston.format.json()),
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    uppercaseLevelFormat(),
+    emailMaskingFormat(),
+    winston.format.json()
+  ),
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(winston.format.timestamp(), uppercaseLevelFormat(), winston.format.json()),
-    })
-  );
+  // No format here: the logger-level format above already runs for every
+  // transport, including this one. Redeclaring the same formats here would
+  // apply them a second time on top of their own already-transformed output
+  // (harmless for idempotent steps like uppercasing, but not for email
+  // masking, which can re-match and corrupt its own already-masked output).
+  logger.add(new winston.transports.Console());
 }
 
 const getCallerLineNumber = () => {
