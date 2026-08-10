@@ -12,7 +12,10 @@ module.exports = async (req, res) => {
       cookie,
     });
   } catch (err) {
-    logger.error(`Failed to get GAR details garId=${res?.locals?.gar?.garId}`, { errorMessage: err?.message, stack: err?.stack });
+    logger.error(`Failed to get GAR details garId=${res?.locals?.gar?.garId}`, {
+      errorMessage: err?.message,
+      stack: err?.stack,
+    });
     res.render('app/garfile/arrival/index', {
       cookie,
       errors: [

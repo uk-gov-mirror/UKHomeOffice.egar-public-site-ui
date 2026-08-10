@@ -71,7 +71,10 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error(`Failed to update GAR garId=${cookie.getGarId()}`, { errorMessage: err?.message, stack: err?.stack });
+          logger.error(`Failed to update GAR garId=${cookie.getGarId()}`, {
+            errorMessage: err?.message,
+            stack: err?.stack,
+          });
           context.errors = [{ message: 'Failed to save customs information. Try again' }];
           res.render('app/garfile/customs/index', context);
         });

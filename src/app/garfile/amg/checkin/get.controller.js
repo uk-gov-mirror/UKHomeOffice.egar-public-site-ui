@@ -56,14 +56,20 @@ module.exports = async (req, res) => {
         res.render(template, renderObj);
       })
       .catch((err) => {
-        logger.error(`Failed to retrieve GAR for AMG check-in garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+        logger.error(`Failed to retrieve GAR for AMG check-in garId=${garId}`, {
+          errorMessage: err?.message,
+          stack: err?.stack,
+        });
         res.render('app/garfile/amg/checkin/index', {
           cookie,
           errors: [{ message: 'There was an error retrieving the GAR. Try again later' }],
         });
       });
   } catch (err) {
-    logger.error(`Failed to retrieve GAR for AMG check-in garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+    logger.error(`Failed to retrieve GAR for AMG check-in garId=${garId}`, {
+      errorMessage: err?.message,
+      stack: err?.stack,
+    });
     res.render('app/garfile/amg/checkin/index', {
       cookie,
       errors: [{ message: 'There was an error retrieving the GAR. Try again later' }],

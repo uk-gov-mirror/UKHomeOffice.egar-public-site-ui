@@ -188,7 +188,10 @@ module.exports = async (req, res) => {
                 req.session.save(() => res.redirect('/garfile/review?from=uploadGar'));
               })
               .catch((err) => {
-                logger.error(`Failed to update GAR with excel data garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+                logger.error(`Failed to update GAR with excel data garId=${garId}`, {
+                  errorMessage: err?.message,
+                  stack: err?.stack,
+                });
                 req.session.failureMsg = 'Failed to update GAR. Try again';
                 req.session.failureIdentifier = 'file';
                 res.redirect('garfile/garupload');
@@ -208,7 +211,10 @@ module.exports = async (req, res) => {
         req.session.save(() => res.redirect('/garfile/garupload'));
       });
   } catch (error) {
-    logger.error('Failed to upload GAR information, check the original template file rows', { errorMessage: error?.message, stack: error?.stack });
+    logger.error('Failed to upload GAR information, check the original template file rows', {
+      errorMessage: error?.message,
+      stack: error?.stack,
+    });
     req.session.failureMsg = 'Failed to upload GAR information. Try again';
     req.session.failureIdentifier = 'file';
     res.redirect('garfile/garupload');

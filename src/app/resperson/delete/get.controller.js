@@ -26,7 +26,10 @@ module.exports = (req, res) => {
       return req.session.save(() => res.redirect('/resperson'));
     })
     .catch((err) => {
-      logger.error(`Failed to delete responsible person responsiblePersonId=${responsiblePersonId}`, { errorMessage: err?.message, stack: err?.stack });
+      logger.error(`Failed to delete responsible person responsiblePersonId=${responsiblePersonId}`, {
+        errorMessage: err?.message,
+        stack: err?.stack,
+      });
       req.session.errMsg = errMsg;
       return req.session.save(() => res.redirect('/resperson'));
     });

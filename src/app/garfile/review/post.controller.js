@@ -173,7 +173,10 @@ module.exports = async (req, res) => {
   try {
     await garApi.submitGARForCheckin(garId);
   } catch (err) {
-    logger.error(`Failed to submit GAR people for AMG check-in garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+    logger.error(`Failed to submit GAR people for AMG check-in garId=${garId}`, {
+      errorMessage: err?.message,
+      stack: err?.stack,
+    });
     return res.render('app/garfile/review/index.njk', {
       cookie,
     });

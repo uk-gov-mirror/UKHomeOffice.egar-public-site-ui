@@ -30,7 +30,10 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.error(`Failed to upload supporting document garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+      logger.error(`Failed to upload supporting document garId=${garId}`, {
+        errorMessage: err?.message,
+        stack: err?.stack,
+      });
     });
   },
 };

@@ -38,7 +38,10 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error(`Failed to create organisation userId=${cookie.getUserDbId()}`, { errorMessage: err?.message, stack: err?.stack });
+          logger.error(`Failed to create organisation userId=${cookie.getUserDbId()}`, {
+            errorMessage: err?.message,
+            stack: err?.stack,
+          });
           res.render('app/organisation/create/index', { cookie, errors: [err] });
         });
     })

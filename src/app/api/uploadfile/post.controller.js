@@ -102,8 +102,7 @@ module.exports = (req, res) => {
   }
 
   if (!req.file) {
-    logger.debug('No file selected for upload', {
-    });
+    logger.debug('No file selected for upload', {});
     res.redirect('/garfile/supportingdocuments?query=0');
     return;
   }

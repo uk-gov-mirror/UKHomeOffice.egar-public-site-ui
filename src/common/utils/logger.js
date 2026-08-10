@@ -52,7 +52,7 @@ if (process.env.NODE_ENV !== 'production') {
 const getCallerLineNumber = () => {
   const stack = new Error().stack?.split('\n') ?? [];
   const callerFrame = stack.find(
-    (line) => (line.includes('.js:') || line.includes('.ts:')) && !line.includes('common/utils/logger'),
+    (line) => (line.includes('.js:') || line.includes('.ts:')) && !line.includes('common/utils/logger')
   );
 
   if (!callerFrame) {

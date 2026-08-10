@@ -42,7 +42,10 @@ module.exports = (req, res) => {
           res.render('app/garfile/craft/index', { cookie });
         })
         .catch((err) => {
-          logger.error(`Failed to get saved crafts userId=${userId}`, { errorMessage: err?.message, stack: err?.stack });
+          logger.error(`Failed to get saved crafts userId=${userId}`, {
+            errorMessage: err?.message,
+            stack: err?.stack,
+          });
           res.render('app/garfile/craft/index', {
             cookie,
             errors: [{ message: 'There was a problem getting aircraft information' }],

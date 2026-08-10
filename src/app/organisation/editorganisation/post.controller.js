@@ -32,7 +32,10 @@ module.exports = (req, res) => {
           });
         })
         .catch((err) => {
-          logger.error(`Failed to update organisation organisationId=${cookie.getOrganisationId()}`, { errorMessage: err?.message, stack: err?.stack });
+          logger.error(`Failed to update organisation organisationId=${cookie.getOrganisationId()}`, {
+            errorMessage: err?.message,
+            stack: err?.stack,
+          });
           res.render('app/organisation/editorganisation/index', { cookie, orgName, errors: [err] });
         });
     })

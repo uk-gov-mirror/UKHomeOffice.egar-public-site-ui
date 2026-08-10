@@ -23,7 +23,10 @@ module.exports = (req, res) => {
       });
     })
     .catch((err) => {
-      logger.error(`Failed to get responsible person details responsiblePersonId=${responsiblePersonId}`, { errorMessage: err?.message, stack: err?.stack });
+      logger.error(`Failed to get responsible person details responsiblePersonId=${responsiblePersonId}`, {
+        errorMessage: err?.message,
+        stack: err?.stack,
+      });
       req.session.errMsg = errMsg;
       return req.session.save(() => res.redirect('/resperson'));
     });

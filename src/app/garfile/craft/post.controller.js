@@ -74,7 +74,10 @@ module.exports = (req, res) => {
             }
           })
           .catch((err) => {
-            logger.error(`Failed to update GAR garId=${cookie.getGarId()}`, { errorMessage: err?.message, stack: err?.stack });
+            logger.error(`Failed to update GAR garId=${cookie.getGarId()}`, {
+              errorMessage: err?.message,
+              stack: err?.stack,
+            });
             res.render('app/garfile/craft/index', {
               cookie,
               errors: [{ message: 'Failed to add aircraft to GAR' }],

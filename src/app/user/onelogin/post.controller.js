@@ -130,7 +130,10 @@ async function handleConfirmNameSubmission(req, _res) {
       user: `${firstName}`,
     });
   } catch (error) {
-    logger.error(`Failed to send welcome email userId=${userId}`, { errorMessage: error?.message, stack: error?.stack });
+    logger.error(`Failed to send welcome email userId=${userId}`, {
+      errorMessage: error?.message,
+      stack: error?.stack,
+    });
     return [Outcome.ERROR, error.message || 'Error creating user', null];
   }
 

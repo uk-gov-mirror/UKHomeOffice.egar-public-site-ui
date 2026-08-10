@@ -61,7 +61,10 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error(`Failed to update aircraft craftId=${craftId}`, { errorMessage: err?.message, stack: err?.stack });
+          logger.error(`Failed to update aircraft craftId=${craftId}`, {
+            errorMessage: err?.message,
+            stack: err?.stack,
+          });
           res.render('app/aircraft/edit/index', {
             cookie,
             errors: [{ message: 'An error has occurred. Try again later' }],
