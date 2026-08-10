@@ -20,8 +20,7 @@ const postController = async (req, res) => {
       return res.render('app/user/deleteAccount/index', { cookie, errors: [parsedResponse] });
     }
   } catch (err) {
-    logger.error('Failed to delete user account');
-    logger.debug(err);
+    logger.error('Failed to delete user account', { errorMessage: err?.message, stack: err?.stack });
     return res.render('app/user/deleteAccount/index', { cookie, errors: [errObj] });
   }
 
@@ -33,8 +32,7 @@ const postController = async (req, res) => {
       return;
     }
   } catch (err) {
-    logger.error('Failed to send account deletion email');
-    logger.debug(err);
+    logger.error('Failed to send account deletion email', { errorMessage: err?.message, stack: err?.stack });
   }
 
   req.session.destroy(() => {

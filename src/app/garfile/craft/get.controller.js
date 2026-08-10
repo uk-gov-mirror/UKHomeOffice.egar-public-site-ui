@@ -42,8 +42,7 @@ module.exports = (req, res) => {
           res.render('app/garfile/craft/index', { cookie });
         })
         .catch((err) => {
-          logger.error(`Failed to get saved crafts userId=${userId}`);
-          logger.debug(err);
+          logger.error(`Failed to get saved crafts userId=${userId}`, { errorMessage: err?.message, stack: err?.stack });
           res.render('app/garfile/craft/index', {
             cookie,
             errors: [{ message: 'There was a problem getting aircraft information' }],
@@ -51,8 +50,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.error('Failed to get GAR from API');
-      logger.debug(err);
+      logger.error('Failed to get GAR from API', { errorMessage: err?.message, stack: err?.stack });
       res.render('app/garfile/craft/index', {
         cookie,
         errors: [{ message: 'There was a problem getting GAR information' }],

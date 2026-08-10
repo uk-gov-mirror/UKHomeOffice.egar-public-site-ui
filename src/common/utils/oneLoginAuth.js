@@ -105,16 +105,14 @@ const verifyJwt = (idToken, nonce, callback) => {
         if (!err && decoded !== null && decodedToken.vot === decoded.vot && decodedToken.sub === decoded.sub) {
           valid = true;
         } else {
-          logger.error('Failed to verify JWT');
-          logger.debug(err);
+          logger.error('Failed to verify JWT', { errorMessage: err?.message, stack: err?.stack });
           valid = false;
         }
         callback(valid);
       }
     );
   } catch (error) {
-    logger.error('Failed to verify oneLogin token');
-    logger.debug(error);
+    logger.error('Failed to verify oneLogin token', { errorMessage: error?.message, stack: error?.stack });
     //TODO implement metrics
     // CountLoginError();
     throw error;

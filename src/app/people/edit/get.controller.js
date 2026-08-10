@@ -61,8 +61,7 @@ module.exports = async (req, res) => {
         });
     })
     .catch((err) => {
-      logger.error('Failed to get saved person details');
-      logger.debug(err);
+      logger.error('Failed to get saved person details', { errorMessage: err?.message, stack: err?.stack });
       res.redirect('/people');
     });
 };

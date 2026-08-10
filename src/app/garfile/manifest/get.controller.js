@@ -134,8 +134,7 @@ module.exports = async (req, res) => {
     });
   } catch (err) {
     // Get savedpeople / manifest failed
-    logger.error('Failed to get manifest data');
-    logger.debug(err);
+    logger.error('Failed to get manifest data', { errorMessage: err?.message, stack: err?.stack });
     res.render('app/garfile/manifest/index', {
       cookie,
       errors: [{ message: 'Failed to get manifest data' }],

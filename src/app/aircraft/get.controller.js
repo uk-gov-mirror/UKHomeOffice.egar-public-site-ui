@@ -47,8 +47,7 @@ module.exports = (req, res) => {
       });
     })
     .catch((err) => {
-      logger.error('Failed to fetch craft data');
-      logger.debug(err);
+      logger.error('Failed to fetch craft data', { errorMessage: err?.message, stack: err?.stack });
       res.render('app/aircraft/index', {
         cookie,
         errors: [{ message: 'There was a problem fetching data' }],

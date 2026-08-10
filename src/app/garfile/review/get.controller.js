@@ -60,14 +60,12 @@ module.exports = (req, res) => {
         })
         .catch((err) => {
           logger.warn(`GAR review validation failed garId=${garId}`);
-          logger.debug(err);
           renderObj.errors = err;
           res.render('app/garfile/review/index', renderObj);
         });
     })
     .catch((err) => {
-      logger.error('Failed to retrieve GAR for review');
-      logger.debug(err);
+      logger.error('Failed to retrieve GAR for review', { errorMessage: err?.message, stack: err?.stack });
       res.render('app/garfile/review/index', {
         cookie,
         errors: [{ message: 'There was an error retrieving the GAR. Try again later' }],

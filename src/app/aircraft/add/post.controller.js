@@ -66,7 +66,6 @@ module.exports = (req, res) => {
     })
     .catch((err) => {
       logger.error('Failed to add craft');
-      logger.debug(err);
       res.render('app/aircraft/add/index', {
         cookie,
         craftObj,

@@ -27,14 +27,12 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('Failed to get user details');
-          logger.debug(err);
+          logger.error('Failed to get user details', { errorMessage: err?.message, stack: err?.stack });
           return res.redirect('/organisation/inviteuser');
         });
     })
     .catch((err) => {
       logger.error('Failed to invite user');
-      logger.debug(err);
       res.render('app/organisation/inviteusers/index', {
         cookie,
         fname,

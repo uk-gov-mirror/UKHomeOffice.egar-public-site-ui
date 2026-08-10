@@ -50,8 +50,7 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('Failed to add person to saved people');
-          logger.debug(err);
+          logger.error('Failed to add person to saved people', { errorMessage: err?.message, stack: err?.stack });
           res.render('app/people/add/index', {
             cookie,
             persontype,
@@ -63,7 +62,6 @@ module.exports = (req, res) => {
     })
     .catch((err) => {
       logger.warn('Person validation failed');
-      logger.debug(JSON.stringify(err));
       res.render('app/people/add/index', {
         cookie,
         req,

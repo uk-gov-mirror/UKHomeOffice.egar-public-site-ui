@@ -36,8 +36,7 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.error('Failed to create user');
-      logger.debug(err);
+      logger.error('Failed to create user', { errorMessage: err?.message, stack: err?.stack });
     });
   },
 };

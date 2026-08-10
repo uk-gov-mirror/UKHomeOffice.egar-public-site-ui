@@ -21,8 +21,7 @@ module.exports = (req, res) => {
       res.render('app/verify/registeruser/index', { cookie });
     })
     .catch((err) => {
-      logger.error('Failed to verify token');
-      logger.debug(err);
+      logger.error('Failed to verify token', { errorMessage: err?.message, stack: err?.stack });
       res.render('app/verify/registeruser/index', {
         cookie,
         message: 'There was an issue verifying your account. Please try again later.',

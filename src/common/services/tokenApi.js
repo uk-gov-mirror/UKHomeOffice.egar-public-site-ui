@@ -23,8 +23,7 @@ module.exports = {
         },
         (error, _response, body) => {
           if (error) {
-            logger.error('Failed to call settoken API');
-            logger.debug(error);
+            logger.error('Failed to call settoken API', { errorMessage: error?.message, stack: error?.stack });
             reject(error);
           }
           resolve(body);

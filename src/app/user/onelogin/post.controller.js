@@ -81,8 +81,7 @@ async function handleGivenNameSubmission(req, _res) {
 
       return [Outcome.SUCCESS, step_data, null];
     } catch (apiError) {
-      logger.error('Failed to get user info from API');
-      logger.debug(apiError);
+      logger.error('Failed to get user info from API', { errorMessage: apiError?.message, stack: apiError?.stack });
       return [Outcome.ERROR, apiError.message || 'API error', null];
     }
   } catch (validationError) {
@@ -106,8 +105,7 @@ async function handleConfirmNameSubmission(req, _res) {
 
     resp = await userApi.createUser(email, firstName, lastName, sub, 'verified', tokenId);
   } catch (error) {
-    logger.error('Failed to create user');
-    logger.debug(error);
+    logger.error('Failed to create user', { errorMessage: error?.message, stack: error?.stack });
     return [Outcome.ERROR, error.message || 'Error creating user', null];
   }
 
@@ -132,8 +130,7 @@ async function handleConfirmNameSubmission(req, _res) {
       user: `${firstName}`,
     });
   } catch (error) {
-    logger.error(`Failed to send welcome email userId=${userId}`);
-    logger.debug(error);
+    logger.error(`Failed to send welcome email userId=${userId}`, { errorMessage: error?.message, stack: error?.stack });
     return [Outcome.ERROR, error.message || 'Error creating user', null];
   }
 

@@ -48,8 +48,7 @@ module.exports = async (req, res) => {
       cancelledGars: JSON.parse(cancelledGars),
     });
   } catch (error) {
-    logger.error('Failed to get GARS from API');
-    logger.debug(error);
+    logger.error('Failed to get GARS from API', { errorMessage: error?.message, stack: error?.stack });
     res.render('app/home/index', {
       cookie,
       successMsg,

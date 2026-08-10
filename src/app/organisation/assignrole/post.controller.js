@@ -68,8 +68,7 @@ module.exports = (req, res) => {
               res.redirect('/organisation/invite/success');
             })
             .catch((err) => {
-              logger.error('Failed to send invitation email');
-              logger.debug(err);
+              logger.error('Failed to send invitation email', { errorMessage: err?.message, stack: err?.stack });
               res.render('app/organisation/assignrole/index', {
                 cookie,
                 roles,
@@ -78,8 +77,7 @@ module.exports = (req, res) => {
             });
         })
         .catch((err) => {
-          logger.error('Failed to set invite token');
-          logger.debug(err);
+          logger.error('Failed to set invite token', { errorMessage: err?.message, stack: err?.stack });
           res.render('app/organisation/assignrole/index', { cookie, roles, errors: [err] });
         });
     })

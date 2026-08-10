@@ -54,8 +54,7 @@ module.exports = (req, res) => {
           return res.redirect('/garfile/manifest');
         })
         .catch((err) => {
-          logger.error(`Failed to update GAR person garPeopleId=${req.body.garPeopleId}`);
-          logger.debug(err);
+          logger.error(`Failed to update GAR person garPeopleId=${req.body.garPeopleId}`, { errorMessage: err?.message, stack: err?.stack });
           res.render('app/garfile/manifest/editperson/index', {
             req,
             cookie,

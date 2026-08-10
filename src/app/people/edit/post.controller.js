@@ -52,8 +52,7 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error('Failed to update saved person');
-          logger.debug(err);
+          logger.error('Failed to update saved person', { errorMessage: err?.message, stack: err?.stack });
           res.render('app/people/edit/index', {
             cookie,
             req,
@@ -66,7 +65,6 @@ module.exports = (req, res) => {
     })
     .catch((err) => {
       logger.error('Failed to add person to saved people');
-      logger.debug(err);
       res.render('app/people/edit/index', {
         cookie,
         req,

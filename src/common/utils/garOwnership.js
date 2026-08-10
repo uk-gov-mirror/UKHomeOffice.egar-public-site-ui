@@ -40,8 +40,7 @@ const hasGarOwnership = async (cookie, garId, { isCbpId = false } = {}) => {
     const ok = checkGARUser(gar, cookie.getUserDbId(), cookie.getOrganisationId());
     return { ok, gar };
   } catch (err) {
-    logger.error(`Failed to verify GAR ownership garId=${garId}`);
-    logger.debug(err);
+    logger.error(`Failed to verify GAR ownership garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
     return { ok: false, gar: null };
   }
 };
