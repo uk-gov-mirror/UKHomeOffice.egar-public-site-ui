@@ -115,7 +115,6 @@ describe('Server request logging', () => {
     expect(morganStub.firstCall.args[1].skip({ path: '/welcome/index' })).to.equal(false);
     const requestLogFormatter = morganStub.firstCall.args[0];
     const tokens = {
-      'remote-addr': sinon.stub().returns('127.0.0.1'),
       method: sinon.stub().returns('GET'),
       url: sinon.stub().returns('/welcome/index'),
       'http-version': sinon.stub().returns('1.1'),
@@ -125,7 +124,6 @@ describe('Server request logging', () => {
     };
     requestLogFormatter(tokens, {}, {});
     expect(loggerMethods.info).to.have.been.calledWith('http request start', {
-      remoteAddr: '127.0.0.1',
       method: 'GET',
       url: '/welcome/index',
       httpVersion: '1.1',

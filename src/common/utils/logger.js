@@ -25,7 +25,7 @@ const emailMaskingFormat = winston.format((info) => {
       info.message = info.message.replace(EMAIL_REGEX, (email) => maskEmail(email));
     }
     return info;
-  } catch (error) {
+  } catch {
     return info;
   }
 });

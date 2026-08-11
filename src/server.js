@@ -144,7 +144,6 @@ function initialiseGlobalMiddleware(app) {
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
     const requestLogFormatter = (tokens, req, res) => {
       logger.info('http request start', {
-        remoteAddr: tokens['remote-addr'](req, res),
         method: tokens.method(req, res),
         url: tokens.url(req, res),
         httpVersion: tokens['http-version'](req, res),
