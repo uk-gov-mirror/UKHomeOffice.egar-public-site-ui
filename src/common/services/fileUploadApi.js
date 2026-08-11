@@ -30,7 +30,8 @@ module.exports = {
         }
       );
     }).catch((err) => {
-      logger.error(`Failed to upload supporting document garId=${garId}`, {
+      logger.error('Failed to upload supporting document', {
+        garId,
         errorMessage: err?.message,
         stack: err?.stack,
       });

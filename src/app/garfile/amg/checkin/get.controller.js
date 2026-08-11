@@ -56,7 +56,8 @@ module.exports = async (req, res) => {
         res.render(template, renderObj);
       })
       .catch((err) => {
-        logger.error(`Failed to retrieve GAR for AMG check-in garId=${garId}`, {
+        logger.error('Failed to retrieve GAR for AMG check-in', {
+          garId,
           errorMessage: err?.message,
           stack: err?.stack,
         });
@@ -66,7 +67,8 @@ module.exports = async (req, res) => {
         });
       });
   } catch (err) {
-    logger.error(`Failed to retrieve GAR for AMG check-in garId=${garId}`, {
+    logger.error('Failed to retrieve GAR for AMG check-in', {
+      garId,
       errorMessage: err?.message,
       stack: err?.stack,
     });

@@ -36,7 +36,8 @@ module.exports = async (req, res) => {
     req.session.successMsg = 'User deleted';
     return req.session.save(() => res.redirect('/organisation'));
   } catch (err) {
-    logger.error(`Failed to delete organisation user organisationId=${cookie.getOrganisationId()}`, {
+    logger.error('Failed to delete organisation user', {
+      organisationId: cookie.getOrganisationId(),
       errorMessage: err?.message,
       stack: err?.stack,
     });

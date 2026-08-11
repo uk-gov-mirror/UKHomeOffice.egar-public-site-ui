@@ -13,8 +13,7 @@ module.exports = async (req, res) => {
     const manifest = new Manifest(JSON.stringify({ items: people }));
 
     if (people.message) {
-      logger.info('Failed to get saved people');
-      logger.info(people.message);
+      logger.warn('Failed to get saved people', { errorMessage: people.message });
       return res.render('app/people/index', { cookie, errors: [errMSg] });
     }
     if (req.session.errMsg) {
@@ -27,7 +26,7 @@ module.exports = async (req, res) => {
 
     if (!isValidPeople) {
       logger.error(`User ${cookie.getUserDbId()} users are invalid`);
-      logger.warn(`Manifest validation failed userId=${cookie.getUserDbId()}`);
+      logger.warn('Manifest validation failed', { userId: cookie.getUserDbId() });
 
       return res.render('app/people/index', {
         cookie,
@@ -51,7 +50,7 @@ module.exports = async (req, res) => {
     }
     return res.render('app/people/index', { cookie, people });
   } catch {
-    logger.info('Failed to get saved people');
+    logger.warn('Failed to get saved people');
     return res.render('app/people/index', { cookie, errors: [errMSg] });
   }
 };

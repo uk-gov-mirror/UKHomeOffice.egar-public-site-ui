@@ -28,7 +28,7 @@ const exceedFileNumSizeLimit = (fileSize, garId) => {
         let total = 0;
         const parsedGars = JSON.parse(gars);
         if (parsedGars.items.length >= MAX_NUM) {
-          logger.info('Number of supporting docs exceeds maximum allowed', {
+          logger.warn('Number of supporting documents exceeds the maximum allowed', {
             garId,
             maxNumFiles: MAX_NUM,
             existingNumFiles: parsedGars.items.length,
@@ -39,13 +39,13 @@ const exceedFileNumSizeLimit = (fileSize, garId) => {
         parsedGars.items.forEach((gar) => {
           total += transformers.strToBytes(gar.size);
         });
-        logger.info('Computed total supporting document size', {
+        logger.debug('Computed total supporting document size', {
           garId,
           existingTotalBytes: total,
           uploadSizeBytes: fileSize,
         });
         if (fileSize + total > MAX_SIZE) {
-          logger.info('Total supporting document size exceeds maximum allowed', {
+          logger.warn('Total supporting document size exceeds the maximum allowed', {
             garId,
             maxSizeBytes: MAX_SIZE,
             attemptedTotalBytes: fileSize + total,
@@ -69,7 +69,7 @@ const handleDeleteDocument = (req, res) => {
   if (!req.body.deleteDocId) {
     return false;
   }
-  logger.info('Handling supporting document delete request', {
+  logger.debug('Handling supporting document delete request', {
     garId: req.body.garid,
     deleteDocId: req.body.deleteDocId,
   });
@@ -114,11 +114,11 @@ module.exports = (req, res) => {
   exceedFileNumSizeLimit(req.file.size, req.body.garid)
     .then((result) => {
       if (result === 'EXCEEDS_MAX_SIZE') {
-        logger.debug('Total file size was greater than the limit');
+        logger.warn('Total file size exceeded the limit');
         res.redirect('/garfile/supportingdocuments?query=limit');
         return;
       } else if (result === 'EXCEEDS_MAX_NUMBER') {
-        logger.debug('Total number of files greater than the limit');
+        logger.warn('Total number of files exceeded the limit');
         res.redirect('/garfile/supportingdocuments?query=number');
         return;
       }
@@ -130,7 +130,7 @@ module.exports = (req, res) => {
       const mimeType = fileType(req.file.buffer);
 
       if (!mimeType || !isValidFileMime(req.file.originalname, mimeType.mime)) {
-        logger.info('Rejecting file due to disallowed mimetype', {
+        logger.warn('Rejecting file due to disallowed MIME type', {
           garId: req.body.garid,
           fileName: req.file.originalname,
           detectedMimeType: mimeType?.mime || null,
@@ -138,7 +138,7 @@ module.exports = (req, res) => {
         res.redirect('/garfile/supportingdocuments?query=invalid');
         return;
       }
-      logger.info('Valid mimetype, proceeding', {
+      logger.debug('Valid MIME type; proceeding', {
         garId: req.body.garid,
         fileName: req.file.originalname,
         detectedMimeType: mimeType.mime,
@@ -181,7 +181,7 @@ module.exports = (req, res) => {
                   res.redirect('/garfile/supportingdocuments?query=e');
                   return;
                 }
-                logger.info('Supporting document uploaded', {
+                logger.info('Uploaded supporting document', {
                   garId: req.body.garid,
                   fileName: req.file.originalname,
                 });
@@ -211,7 +211,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.error('Error occurred during scan/upload flow', {
+      logger.error('An error occurred during the scan/upload flow', {
         garId: req.body.garid,
         errorMessage: err?.message,
       });

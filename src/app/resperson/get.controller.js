@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       });
     }
     if (resPersons.message) {
-      logger.info(`Failed to get saved responsible persons: ${resPersons.message}`);
+      logger.warn('Failed to get saved responsible persons', { errorMessage: resPersons.message });
       return res.render('app/resperson/index', {
         cookie,
         resPersons: [],
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
     }
     return res.render('app/resperson/index', { cookie, resPersons });
   } catch {
-    logger.info('Failed to get saved responsible persons');
+    logger.warn('Failed to get saved responsible persons');
     return res.render('app/resperson/index', { cookie, errors: [errMessage] });
   }
 };

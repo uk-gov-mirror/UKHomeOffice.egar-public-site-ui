@@ -60,7 +60,8 @@ module.exports = (req, res) => {
       res.render('app/garfile/supportingdocuments/index', context);
     })
     .catch((err) => {
-      logger.error(`Failed to get GAR supporting documents garId=${cookie.getGarId()}`, {
+      logger.error('Failed to get GAR supporting documents', {
+        garId: cookie.getGarId(),
         errorMessage: err?.message,
         stack: err?.stack,
       });

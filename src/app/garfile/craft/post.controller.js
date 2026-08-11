@@ -27,7 +27,7 @@ module.exports = (req, res) => {
         req.session.save(() => res.redirect('/garfile/craft'));
       })
       .catch((err) => {
-        logger.error(`Failed to add craft to GAR userId=${userId}`, { errorMessage: err?.message, stack: err?.stack });
+        logger.error('Failed to add craft to GAR', { userId, errorMessage: err?.message, stack: err?.stack });
         res.redirect('/garfile/craft');
       });
   } else {
@@ -74,7 +74,8 @@ module.exports = (req, res) => {
             }
           })
           .catch((err) => {
-            logger.error(`Failed to update GAR garId=${cookie.getGarId()}`, {
+            logger.error('Failed to update GAR', {
+              garId: cookie.getGarId(),
               errorMessage: err?.message,
               stack: err?.stack,
             });
@@ -85,7 +86,7 @@ module.exports = (req, res) => {
           });
       })
       .catch((err) => {
-        logger.warn(`GAR aircraft validation failed garId=${cookie.getGarId()}`);
+        logger.warn('GAR aircraft validation failed', { garId: cookie.getGarId() });
         res.render('app/garfile/craft/index', { cookie, errors: err });
       });
   }

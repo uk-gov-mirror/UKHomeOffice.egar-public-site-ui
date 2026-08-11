@@ -99,7 +99,7 @@ module.exports = async (req, res) => {
     }
 
     if (!isValidGarPeople || !isValidSavedPeople) {
-      logger.warn(`Manifest validation failed garId=${garId}`);
+      logger.warn('Manifest validation failed', { garId });
       const invalidGarPeople = garPeopleManifest.genErrValidations();
 
       return res.render('app/garfile/manifest/index', {

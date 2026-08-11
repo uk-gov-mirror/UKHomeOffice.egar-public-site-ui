@@ -42,7 +42,8 @@ module.exports = (req, res) => {
           res.render('app/garfile/craft/index', { cookie });
         })
         .catch((err) => {
-          logger.error(`Failed to get saved crafts userId=${userId}`, {
+          logger.error('Failed to get saved crafts', {
+            userId,
             errorMessage: err?.message,
             stack: err?.stack,
           });

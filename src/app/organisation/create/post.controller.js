@@ -38,7 +38,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error(`Failed to create organisation userId=${cookie.getUserDbId()}`, {
+          logger.error('Failed to create organisation', {
+            userId: cookie.getUserDbId(),
             errorMessage: err?.message,
             stack: err?.stack,
           });
@@ -46,7 +47,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.warn(`Organisation validation failed userId=${cookie.getUserDbId()}`);
+      logger.warn('Organisation validation failed', { userId: cookie.getUserDbId() });
       res.render('app/organisation/create/index', { cookie, errors: err });
     });
 };

@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
   try {
     await garApi.submitGARForException(garId);
     await garApi.patch(cookie.getGarId(), 'Cancelled', {});
-    logger.info(`Cancelled GAR garId=${garId}`);
+    logger.info('Cancelled GAR', { garId });
 
     if (!cookie.getCbpId()) {
       req.session.successMsg = 'The GAR has been successfully cancelled';
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
       return;
     }
   } catch (err) {
-    logger.error(`Failed to cancel GAR garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+    logger.error('Failed to cancel GAR', { garId, errorMessage: err?.message, stack: err?.stack });
     res.render('app/garfile/cancel/index', {
       cookie,
       errors: [{ identifier: '', message: 'Failed to cancel GAR' }],

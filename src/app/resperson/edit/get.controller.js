@@ -23,7 +23,8 @@ module.exports = (req, res) => {
       });
     })
     .catch((err) => {
-      logger.error(`Failed to get responsible person details responsiblePersonId=${responsiblePersonId}`, {
+      logger.error('Failed to get responsible person details', {
+        responsiblePersonId,
         errorMessage: err?.message,
         stack: err?.stack,
       });

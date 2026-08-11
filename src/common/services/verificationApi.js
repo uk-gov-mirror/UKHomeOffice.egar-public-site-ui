@@ -12,7 +12,7 @@ module.exports = {
    */
   verifyUser(tokenId) {
     return new Promise((resolve, reject) => {
-      logger.info('Sending request to API to verify token');
+      logger.debug('Sending request to verify token');
       request.put(
         {
           headers: { 'content-type': 'application/json' },
@@ -23,8 +23,8 @@ module.exports = {
         },
         (error, _response, body) => {
           if (error) {
-            logger.error('Failed to call token verification service');
-            reject(new Error('Token verification service failed'));
+            logger.error('Failed to call token verification API');
+            reject(new Error('Token verification API failed'));
             return;
           }
           resolve(body);
@@ -43,7 +43,7 @@ module.exports = {
         service: 'sgar',
       });
 
-      logger.info('Sending request to API to verify token using email');
+      logger.debug('Sending request to verify token using email');
       request.get(
         {
           url: url.toString(),
@@ -51,8 +51,8 @@ module.exports = {
         },
         (error, _response, body) => {
           if (error) {
-            logger.error('Failed to call token verification service');
-            reject(new Error('Token verification service failed'));
+            logger.error('Failed to call token verification API');
+            reject(new Error('Token verification API failed'));
             return;
           }
           resolve(JSON.parse(body));
@@ -68,7 +68,7 @@ module.exports = {
       return await new Promise((resolve, reject) => {
         const url = new URL(endpoints.verifyUser());
         url.searchParams.append('token_id', tokenId);
-        logger.info('Sending request to API to verify token using token id');
+        logger.debug('Sending request to verify token using token id');
         request.get(
           {
             url: url.toString(),
@@ -76,8 +76,8 @@ module.exports = {
           },
           (error, _response, body) => {
             if (error) {
-              logger.error('Failed to call token verification service');
-              reject(new Error('Token verification service failed'));
+              logger.error('Failed to call token verification API');
+              reject(new Error('Token verification API failed'));
               return;
             }
             resolve(JSON.parse(body));

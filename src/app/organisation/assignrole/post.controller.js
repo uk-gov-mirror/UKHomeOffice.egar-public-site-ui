@@ -82,7 +82,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.info('Assign Role post controller - There was a problem with assigning the role');
+      logger.warn('Failed to assign role');
       res.render('app/organisation/assignrole/index', { cookie, roles, errors: err });
     });
 };

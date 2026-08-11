@@ -19,7 +19,7 @@ const checkGARUser = (parsedGar, userId, organisationId) => {
     return true;
   }
   if (parsedGar.userId === userId) {
-    logger.info('GAR user id matches current user ID');
+    logger.debug('GAR user ID matches current user ID');
     return true;
   }
   return false;
@@ -40,7 +40,7 @@ const hasGarOwnership = async (cookie, garId, { isCbpId = false } = {}) => {
     const ok = checkGARUser(gar, cookie.getUserDbId(), cookie.getOrganisationId());
     return { ok, gar };
   } catch (err) {
-    logger.error(`Failed to verify GAR ownership garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+    logger.error('Failed to verify GAR ownership', { garId, errorMessage: err?.message, stack: err?.stack });
     return { ok: false, gar: null };
   }
 };

@@ -23,7 +23,7 @@ const checkGARUser = (parsedGar, userId, organisationId) => {
     return true;
   }
   if (parsedGar.userId === userId) {
-    logger.info('GAR user id matches current user ID');
+    logger.debug('GAR user ID matches current user ID');
     return true;
   }
   return false;
@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
     cookie.setCbpId(parsedGar.cbpId);
     cookie.setGarId(parsedGar.garId);
     cookie.setGarStatus(parsedGar.status.name);
-    logger.info(`Retrieved GAR id: ${parsedGar.garId}`);
+    logger.debug(`Retrieved GAR ID: ${parsedGar.garId}`);
 
     // Maybe not necessary but delete the ids as the template does not need them
     delete parsedGar.userId;
@@ -100,10 +100,10 @@ module.exports = async (req, res) => {
       renderContext.showChangeLinks = false;
     }
 
-    logger.info('Rendering GAR review page');
+    logger.debug('Rendering GAR review page');
     res.render('app/garfile/view/index', renderContext);
   } catch (err) {
-    logger.error(`Failed to get GAR information garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+    logger.error('Failed to get GAR information', { garId, errorMessage: err?.message, stack: err?.stack });
     renderContext.errors = [{ message: 'Failed to get GAR information' }];
     res.render('app/garfile/view/index', renderContext);
   }

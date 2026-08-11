@@ -18,7 +18,10 @@ const checkFileIsExcel = (req, res) => {
     const fileSize = req.file.size;
     const mimeType = req.file.mimetype;
 
-    logger.debug(`In Gar File Upload Service. Uploaded File: ${fileName}, Size: ${fileSize}, MIME: ${mimeType}`);
+    logger.debug(`Processing uploaded GAR file ${fileName}`, {
+      fileSizeBytes: fileSize,
+      mimeType,
+    });
 
     const fileExtension = fileName.split('.').pop();
     // Redirect if incorrect file type is uploaded
@@ -129,7 +132,7 @@ module.exports = async (req, res) => {
     const worksheet = workbook.Sheets[firstSheetName];
 
     if (!(await clamAVService.scanFile(formData))) {
-      logger.info('File rejected as virus detected by ClamAV');
+      logger.warn('File rejected because ClamAV detected a virus');
       res.redirect('/garfile/garupload?query=v');
       return;
     }
@@ -137,7 +140,7 @@ module.exports = async (req, res) => {
     if (!checkFileIsGAR(req, res, worksheet)) {
       return;
     }
-    logger.debug('Determined file to be a valid GAR template, beginning to parse');
+    logger.debug('Validated GAR template; beginning to parse');
     const voyageParser = new ExcelParser(worksheet, cellMap);
 
     // Excel sheet provides two possible cells per person which may correspond to documentType
@@ -160,7 +163,7 @@ module.exports = async (req, res) => {
     await validator
       .validateChains(validations(voyageParser.parse(), crew, passengers))
       .then(() => {
-        logger.info('Uploaded excel sheet is valid, creating GAR via API');
+        logger.debug('Uploaded Excel sheet is valid; creating GAR via API');
         createGarApi
           .createGar(cookie.getUserDbId())
           .then((apiResponse) => {
@@ -184,11 +187,12 @@ module.exports = async (req, res) => {
 
             Promise.all([crewUpdate, passengerUpdate, voyageUpdate])
               .then(() => {
-                logger.info('Updated GAR with excel data');
+                logger.info('Updated GAR with Excel data');
                 req.session.save(() => res.redirect('/garfile/review?from=uploadGar'));
               })
               .catch((err) => {
-                logger.error(`Failed to update GAR with excel data garId=${garId}`, {
+                logger.error('Failed to update GAR with Excel data', {
+                  garId,
                   errorMessage: err?.message,
                   stack: err?.stack,
                 });
@@ -198,7 +202,7 @@ module.exports = async (req, res) => {
               });
           })
           .catch((err) => {
-            logger.error('Failed to create GAR from excel data', { errorMessage: err?.message, stack: err?.stack });
+            logger.error('Failed to create GAR from Excel data', { errorMessage: err?.message, stack: err?.stack });
             req.session.failureMsg = 'Failed to create GAR. Try again';
             req.session.failureIdentifier = 'file';
             res.redirect('garfile/garupload');
@@ -211,7 +215,7 @@ module.exports = async (req, res) => {
         req.session.save(() => res.redirect('/garfile/garupload'));
       });
   } catch (error) {
-    logger.error('Failed to upload GAR information, check the original template file rows', {
+    logger.error('Failed to upload GAR information; check the original template file rows', {
       errorMessage: error?.message,
       stack: error?.stack,
     });

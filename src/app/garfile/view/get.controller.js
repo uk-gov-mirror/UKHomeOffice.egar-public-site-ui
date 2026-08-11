@@ -23,7 +23,7 @@ const checkGARUser = (parsedGar, userId, organisationId) => {
     return true;
   }
   if (parsedGar.userId === userId) {
-    logger.info('GAR user id matches current user ID');
+    logger.debug('GAR user ID matches current user ID');
     return true;
   }
   return false;
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
     garId = cookie.getGarId();
   }
   if (garId === null) {
-    logger.info('GAR id is null, redirect to home page');
+    logger.debug('GAR ID is null; redirecting to home page');
     res.redirect('/home');
     return;
   }
@@ -55,7 +55,7 @@ module.exports = async (req, res) => {
     const isResubmitted = cookie.getResubmitFor0T().includes(garId);
 
     if ('poll' in req.query) {
-      logger.info(`User GAR ${garId}: Checkin progress status is ${progress}`);
+      logger.debug(`User GAR ${garId}: check-in progress status is ${progress}`);
       res.json(progress);
       return;
     }
@@ -79,15 +79,16 @@ module.exports = async (req, res) => {
 
       // Do the check here
       if (!checkGARUser(parsedGar, cookie.getUserDbId(), cookie.getOrganisationId())) {
-        logger.error(
-          `Detected an attempt by user id: ${cookie.getUserDbId()} to access GAR with id: ${parsedGar.garId} which does not match userId or organisationId! Returning to dashboard.`
-        );
+        logger.error('Detected an unauthorized attempt to access GAR', {
+          userId: cookie.getUserDbId(),
+          garId: parsedGar.garId,
+        });
         res.redirect('/home');
         return;
       }
       cookie.setGarId(parsedGar.garId);
       cookie.setGarStatus(parsedGar.status.name);
-      logger.info(`Retrieved GAR id: ${parsedGar.garId}`);
+      logger.debug(`Retrieved GAR ID: ${parsedGar.garId}`);
 
       // Maybe not necessary but delete the ids as the template does not need them
       delete parsedGar.userId;
@@ -116,19 +117,19 @@ module.exports = async (req, res) => {
       }
 
       if (progress === 'Incomplete' && resubmitted === 'yes') {
-        logger.info(`Rendering GAR 0T resubmit page`);
+        logger.debug('Rendering GAR 0T resubmit page');
         res.render('app/garfile/amg/checkin/resubmit', renderContext);
       } else {
-        logger.info(`Rendering GAR review page`);
+        logger.debug('Rendering GAR review page');
         res.render('app/garfile/view/index', renderContext);
       }
     } catch (err) {
-      logger.error(`Failed to get GAR information garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+      logger.error('Failed to get GAR information', { garId, errorMessage: err?.message, stack: err?.stack });
       renderContext.errors = [{ message: 'Failed to get GAR information' }];
       res.render('app/garfile/view/index', renderContext);
     }
   } catch (err) {
-    logger.error(`Failed to get GAR information garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+    logger.error('Failed to get GAR information', { garId, errorMessage: err?.message, stack: err?.stack });
     renderContext.errors = [{ message: 'Failed to get GAR information' }];
     res.render('app/garfile/view/index', renderContext);
   }

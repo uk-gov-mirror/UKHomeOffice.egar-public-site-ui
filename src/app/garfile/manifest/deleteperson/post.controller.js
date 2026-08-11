@@ -36,7 +36,7 @@ module.exports = (req, res) => {
       return res.redirect('/garfile/manifest');
     })
     .catch((err) => {
-      logger.error(`Failed to delete GAR person userId=${userId}`, { errorMessage: err?.message, stack: err?.stack });
+      logger.error('Failed to delete GAR person', { userId, errorMessage: err?.message, stack: err?.stack });
       req.session.errMsg = deleteErr;
       return res.redirect('/garfile/manifest');
     });

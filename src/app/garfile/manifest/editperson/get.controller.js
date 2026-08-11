@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
         });
       })
       .catch((err) => {
-        logger.error(`Validation failed for GAR person garId=${cookie.getGarId()}`);
+        logger.error('Validation failed for GAR person', { garId: cookie.getGarId() });
         return res.render('app/garfile/manifest/editperson/index', {
           req,
           cookie,
@@ -48,7 +48,8 @@ module.exports = async (req, res) => {
         });
       });
   } catch (err) {
-    logger.error(`Failed to get GAR person details personId=${personId}`, {
+    logger.error('Failed to get GAR person details', {
+      personId,
       errorMessage: err?.message,
       stack: err?.stack,
     });

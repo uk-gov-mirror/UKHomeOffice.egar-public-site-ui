@@ -39,7 +39,7 @@ const BASE_URL = process.env.BASE_URL || '';
 // Set Cookie secure flag depending on environment variable
 let secureFlag = process.env.COOKIE_SECURE_FLAG === 'true';
 
-logger.debug('Secure Flag for Cookie set to: ' + secureFlag);
+logger.debug('Secure flag for cookie set', { secureFlag });
 
 const STATIC_ASSET_PREFIXES = [
   '/assets/',

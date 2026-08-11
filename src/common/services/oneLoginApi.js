@@ -24,7 +24,7 @@ const parseUrlForNonProd = (req, url) => {
   } else if (currentAddress?.match(internalRegex) && url.match(notInternalRegex)) {
     returnUrl = url.replace('.egar-notprod', '.internal.egar-notprod');
   }
-  logger.info(`return URL ${returnUrl}`);
+  logger.debug('Resolved OneLogin URL', { returnUrl });
   return returnUrl;
 };
 
@@ -68,7 +68,7 @@ module.exports = {
         },
         (error, _response, body) => {
           if (error) {
-            logger.error('Failed to call get one login API endpoint');
+            logger.error('Failed to call OneLogin token API endpoint');
             reject(JSON.parse(error));
             return;
           }
@@ -85,7 +85,7 @@ module.exports = {
    */
   getUserInfoFromOneLogin(access_token) {
     return new Promise((resolve, reject) => {
-      logger.info('Sending request to fetch userinfo from one Login');
+      logger.debug('Sending request to fetch OneLogin userinfo');
       const url = `${config.ONE_LOGIN_INTEGRATION_URL}/userinfo`;
       request.get(
         {
@@ -96,7 +96,7 @@ module.exports = {
         },
         (error, _response, body) => {
           if (error) {
-            logger.error('Failed to fetch userinfo from oneLogin', {
+            logger.error('Failed to fetch OneLogin userinfo', {
               errorMessage: error?.message,
               stack: error?.stack,
             });

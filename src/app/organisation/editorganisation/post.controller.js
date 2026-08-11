@@ -32,7 +32,8 @@ module.exports = (req, res) => {
           });
         })
         .catch((err) => {
-          logger.error(`Failed to update organisation organisationId=${cookie.getOrganisationId()}`, {
+          logger.error('Failed to update organisation', {
+            organisationId: cookie.getOrganisationId(),
             errorMessage: err?.message,
             stack: err?.stack,
           });
@@ -40,7 +41,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.warn(`Organisation validation failed organisationId=${cookie.getOrganisationId()}`);
+      logger.warn('Organisation validation failed', { organisationId: cookie.getOrganisationId() });
       res.render('app/organisation/editorganisation/index', { cookie, orgName, errors: err });
     });
 };

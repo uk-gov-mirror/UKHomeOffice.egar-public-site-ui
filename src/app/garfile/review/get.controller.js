@@ -59,7 +59,7 @@ module.exports = (req, res) => {
           res.render('app/garfile/review/index', renderObj);
         })
         .catch((err) => {
-          logger.warn(`GAR review validation failed garId=${garId}`);
+          logger.warn('GAR review validation failed', { garId });
           renderObj.errors = err;
           res.render('app/garfile/review/index', renderObj);
         });

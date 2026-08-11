@@ -43,7 +43,7 @@ module.exports = (req, res) => {
         });
     })
     .catch((err) => {
-      logger.warn(`Responsible person validation failed responsiblePersonId=${resPersonId}`);
+      logger.warn('Responsible person validation failed', { responsiblePersonId: resPersonId });
       res.render('app/resperson/edit/index', {
         cookie,
         req,

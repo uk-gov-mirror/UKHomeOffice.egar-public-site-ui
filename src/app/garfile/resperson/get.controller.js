@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
       });
     }
   } catch (err) {
-    logger.error(`Failed to retrieve GAR garId=${garId}`, { errorMessage: err?.message, stack: err?.stack });
+    logger.error('Failed to retrieve GAR', { garId, errorMessage: err?.message, stack: err?.stack });
     const payload = {
       ...context,
       errors: [

@@ -14,7 +14,8 @@ module.exports = (req, res) => {
       return res.render('app/garfile/departure/index', { cookie });
     })
     .catch((err) => {
-      logger.error(`Failed to get GAR details garId=${res.locals.gar.garId}`, {
+      logger.error('Failed to get GAR details', {
+        garId: res.locals.gar.garId,
         errorMessage: err?.message,
         stack: err?.stack,
       });

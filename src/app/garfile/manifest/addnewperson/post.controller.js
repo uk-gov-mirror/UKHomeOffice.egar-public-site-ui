@@ -52,7 +52,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error(`Failed to add person to GAR manifest garId=${cookie.getGarId()}`, {
+          logger.error('Failed to add person to GAR manifest', {
+            garId: cookie.getGarId(),
             errorMessage: err?.message,
             stack: err?.stack,
           });

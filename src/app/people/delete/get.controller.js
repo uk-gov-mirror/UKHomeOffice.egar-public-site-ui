@@ -26,7 +26,7 @@ module.exports = (req, res) => {
       return req.session.save(() => res.redirect('/people'));
     })
     .catch((err) => {
-      logger.error(`Failed to delete person personId=${personId}`, { errorMessage: err?.message, stack: err?.stack });
+      logger.error('Failed to delete person', { personId, errorMessage: err?.message, stack: err?.stack });
       req.session.errMsg = errMsg;
       return req.session.save(() => res.redirect('/people'));
     });

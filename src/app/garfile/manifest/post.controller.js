@@ -40,9 +40,10 @@ module.exports = async (req, res) => {
           });
       })
       .catch(() => {
-        logger.error(
-          `user_id: ${cookie.getUserDbId()}, gar_id: ${res.locals.gar.garId} > Failed to retrieve manifest ids`
-        );
+        logger.error('Failed to retrieve manifest IDs', {
+          userId: cookie.getUserDbId(),
+          garId: res.locals.gar.garId,
+        });
         req.session.manifestErr = [
           {
             message: 'Failed to patch GAR with updated manifest',
@@ -82,12 +83,12 @@ module.exports = async (req, res) => {
             res.redirect('/garfile/manifest');
           })
           .catch(() => {
-            logger.info('Failed to create People with updated manifest');
+            logger.warn('Failed to create people with updated manifest');
             res.redirect('/garfile/manifest');
           });
       })
       .catch(() => {
-        logger.info('Failed to retrieve manifest ids');
+        logger.warn('Failed to retrieve manifest IDs');
         res.redirect('/garfile/manifest');
       });
   } else if (req.body.buttonClicked === 'Save and Exit') {
@@ -99,7 +100,8 @@ module.exports = async (req, res) => {
     try {
       await garApi.patch(cookie.getGarId(), cookie.getGarStatus(), { isMilitaryFlight });
     } catch (err) {
-      logger.error(`Failed to update GAR garId=${cookie.getGarId()}`, {
+      logger.error('Failed to update GAR', {
+        garId: cookie.getGarId(),
         errorMessage: err?.message,
         stack: err?.stack,
       });
@@ -117,7 +119,8 @@ module.exports = async (req, res) => {
     try {
       apiResponse = await garApi.getPeople(cookie.getGarId());
     } catch (err) {
-      logger.error(`Failed to get manifest garId=${cookie.getGarId()}`, {
+      logger.error('Failed to get manifest', {
+        garId: cookie.getGarId(),
         errorMessage: err?.message,
         stack: err?.stack,
       });
@@ -151,7 +154,7 @@ module.exports = async (req, res) => {
         return res.redirect('/garfile/resperson');
       }
 
-      logger.warn(`Manifest validation failed garId=${cookie.getGarId()}`);
+      logger.warn('Manifest validation failed', { garId: cookie.getGarId() });
       req.session.manifestErr = manifest.genErrValidations();
       req.session.manifestInvalidPeople = manifest.invalidPeople;
       return res.redirect('/garfile/manifest');

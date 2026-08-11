@@ -18,7 +18,7 @@ module.exports = (req, res) => {
       return res.render('app/aircraft/edit/index', { cookie });
     })
     .catch((err) => {
-      logger.error(`Failed to get craft details craftId=${craftId}`, { errorMessage: err?.message, stack: err?.stack });
+      logger.error('Failed to get craft details', { craftId, errorMessage: err?.message, stack: err?.stack });
       return res.redirect('/aircraft');
     });
 };

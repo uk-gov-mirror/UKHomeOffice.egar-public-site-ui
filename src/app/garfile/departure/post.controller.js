@@ -103,7 +103,8 @@ const performAPICall = (cookie, res, buttonClicked) => {
       }
     })
     .catch((err) => {
-      logger.error(`Failed to update GAR garId=${cookie.getGarId()}`, {
+      logger.error('Failed to update GAR', {
+        garId: cookie.getGarId(),
         errorMessage: err?.message,
         stack: err?.stack,
       });
@@ -157,7 +158,7 @@ module.exports = async (req, res) => {
       performAPICall(cookie, res, buttonClicked);
     })
     .catch((err) => {
-      logger.warn(`GAR departure validation failed garId=${cookie.getGarId()}`);
+      logger.warn('GAR departure validation failed', { garId: cookie.getGarId() });
       res.render('app/garfile/departure/index', { cookie, errors: err });
     });
 };

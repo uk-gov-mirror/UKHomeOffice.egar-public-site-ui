@@ -77,7 +77,7 @@ async function handleGivenNameSubmission(req, _res) {
         sub,
       };
 
-      logger.info('Validating user Given Names submission');
+      logger.debug('Validating user given names submission');
 
       return [Outcome.SUCCESS, step_data, null];
     } catch (apiError) {
@@ -94,7 +94,7 @@ async function handleGivenNameSubmission(req, _res) {
 
 async function handleConfirmNameSubmission(req, _res) {
   if (!req.body.nameConfirmDeclaration) {
-    logger.info('Declaration not checked in name confirmation');
+    logger.warn('Declaration was not checked in name confirmation');
     return [Outcome.DECLARATION_NOT_CHECKED, 'Declaration not checked', '/onelogin/register'];
   }
   const { email, firstName, lastName, sub } = req.session.step_data;
@@ -110,7 +110,7 @@ async function handleConfirmNameSubmission(req, _res) {
   }
 
   if (resp.message) {
-    logger.error('Error creating user');
+    logger.error('Failed to create user');
     logger.error(resp.message);
     return [Outcome.ERROR, resp.message, null];
   }
@@ -130,7 +130,8 @@ async function handleConfirmNameSubmission(req, _res) {
       user: `${firstName}`,
     });
   } catch (error) {
-    logger.error(`Failed to send welcome email userId=${userId}`, {
+    logger.error('Failed to send welcome email', {
+      userId,
       errorMessage: error?.message,
       stack: error?.stack,
     });
@@ -194,10 +195,10 @@ module.exports = async (req, res) => {
         ...data,
       });
     case Outcome.DECLARATION_NOT_CHECKED:
-      logger.info('Declaration not checked in confirmation flow');
+      logger.warn('Declaration was not checked in confirmation flow');
       return res.redirect('/onelogin/register');
     case Outcome.ERROR:
-      logger.error('Error in onelogin flow: ' + data);
+      logger.error('OneLogin flow error', { errorMessage: data });
       return res.redirect('error/404');
   }
 

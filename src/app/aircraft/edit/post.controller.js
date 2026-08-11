@@ -61,7 +61,8 @@ module.exports = (req, res) => {
           }
         })
         .catch((err) => {
-          logger.error(`Failed to update aircraft craftId=${craftId}`, {
+          logger.error('Failed to update aircraft', {
+            craftId,
             errorMessage: err?.message,
             stack: err?.stack,
           });
