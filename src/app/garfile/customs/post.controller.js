@@ -48,8 +48,6 @@ module.exports = (req, res) => {
     gar: customs,
   };
 
-  logger.debug(req.body.prohibitedGoods);
-
   const { buttonClicked } = req.body;
 
   validator
