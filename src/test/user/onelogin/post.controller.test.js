@@ -33,6 +33,7 @@ describe('User OneLogin Post Controller', () => {
     req = {
       session: {
         save: sinon.spy(),
+        regenerate: sinon.stub().callsFake((cb) => cb && cb(null)),
         step: PHASE_GIVEN_NAME,
         step_data: {},
         access_token: 'mock_access_token',

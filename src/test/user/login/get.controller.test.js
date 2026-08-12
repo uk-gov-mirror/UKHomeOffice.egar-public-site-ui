@@ -33,6 +33,7 @@ describe('User Login Get Controller', () => {
       session: {
         reload: sinon.spy(),
         save: sinon.spy(),
+        regenerate: sinon.stub().callsFake((cb) => cb && cb(null)),
       },
     };
 

@@ -87,7 +87,7 @@ function initialisExpressSession(app) {
       }),
       secret: config.SESSION_ENCODE_SECRET,
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
       cookie: {
         secure: secureFlag,
         httpOnly: IS_HTTPS_SERVER,
