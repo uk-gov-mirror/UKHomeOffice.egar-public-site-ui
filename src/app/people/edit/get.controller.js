@@ -48,7 +48,7 @@ module.exports = async (req, res) => {
           });
         })
         .catch((err) => {
-          logger.error(`gar id (${cookie.getGarId()}): ${JSON.stringify(err)}`);
+          logger.error(`GAR id (${cookie.getGarId()}): ${JSON.stringify(err)}`);
           return res.render('app/people/edit/index', {
             req,
             cookie,

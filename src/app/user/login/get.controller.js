@@ -111,7 +111,7 @@ const handleUserAuthentication = (req, res, userInfo) => {
           );
         case !oneLoginSidMatches && emailMatches && userData.oneLoginSid !== null:
           // condition: User had SID in our DB that doesn't match the one from ONELOGIN. Email matches however.
-          logger.error('login error: User SID does not match but email matches.');
+          logger.error('Login error: User SID does not match but email matches.');
           return { redirect: redirectErrorPage(req, res, 'login-error') };
         default:
           logger.error('User Id not found or email not verified during onelogin flow.');

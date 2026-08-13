@@ -129,7 +129,7 @@ function initialiseGlobalMiddleware(app) {
 
     const startTimeMs = Date.now();
     res.on('finish', () => {
-      logger.info('http request complete', {
+      logger.info('HTTP request complete', {
         method: req.method,
         url: getRequestPath(req),
         statusCode: res.statusCode,
@@ -143,7 +143,7 @@ function initialiseGlobalMiddleware(app) {
 
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
     const requestLogFormatter = (tokens, req, res) => {
-      logger.info('http request start', {
+      logger.info('HTTP request start', {
         method: tokens.method(req, res),
         url: tokens.url(req, res),
         httpVersion: tokens['http-version'](req, res),

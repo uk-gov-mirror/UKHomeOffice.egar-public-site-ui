@@ -137,7 +137,7 @@ module.exports = async (req, res) => {
       const manifest = new Manifest(apiResponse);
 
       if (!isMilitaryFlight && !manifest.validateCaptainCrew()) {
-        logger.error(`user ${cookie.getUserDbId()}, gar ${cookie.getGarId()}: Manifest validation no crew`);
+        logger.error(`User ${cookie.getUserDbId()}, GAR ${cookie.getGarId()}: Manifest validation no crew`);
         req.session.manifestInvalidPeople = [];
         req.session.manifestErr = [
           {
@@ -159,7 +159,7 @@ module.exports = async (req, res) => {
       req.session.manifestInvalidPeople = manifest.invalidPeople;
       return res.redirect('/garfile/manifest');
     } catch (err) {
-      logger.error(`user ${cookie.getUserDbId()}, gar ${cookie.getGarId()} > ${JSON.stringify(err)}`);
+      logger.error(`User ${cookie.getUserDbId()}, GAR ${cookie.getGarId()} > ${JSON.stringify(err)}`);
       req.session.manifestErr = [
         {
           message: 'Failed to submit manifest',

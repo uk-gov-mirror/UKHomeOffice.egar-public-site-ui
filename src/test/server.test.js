@@ -123,7 +123,7 @@ describe('Server request logging', () => {
       'user-agent': sinon.stub().returns('test-agent'),
     };
     requestLogFormatter(tokens, {}, {});
-    expect(loggerMethods.info).to.have.been.calledWith('http request start', {
+    expect(loggerMethods.info).to.have.been.calledWith('HTTP request start', {
       method: 'GET',
       url: '/welcome/index',
       httpVersion: '1.1',
