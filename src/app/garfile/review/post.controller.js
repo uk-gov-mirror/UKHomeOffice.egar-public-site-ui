@@ -129,7 +129,7 @@ module.exports = async (req, res) => {
         identifier: '',
       };
       req.session.submiterrormessage.push(submitError);
-      logger.info('GAR already submitted');
+      logger.warn('GAR already submitted');
       req.session.save(() => res.redirect('/garfile/review'));
       return;
     }
