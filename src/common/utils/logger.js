@@ -1,6 +1,6 @@
 const winston = require('winston');
 const config = require('../config/index');
-const { getCorrelationId } = require('./correlationContext');
+const { getCorrelationId, getSessionId } = require('./correlationContext');
 
 const LEVEL_NAME_MAP = { warn: 'WARNING' };
 
@@ -81,6 +81,7 @@ const formatValue = (value) => {
 
 const buildMetadata = (fileName, metadata) => {
   const correlationId = getCorrelationId();
+  const sessionId = getSessionId();
   const logMetadata = {
     fileName,
   };
@@ -88,6 +89,8 @@ const buildMetadata = (fileName, metadata) => {
   if (correlationId) {
     logMetadata.correlationId = correlationId;
   }
+
+  logMetadata.sessionId = sessionId || null;
 
   const lineNumber = getCallerLineNumber();
   if (lineNumber !== undefined) {
