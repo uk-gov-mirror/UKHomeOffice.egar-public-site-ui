@@ -1,5 +1,4 @@
 const logger = require('../../../common/utils/logger')(__filename);
-exports.logger = logger;
 const airportValidation = require('../../../common/utils/airportValidation');
 const CookieModel = require('../../../common/models/Cookie.class');
 const manifestFields = require('../../../common/seeddata/gar_manifest_fields.json');

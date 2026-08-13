@@ -17,7 +17,7 @@
     <div class="govuk-grid-column-two-thirds">
 
     <h1 class="govuk-heading-xl">{{__('title_garupload')}}</h1>
-    <form action="/uploadgar?_csrf={{ csrfToken }}" class="form-group" method="post" role="form" enctype="multipart/form-data">
+    <form class="form-group" method="post" role="form" enctype="multipart/form-data">
       <p class="govuk-body-m">{{__('garupload_caption')}}</p>
 
       {{ govukWarningText({
@@ -35,10 +35,7 @@
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           {{ 'aria-describedby=file-error' if errors | containsError('file') }}>
       </div>
-
-      <div>
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-      </div>
+      
       <div class="form-group">
         <button id="submit" type="submit" class="govuk-button">{{__('form_upload_and_continue')}}</button>
       </div>
