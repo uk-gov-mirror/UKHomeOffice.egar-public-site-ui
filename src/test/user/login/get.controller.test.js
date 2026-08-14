@@ -277,9 +277,9 @@ FnBdx5XR9zLe40LX3+cbEtw=
     // Execute controller
     await controller(req, res);
 
-    // Verify redirect to error page
+    // State mismatch happens before token exchange, so there is no id_token for One Login logout.
     expect(res.redirect).to.have.been.calledOnce;
-    expect(res.redirect.firstCall.args[0]).to.contain('/logout');
+    expect(res.redirect.firstCall.args[0]).to.equal('/error/404');
     expect(res.render).to.not.have.been.called;
   });
 
