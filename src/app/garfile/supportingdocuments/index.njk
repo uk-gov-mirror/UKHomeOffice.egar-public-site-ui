@@ -15,7 +15,7 @@
 {% block content %}
 <script src="/javascripts/garfile/supportingdocuments.js" type="module"></script>
 <div class="govuk-grid-row">
-  <form class="form-group" method="post" role="form" enctype="multipart/form-data">
+  <form action="/uploadgar" class="form-group" method="post" role="form" enctype="multipart/form-data">
     <div class="govuk-grid-column-two-thirds">
       <span class="govuk-caption-xl">{{__('section_count', 7, 9)}}</span>
       <h1 class="govuk-heading-xl">{{__('heading_supporting_documents')}}</h1>
