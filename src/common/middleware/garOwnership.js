@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
     .then(({ ok, gar }) => {
       if (!ok) {
         logger.error(
-          `Detected an attempt by user -di: ${cookie.getUserDbId()} to access GAR id: ${garId} which does not match userId or OrganisationId.`
+          `Detected an attempt by user-id: ${cookie.getUserDbId()} to access GAR id: ${garId} which does not match userId or OrganisationId.`
         );
         cookie.clearGar();
         return res.redirect('/home');
