@@ -61,8 +61,10 @@ const simpleGetRender = (req, res, page) => {
   res.render(page, { cookie });
 };
 
+let defaultMiddleware = [flagpole, usercheck, parseForm, csrfcheck];
+
 exports.garMiddlewares = (initialMiddleware = []) => {
-  let middlewares = [flagpole, usercheck, parseForm, csrfcheck];
+  let middlewares = defaultMiddleware;
 
   if (initialMiddleware) {
     middlewares = [...initialMiddleware];
