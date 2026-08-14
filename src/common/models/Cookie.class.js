@@ -132,6 +132,7 @@ class Cookie {
           fixedBasedOperatorAnswer: null,
         },
         isMilitaryFlight: null,
+        isInbound: null,
         prohibitedGoods: null,
         goodsDeclaration: null,
         continentalShelf: null,
@@ -205,6 +206,14 @@ class Cookie {
 
   setIsMilitaryFlight(isMilitaryFlight) {
     this.session.gar.isMilitaryFlight = isMilitaryFlight;
+  }
+
+  getIsInbound() {
+    return this.session.gar.isInbound;
+  }
+
+  setIsInbound(isInbound) {
+    this.session.gar.isInbound = isInbound;
   }
 
   setGarCraft(registration, craftType, craftBase, portChoice) {
