@@ -25,8 +25,6 @@ const USER_STATES = {
   VERIFIED: 'verified',
 };
 
-let accountUrl = BASE_URL + '/organisation';
-
 /**
  * Checks if user is authenticated in the session
  * @param {Object} userSessionObject - User session object
@@ -37,7 +35,7 @@ const isUserAuthenticated = (userSessionObject) => {
   return !!(userSessionObject.dbId && userSessionObject.vr && userSessionObject.rl);
 };
 
-const sendAdminUpdateEmail = (userObj) => {
+const sendAdminUpdateEmail = (userObj, accountUrl) => {
   if (!userObj.organisation) {
     return new Promise((resolve, _reject) => resolve(userObj));
   }
@@ -69,7 +67,7 @@ const sendAdminUpdateEmail = (userObj) => {
  * @param {Object} cookie - Cookie model instance
  * @returns {Promise<Object>} - User authentication result
  */
-const handleUserAuthentication = (req, res, userInfo) => {
+const handleUserAuthentication = (req, res, userInfo, accountUrl) => {
   const { email, sub: oneLoginSid } = userInfo;
   return userApi
     .userSearch(email, oneLoginSid)
@@ -98,7 +96,7 @@ const handleUserAuthentication = (req, res, userInfo) => {
               .updateEmailOrOneLoginSid(userData.email, { email })
               .then(() => {
                 userData.email = email;
-                sendAdminUpdateEmail(userData).then(() => resolve(userData));
+                sendAdminUpdateEmail(userData, accountUrl).then(() => resolve(userData));
               })
               .catch((err) => reject(err))
           );
@@ -204,7 +202,7 @@ module.exports = async (req, res) => {
             return res.redirect(redirectErrorPage(req, res, 'login-error'));
           }
 
-          accountUrl = parseUrlForNonProd(req, accountUrl);
+          const accountUrl = parseUrlForNonProd(req, `${BASE_URL}/organisation`);
 
           return sessionRegenerateForAuthenticatedUser(req)
             .then((isRegenerated) => {
@@ -212,7 +210,7 @@ module.exports = async (req, res) => {
                 return { redirect: redirectErrorPage(req, res, 'service-error') };
               }
 
-              return handleUserAuthentication(req, res, userInfo);
+              return handleUserAuthentication(req, res, userInfo, accountUrl);
             })
             .then(({ redirect }) => {
               const cookie = new CookieModel(req);
@@ -249,6 +247,7 @@ module.exports = async (req, res) => {
       if (error) {
         logger.error(`Login process failed ${error}`);
       }
+      return res.redirect(redirectErrorPage(req, res, 'service-error'));
     });
 };
 
@@ -274,6 +273,13 @@ function redirectErrorPage(req, res, errorPage) {
   const sessionToken = req.session?.id_token;
   if (req.session) {
     delete req.session.id_token;
+    delete req.session.access_token;
+    delete req.session.step;
+    delete req.session.step_data;
+  }
+
+  if (!sessionToken || !req.cookies?.state) {
+    return ROUTES.ERROR_404;
   }
 
   return getOneLoginLogoutUrl(req, sessionToken, req.cookies.state);
