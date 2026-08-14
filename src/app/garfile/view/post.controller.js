@@ -65,14 +65,6 @@ module.exports = async (req, res) => {
 
     numberOf0TResponseCodes = (parsedPeople.items || []).filter((x) => x.amgCheckinResponseCode === '0T').length;
     const durationInDeparture = garApi.getDurationBeforeDeparture(parsedGar.departureDate, parsedGar.departureTime);
-    // Do the check here
-    if (!checkGARUser(parsedGar, cookie.getUserDbId(), cookie.getOrganisationId())) {
-      logger.error(
-        `Detected an attempt by user id: ${cookie.getUserDbId()} to access GAR with id: ${parsedGar.garId} which does not match userId or organisationId! Returning to dashboard.`
-      );
-      res.redirect('/home');
-      return;
-    }
 
     cookie.setCbpId(parsedGar.cbpId);
     cookie.setGarId(parsedGar.garId);

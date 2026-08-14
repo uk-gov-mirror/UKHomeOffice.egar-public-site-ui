@@ -19,10 +19,8 @@ const paths = {
   index: indexPath,
 };
 
-const ownershipCheck = garCheckOwnership;
-
 // Routing
-router.post(paths.index, flagpole, usercheck, parseForm, csrfcheck, postController);
+router.post(paths.index, flagpole, usercheck, parseForm, csrfcheck, garCheckOwnership, postController);
 router.get(paths.index, flagpole, usercheck, parseForm, csrfcheck, garCheckOwnership, getController);
 
 // Export

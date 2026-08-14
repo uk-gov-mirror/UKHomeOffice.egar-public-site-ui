@@ -11,7 +11,6 @@ const pageAccess = require('../middleware/pageAccess');
 const logger = require('./logger')(__filename);
 const CookieModel = require('../models/Cookie.class');
 const garAccessCheck = require('../middleware/garOwnership');
-const { paths } = require('../../app/help');
 
 const buildRouterAndPaths = (path, getController, postController) => {
   // Initialisation
@@ -62,14 +61,8 @@ const simpleGetRender = (req, res, page) => {
   res.render(page, { cookie });
 };
 
-const defaultMiddleware = [flagpole, usercheck, csrfcheck, pageAccess];
-exports.defaultMiddleware = defaultMiddleware;
-
-const defaultPostMiddlewares = [flagpole, usercheck, parseForm, csrfcheck];
-exports.defaultPostMiddlewares = defaultPostMiddlewares;
-
 exports.garMiddlewares = (initialMiddleware = []) => {
-  let middlewares = defaultMiddleware;
+  let middlewares = [flagpole, usercheck, parseForm, csrfcheck];
 
   if (initialMiddleware) {
     middlewares = [...initialMiddleware];
