@@ -1,14 +1,7 @@
 const logger = require('./logger')(__filename);
 const { getCorrelationId } = require('./correlationContext');
 
-const STATIC_ASSET_PREFIXES = [
-  '/assets/',
-  '/images/',
-  '/public/',
-  '/stylesheets/',
-  '/javascripts/',
-  '/.well-known/',
-];
+const STATIC_ASSET_PREFIXES = ['/assets/', '/images/', '/public/', '/stylesheets/', '/javascripts/', '/.well-known/'];
 
 const STATIC_OR_PROBE_EXTENSION = /\.(map|css|js|png|svg|ico|woff2?|json)$/i;
 
@@ -24,7 +17,7 @@ function isStaticOrProbeRequest(req) {
   );
 }
 
-module.exports = (req, res, next) => {
+module.exports = (req, _res, next) => {
   if (isStaticOrProbeRequest(req)) {
     next();
     return;
