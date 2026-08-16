@@ -3,11 +3,10 @@ const sinon = require('sinon');
 
 require('../../global.test');
 
-// Uses the real winston pipeline (unlike logger.test.js, which mocks winston
-// entirely) because level-uppercasing and email-masking are real winston
-// format transforms that only a real pipeline can catch regressions in -
-// this is exactly how a double-application bug slipped past the mocked test.
-describe('Logger formatting (real winston pipeline)', () => {
+// Uses the real pino pipeline (unlike logger.test.js, which mocks pino
+// entirely) because level-uppercasing and email-masking are real logger
+// transforms that only a real pipeline can catch regressions in.
+describe('Logger formatting (real pino pipeline)', () => {
   let writeStub;
   let chunks;
 

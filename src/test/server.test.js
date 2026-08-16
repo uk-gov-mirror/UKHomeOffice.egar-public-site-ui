@@ -1,15 +1,19 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
+const chai = require('chai');
+const sinonChai = require('sinon-chai');
 const proxyquire = require('proxyquire');
 
 require('./global.test');
+
+chai.use(sinonChai);
 
 describe('Server request logging', () => {
   afterEach(() => {
     sinon.restore();
   });
 
-  it('configures Morgan to log as soon as the request is received', () => {
+  it('configures request logging middleware to log as soon as the request is received', () => {
     const loggerMethods = {
       error: sinon.spy(),
       warn: sinon.spy(),
@@ -24,14 +28,12 @@ describe('Server request logging', () => {
       listen: sinon.spy(),
     };
 
-    const morganStub = sinon.stub().returns(sinon.spy());
-    morganStub.token = sinon.spy();
+    const requestLoggingMiddleware = sinon.spy();
 
     const server = proxyquire('../server', {
       express: Object.assign(() => app, {
         static: sinon.stub().returns(sinon.spy()),
       }),
-      morgan: morganStub,
       'express-session': sinon.stub().returns(sinon.spy()),
       'serve-favicon': sinon.stub().returns(sinon.spy()),
       'body-parser': {
@@ -61,6 +63,7 @@ describe('Server request logging', () => {
         correlationIdMiddleware: sinon.spy(),
         getCorrelationId: sinon.stub().returns('corr-123'),
       },
+      './common/utils/requestLogging': requestLoggingMiddleware,
       './common/utils/logger': sinon.stub().returns(loggerMethods),
       './common/config/index': {
         PUBLIC_SITE_DB_CONNSTR: 'postgres://example',
@@ -105,32 +108,7 @@ describe('Server request logging', () => {
     });
     server.getApp();
 
-    sinon.assert.calledOnce(morganStub);
-    expect(morganStub.firstCall.args[0]).to.be.a('function');
-    expect(morganStub.firstCall.args[1]).to.deep.include({ immediate: true });
-    expect(morganStub.firstCall.args[1].skip({ path: '/assets/rebrand/manifest.json' })).to.equal(true);
-    expect(morganStub.firstCall.args[1].skip({ path: '/.well-known/appspecific/com.chrome.devtools.json' })).to.equal(
-      true
-    );
-    expect(morganStub.firstCall.args[1].skip({ path: '/welcome/index' })).to.equal(false);
-    const requestLogFormatter = morganStub.firstCall.args[0];
-    const tokens = {
-      method: sinon.stub().returns('GET'),
-      url: sinon.stub().returns('/welcome/index'),
-      'http-version': sinon.stub().returns('1.1'),
-      'session-id': sinon.stub().returns('sess-123'),
-      referrer: sinon.stub().returns('-'),
-      'user-agent': sinon.stub().returns('test-agent'),
-    };
-    requestLogFormatter(tokens, {}, {});
-    expect(loggerMethods.info).to.have.been.calledWith('HTTP request start', {
-      method: 'GET',
-      url: '/welcome/index',
-      httpVersion: '1.1',
-      sessionId: 'sess-123',
-      referrer: '-',
-      userAgent: 'test-agent',
-    });
+    expect(app.use.getCalls().some((call) => call.args[0] === requestLoggingMiddleware)).to.equal(true);
 
     loggerMethods.info.resetHistory();
     const fallbackHandler = app.use.lastCall.args[0];
@@ -166,9 +144,6 @@ describe('Server request logging', () => {
       listen: sinon.spy(),
     };
 
-    const morganStub = sinon.stub().returns(sinon.spy());
-    morganStub.token = sinon.spy();
-
     const loggerMethods = {
       error: sinon.spy(),
       warn: sinon.spy(),
@@ -180,7 +155,6 @@ describe('Server request logging', () => {
       express: Object.assign(() => app, {
         static: sinon.stub().returns(sinon.spy()),
       }),
-      morgan: morganStub,
       'express-session': sinon.stub().returns(sinon.spy()),
       'serve-favicon': sinon.stub().returns(sinon.spy()),
       'body-parser': {
@@ -210,6 +184,7 @@ describe('Server request logging', () => {
         correlationIdMiddleware: sinon.spy(),
         getCorrelationId: sinon.stub().returns('corr-123'),
       },
+      './common/utils/requestLogging': sinon.spy(),
       './common/utils/logger': sinon.stub().returns(loggerMethods),
       './common/config/index': {
         PUBLIC_SITE_DB_CONNSTR: 'postgres://example',

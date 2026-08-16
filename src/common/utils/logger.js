@@ -1,13 +1,8 @@
-const winston = require('winston');
+const pino = require('pino');
 const config = require('../config/index');
 const { getCorrelationId, getSessionId } = require('./correlationContext');
 
 const LEVEL_NAME_MAP = { warn: 'WARNING' };
-
-const uppercaseLevelFormat = winston.format((info) => {
-  info.level = LEVEL_NAME_MAP[info.level] || info.level.toUpperCase();
-  return info;
-});
 
 const EMAIL_REGEX = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
 
@@ -19,35 +14,19 @@ const maskEmail = (email) => {
   return `${prefix[0]}***${prefix.slice(-1)}@${domain}`;
 };
 
-const emailMaskingFormat = winston.format((info) => {
-  try {
-    if (typeof info.message === 'string') {
-      info.message = info.message.replace(EMAIL_REGEX, (email) => maskEmail(email));
-    }
-    return info;
-  } catch {
-    return info;
-  }
-});
-
-const logger = winston.createLogger({
+const logger = pino({
   level: config.LOG_LEVEL.toLowerCase(),
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    uppercaseLevelFormat(),
-    emailMaskingFormat(),
-    winston.format.json()
-  ),
+  base: null,
+  messageKey: 'message',
+  timestamp: () => `,"timestamp":"${new Date().toISOString()}"`,
+  formatters: {
+    level(label) {
+      return {
+        level: LEVEL_NAME_MAP[label] || label.toUpperCase(),
+      };
+    },
+  },
 });
-
-if (process.env.NODE_ENV !== 'production') {
-  // No format here: the logger-level format above already runs for every
-  // transport, including this one. Redeclaring the same formats here would
-  // apply them a second time on top of their own already-transformed output
-  // (harmless for idempotent steps like uppercasing, but not for email
-  // masking, which can re-match and corrupt its own already-masked output).
-  logger.add(new winston.transports.Console());
-}
 
 const getCallerLineNumber = () => {
   const stack = new Error().stack?.split('\n') ?? [];
@@ -78,6 +57,8 @@ const formatValue = (value) => {
 
   return String(value);
 };
+
+const maskMessage = (text) => formatValue(text).replace(EMAIL_REGEX, (email) => maskEmail(email));
 
 const buildMetadata = (fileName, metadata) => {
   const correlationId = getCorrelationId();
@@ -125,12 +106,10 @@ const buildMetadata = (fileName, metadata) => {
 module.exports = (fileName) => {
   // Dockerfile stores and sets working dir to public-site, so remove it from file path
   const normalisedFileName = fileName.replace('/public-site/', '/');
-  const loggerWithFilename = {
-    error: (text, metadata) => logger.error(formatValue(text), buildMetadata(normalisedFileName, metadata)),
-    warn: (text, metadata) => logger.warn(formatValue(text), buildMetadata(normalisedFileName, metadata)),
-    debug: (text, metadata) => logger.debug(formatValue(text), buildMetadata(normalisedFileName, metadata)),
-    info: (text, metadata) => logger.info(formatValue(text), buildMetadata(normalisedFileName, metadata)),
+  return {
+    error: (text, metadata) => logger.error(buildMetadata(normalisedFileName, metadata), maskMessage(text)),
+    warn: (text, metadata) => logger.warn(buildMetadata(normalisedFileName, metadata), maskMessage(text)),
+    debug: (text, metadata) => logger.debug(buildMetadata(normalisedFileName, metadata), maskMessage(text)),
+    info: (text, metadata) => logger.info(buildMetadata(normalisedFileName, metadata), maskMessage(text)),
   };
-
-  return loggerWithFilename;
 };

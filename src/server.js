@@ -7,8 +7,6 @@ const favicon = require('serve-favicon');
 // Npm dependencies
 const bodyParser = require('body-parser');
 const i18n = require('i18n');
-const loggingMiddleware = require('morgan');
-const { token } = require('morgan');
 const argv = require('minimist')(process.argv.slice(2));
 const compression = require('compression');
 const nunjucks = require('nunjucks');
@@ -24,6 +22,7 @@ const logger = require('./common/utils/logger')(__filename);
 const config = require('./common/config/index');
 const availability = require('./common/config/availability');
 const router = require('./app/router');
+const requestLoggingMiddleware = require('./common/utils/requestLogging');
 const autocompleteUtil = require('./common/utils/autocomplete');
 const nunjucksFilters = require('./common/utils/templateFilters.js');
 const travelPermissionCodes = require('./common/utils/travel_permission_codes.json');
@@ -98,10 +97,6 @@ function initialisExpressSession(app) {
   );
 }
 
-function setupLoggingContext() {
-  token('session-id', (req) => req.sessionID || '');
-}
-
 function initialiseGlobalMiddleware(app) {
   app.use(correlationIdMiddleware);
 
@@ -120,7 +115,6 @@ function initialiseGlobalMiddleware(app) {
     favicon(path.join(__dirname, 'node_modules', 'govuk-frontend', 'dist', 'govuk', 'assets', 'images', 'favicon.ico'))
   );
   app.use(compression());
-
   app.use((req, res, next) => {
     if (isStaticOrProbeRequest(req)) {
       next();
@@ -142,23 +136,7 @@ function initialiseGlobalMiddleware(app) {
   });
 
   if (process.env.DISABLE_REQUEST_LOGGING !== 'true') {
-    const requestLogFormatter = (tokens, req, res) => {
-      logger.info('HTTP request start', {
-        method: tokens.method(req, res),
-        url: tokens.url(req, res),
-        httpVersion: tokens['http-version'](req, res),
-        sessionId: tokens['session-id'](req, res),
-        referrer: tokens.referrer(req, res),
-        userAgent: tokens['user-agent'](req, res),
-      });
-    };
-
-    app.use(
-      loggingMiddleware(requestLogFormatter, {
-        immediate: true,
-        skip: (req) => isStaticOrProbeRequest(req),
-      })
-    );
+    app.use(requestLoggingMiddleware);
   }
   app.use(bodyParser.json());
   app.use(
@@ -308,7 +286,6 @@ function initialise() {
 
   async function prepDb() {
     try {
-      setupLoggingContext();
       initialisExpressSession(unconfiguredApp);
       initialiseProxy(unconfiguredApp);
       initialiseI18n(unconfiguredApp);
