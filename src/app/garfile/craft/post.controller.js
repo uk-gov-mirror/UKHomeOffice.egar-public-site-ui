@@ -54,7 +54,7 @@ module.exports = (req, res) => {
       .validateChains(validations)
       .then(() => {
         garApi
-          .patch(cookie.getGarId(), cookie.getGarStatus(), {
+          .patch(res.locals.gar.garId, cookie.getGarStatus(), {
             registration: craftObj.registration,
             craftType: craftObj.craftType,
             craftBase: craftObj.craftBase,

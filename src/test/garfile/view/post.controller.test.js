@@ -10,7 +10,6 @@ const garApi = require('../../../common/services/garApi');
 const dataAccessApi = require('../../../common/services/dataAccessApi');
 
 const controller = require('../../../app/garfile/view/post.controller');
-const { checkGARUser } = require('../../../app/garfile/view/post.controller');
 const { outboundGar } = require('../../fixtures');
 
 describe('GAR view post controller', () => {
@@ -54,67 +53,6 @@ describe('GAR view post controller', () => {
   afterEach(() => {
     sinon.restore();
     clock.restore();
-  });
-
-  describe('checkGARUser', () => {
-    it('should return false if all undefined fields', () => {
-      expect(checkGARUser(undefined, undefined, undefined)).to.be.false;
-    });
-
-    it('should return false if all null fields', () => {
-      expect(checkGARUser(null, null, null)).to.be.false;
-    });
-
-    it('should return false if user id no match and undefined organisation', () => {
-      const parsedGar = {
-        userId: 'USER-123',
-      };
-
-      expect(checkGARUser(parsedGar, undefined, 'USER-234')).to.be.false;
-    });
-
-    it('should return false if organisation id no match and undefined user', () => {
-      const parsedGar = {
-        userId: 'USER-123',
-        organisationId: 'ORG-123',
-      };
-
-      expect(checkGARUser(parsedGar, undefined, 'ORG-234')).to.be.false;
-    });
-
-    it('should return false if no match', () => {
-      const parsedGar = {
-        userId: 'USER-123',
-        organisationId: 'ORG-123',
-      };
-
-      expect(checkGARUser(parsedGar, 'USER-234', 'ORG-234')).to.be.false;
-    });
-
-    it('should return true if user ids match', () => {
-      const parsedGar = {
-        userId: 'USER-123',
-      };
-
-      expect(checkGARUser(parsedGar, 'USER-123', undefined)).to.be.true;
-    });
-
-    it('should return true if organisation ids match', () => {
-      const parsedGar = {
-        organisationId: 'ORG-123',
-      };
-
-      expect(checkGARUser(parsedGar, 'USER-123', 'ORG-123')).to.be.true;
-    });
-
-    it('should return true if organisation ids match and user ids match', () => {
-      const parsedGar = {
-        organisationId: 'ORG-123',
-        userId: 'USER-123',
-      };
-
-      expect(checkGARUser(parsedGar, 'USER-123', 'ORG-123')).to.be.true;
-    });
   });
 
   it('should redirect to home if the api does not find the GAR', async () => {
@@ -350,46 +288,6 @@ describe('GAR view post controller', () => {
           durationInDeparture: 125,
           isResubmitted: false,
         });
-      });
-  });
-
-  it('should redirect if user id does not match', () => {
-    const cookie = new CookieModel(req);
-    cookie.setGarId('GAR-ID-EXAMPLE-1');
-
-    garApiGetStub.resolves(
-      JSON.stringify({
-        garId: 'GAR-ID-EXAMPLE-1-API',
-        status: { name: 'Submitted' },
-        userId: 'USER-124',
-      })
-    );
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [
-          { id: 'PERSON-1', firstName: 'Simona' },
-          { id: 'PERSON-2', firstName: 'Serena' },
-        ],
-      })
-    );
-    garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-      })
-    );
-
-    const callController = async () => {
-      await controller(req, res);
-    };
-
-    callController()
-      .then()
-      .then(() => {
-        expect(garApiGetStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1', true);
-        expect(garApiGetPeopleStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
-        expect(garApiGetSupportingDocsStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
-        expect(res.redirect).to.have.been.calledOnceWithExactly('/home');
-        expect(res.render).to.not.have.been.called;
       });
   });
 
