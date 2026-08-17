@@ -42,7 +42,6 @@ module.exports = async (req, res) => {
 
     // Do the check here
     if (parsedGar?.message) {
-      console.log('I got here');
       logger.error(`Gar not found : ${parsedGar.garId}.`);
       res.redirect('/home');
       return;
