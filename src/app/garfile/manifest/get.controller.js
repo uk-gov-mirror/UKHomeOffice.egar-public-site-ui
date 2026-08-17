@@ -53,10 +53,8 @@ module.exports = async (req, res) => {
 
   try {
     const savedPeopleJson = await personApi.getPeople(userId, 'individual');
-    const currentPage = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const garpeopleJson = await dataAccessApi.garApi.getPeople(garId, currentPage);
+    const garpeopleJson = await dataAccessApi.garApi.getPeople(garId);
     const garfileJson = await garApi.get(garId);
-    const paginationData = garpeopleJson._meta;
     const initialSavedPeople = JSON.parse(savedPeopleJson);
     const garfile = await JSON.parse(garfileJson);
     const savedPeopleManifest = new Manifest(JSON.stringify({ items: initialSavedPeople }));
@@ -82,8 +80,6 @@ module.exports = async (req, res) => {
         isInvalidSavedPeople,
         isUnableToAddPeople,
         manifest: garpeople,
-        pages: paginationData,
-        currentPage: currentPage,
         errors: [errMsg],
       });
     }
@@ -99,8 +95,6 @@ module.exports = async (req, res) => {
         manifest: garpeople,
         manifestInvalidPeople,
         isUnableToAddPeople,
-        pages: paginationData,
-        currentPage: currentPage,
         errors: manifestErr,
       });
     }
@@ -116,8 +110,6 @@ module.exports = async (req, res) => {
         isUnableToAddPeople,
         manifest: garpeople,
         manifestInvalidPeople: garPeopleManifest.invalidPeople,
-        pages: paginationData,
-        currentPage: currentPage,
         errors: invalidGarPeople.length ? invalidGarPeople : undefined,
       });
     }
@@ -131,8 +123,6 @@ module.exports = async (req, res) => {
         isInvalidSavedPeople,
         isUnableToAddPeople,
         manifest: garpeople,
-        pages: paginationData,
-        currentPage: currentPage,
         successMsg,
       });
     }
@@ -142,8 +132,6 @@ module.exports = async (req, res) => {
       isInvalidSavedPeople,
       isUnableToAddPeople,
       manifest: garpeople,
-      pages: paginationData,
-      currentPage: currentPage,
     });
   } catch (err) {
     // Get savedpeople / manifest failed

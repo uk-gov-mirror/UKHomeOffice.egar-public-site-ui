@@ -145,6 +145,7 @@ describe('API upload GAR post controller', () => {
   describe('incorrect files', () => {
     it('return message if not expected spreadsheet', async () => {
       sinon.stub(XLSX, 'read').returns(incorrectWorkbook);
+      clamAVServiceStub.resolves(true);
       req.file.originalname = 'incorrect.xls';
 
       await controller(req, res);
@@ -157,6 +158,7 @@ describe('API upload GAR post controller', () => {
     it('return message if cell C1 is undefined', async () => {
       delete incorrectWorkbook.Sheets.Sheet1.C1;
       sinon.stub(XLSX, 'read').returns(incorrectWorkbook);
+      clamAVServiceStub.resolves(true);
       req.file.originalname = 'incorrect.xls';
 
       await controller(req, res);

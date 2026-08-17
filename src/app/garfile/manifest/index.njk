@@ -223,7 +223,7 @@
             <label class="govuk-label" for="totalPersonsOnBoard">
               {{__('total_persons_on_board')}}
             </label>
-            <input class="govuk-input govuk-input--width-3" id="totalPersonsOnBoard" name="name" readonly type="number" value="{{ pages.totalItems }}">
+            <input class="govuk-input govuk-input--width-3" id="totalPersonsOnBoard" name="name" readonly type="number" value="{{ manifest.items | length }}">
           </div>
           <button id="garPeopleId" type="submit" name="buttonClicked" value="Add to PEOPLE" class="govuk-button multi-submit-button" disabled="true" >
             {{__('button_add_to_people')}}

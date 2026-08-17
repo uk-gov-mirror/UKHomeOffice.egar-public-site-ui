@@ -128,6 +128,7 @@ module.exports = async (req, res) => {
 
   const gar = await garApi.get(res.locals.gar.garId);
   const departurePort = JSON.parse(gar).departurePort;
+  cookie.setIsInbound(airportValidation.isJourneyUKInbound(departurePort, voyage.arrivalPort));
 
   validations.push([
     new ValidationRule(

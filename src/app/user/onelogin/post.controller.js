@@ -9,6 +9,7 @@ const { USER_GIVEN_NAME_CHARACTER_COUNT, USER_SURNAME_CHARACTER_COUNT } = requir
 const sendEmail = require('../../../common/services/sendEmail');
 const config = require('../../../common/config');
 const { getUserInviteToken } = require('../../../common/services/verificationApi');
+const { sessionRegenerateForAuthenticatedUser } = require('../../../common/utils/session_generator');
 
 const Outcome = {
   SUCCESS: 'success',
@@ -116,6 +117,24 @@ async function handleConfirmNameSubmission(req, _res) {
     logger.error(resp.message);
     return [Outcome.ERROR, resp.message, null];
   }
+
+  const userIdToken = req.session?.id_token;
+  const userAccessToken = req.session?.access_token;
+  const isRegenerated = await sessionRegenerateForAuthenticatedUser(req);
+
+  if (!isRegenerated) {
+    logger.error('Session regeneration failed in One Login registration flow.');
+    return [Outcome.ERROR, 'Session regeneration failed', null];
+  }
+
+  if (userIdToken) {
+    req.session.id_token = userIdToken;
+  }
+
+  if (userAccessToken) {
+    req.session.access_token = userAccessToken;
+  }
+
   const { userId, state, role, organisation } = resp;
 
   const cookie = new CookieModel(req);

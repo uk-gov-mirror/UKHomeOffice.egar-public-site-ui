@@ -21,12 +21,6 @@ const checkFileIsExcel = (req, res) => {
 
     logger.debug(`In Gar File Upload Service. Uploaded File: ${fileName}, Size: ${fileSize}, MIME: ${mimeType}`);
 
-    logger.debug('Creating a stream of the incoming buffer');
-    const readStream = new stream.Readable();
-    readStream.push(req.file.buffer);
-    readStream.push(null);
-    logger.debug('Stream created, about to check file name extension');
-
     const fileExtension = fileName.split('.').pop();
     // Redirect if incorrect file type is uploaded
     if ((fileExtension !== 'xls' && fileExtension !== 'xlsx') || typeof fileExtension === 'undefined') {
@@ -135,12 +129,13 @@ module.exports = async (req, res) => {
     const firstSheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[firstSheetName];
 
-    if (!checkFileIsGAR(req, res, worksheet)) {
-      return;
-    }
     if (!(await clamAVService.scanFile(formData))) {
       logger.info('File rejected as virus detected by ClamAV');
       res.redirect('/garfile/garupload?query=v');
+      return;
+    }
+
+    if (!checkFileIsGAR(req, res, worksheet)) {
       return;
     }
     logger.debug('Determined file to be a valid GAR template, beginning to parse');
