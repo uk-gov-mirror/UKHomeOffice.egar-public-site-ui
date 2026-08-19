@@ -61,9 +61,9 @@ const simpleGetRender = (req, res, page) => {
   res.render(page, { cookie });
 };
 
-let defaultMiddleware = [flagpole, usercheck, parseForm, csrfcheck];
+const defaultMiddleware = [flagpole, usercheck, parseForm, csrfcheck];
 
-exports.garMiddlewares = (initialMiddleware = []) => {
+const garMiddlewares = (initialMiddleware = []) => {
   let middlewares = defaultMiddleware;
 
   if (initialMiddleware) {
@@ -83,7 +83,7 @@ exports.garMiddlewares = (initialMiddleware = []) => {
  * @param middlewares Array - list of middleware to pass before controller
  * @param controller function - controller to instantiate
  */
-let buildRoute = (router, path, method, middlewares, controller) => {
+const buildRoute = (router, path, method, middlewares, controller) => {
   let middlewareConfig = middlewares || defaultMiddleware;
 
   switch (method.toUpperCase()) {
@@ -103,7 +103,7 @@ let buildRoute = (router, path, method, middlewares, controller) => {
   return router;
 };
 
-exports.buildGarRouterAndPaths = (path, getController, postController, middlewares = []) => {
+const buildGarRouterAndPaths = (path, getController, postController, middlewares = []) => {
   const router = new express.Router();
   const paths = { index: path };
 
@@ -119,6 +119,12 @@ exports.buildGarRouterAndPaths = (path, getController, postController, middlewar
   return { router, paths };
 };
 
-exports.simpleGetRender = simpleGetRender;
-exports.buildRouterAndPaths = buildRouterAndPaths;
-exports.buildRouterAndPathsNoUserCheck = buildRouterAndPathsNoUserCheck;
+module.exports = {
+  simpleGetRender,
+  buildRouterAndPaths,
+  buildRouterAndPathsNoUserCheck,
+  buildRoute,
+  buildGarRouterAndPaths,
+  garMiddlewares,
+  defaultMiddleware,
+};
