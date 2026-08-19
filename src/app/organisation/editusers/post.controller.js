@@ -5,6 +5,7 @@ const CookieModel = require('../../../common/models/Cookie.class');
 const orgApi = require('../../../common/services/organisationApi');
 const { getRolesForAssigning } = require('../../../common/utils/utils');
 const ValidationRule = require('../../../common/models/ValidationRule.class');
+const { ROLE_PERMISSION_ERROR_MSG } = require('../constants');
 
 module.exports = (req, res) => {
   logger.debug('In organisation / editusers post controller');
@@ -28,14 +29,7 @@ module.exports = (req, res) => {
       cookie,
       orgUser,
       roles,
-      errors: [
-        new ValidationRule(
-          null,
-          'role',
-          req.body.role,
-          'You do not have the permissions to edit this user or perform this action'
-        ),
-      ],
+      errors: [new ValidationRule(null, 'role', req.body.role, ROLE_PERMISSION_ERROR_MSG)],
     });
   }
 

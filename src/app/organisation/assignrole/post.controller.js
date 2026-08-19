@@ -8,6 +8,7 @@ const emailService = require('../../../common/services/sendEmail');
 const tokenApi = require('../../../common/services/tokenApi');
 const config = require('../../../common/config/index');
 const { parseUrlForNonProd } = require('../../../common/services/oneLoginApi');
+const { ROLE_PERMISSION_ERROR_MSG } = require('../constants');
 
 module.exports = (req, res) => {
   // Start by clearing cookies and initialising
@@ -22,14 +23,7 @@ module.exports = (req, res) => {
     return res.render('app/organisation/assignrole/index', {
       cookie,
       roles,
-      errors: [
-        new ValidationRule(
-          null,
-          'role',
-          role,
-          'You do not have the permissions to edit this user or perform this action'
-        ),
-      ],
+      errors: [new ValidationRule(null, 'role', role, ROLE_PERMISSION_ERROR_MSG)],
     });
   }
 
