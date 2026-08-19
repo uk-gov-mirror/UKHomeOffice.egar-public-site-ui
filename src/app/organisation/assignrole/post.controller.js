@@ -19,7 +19,6 @@ module.exports = (req, res) => {
   const roles = getRolesForAssigning(cookie.getUserRole());
 
   if (!roles.some((r) => r.name === role) && role !== '') {
-    console.log('invitee role ', role, 'available roles', roles);
     return res.render('app/organisation/assignrole/index', {
       cookie,
       roles,
