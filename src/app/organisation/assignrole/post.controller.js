@@ -18,6 +18,22 @@ module.exports = (req, res) => {
 
   const roles = getRolesForAssigning(cookie.getUserRole());
 
+  if (!roles.some((r) => r.name === role) && role !== '') {
+    console.log('invitee role ', role, 'available roles', roles);
+    return res.render('app/organisation/assignrole/index', {
+      cookie,
+      roles,
+      errors: [
+        new ValidationRule(
+          null,
+          'role',
+          role,
+          'You do not have the permissions to edit this user or perform this action'
+        ),
+      ],
+    });
+  }
+
   // Generate a token for the user
   const alphabet = '23456789abcdefghjkmnpqrstuvwxyz-';
   const token = nanoid(alphabet, 13);

@@ -61,7 +61,8 @@ const simpleGetRender = (req, res, page) => {
   res.render(page, { cookie });
 };
 
-let defaultMiddleware = [flagpole, usercheck, parseForm, csrfcheck];
+const defaultMiddleware = [flagpole, usercheck, parseForm, csrfcheck];
+exports.defaultMiddleware = defaultMiddleware;
 
 exports.garMiddlewares = (initialMiddleware = []) => {
   let middlewares = defaultMiddleware;
@@ -122,3 +123,4 @@ exports.buildGarRouterAndPaths = (path, getController, postController, middlewar
 exports.simpleGetRender = simpleGetRender;
 exports.buildRouterAndPaths = buildRouterAndPaths;
 exports.buildRouterAndPathsNoUserCheck = buildRouterAndPathsNoUserCheck;
+exports.buildRoute = buildRoute;

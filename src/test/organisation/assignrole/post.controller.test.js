@@ -30,12 +30,12 @@ describe('Organisation Assign Role Post Controller', () => {
 
     req = {
       body: {
-        role: 'SuperUser',
+        role: 'Admin',
       },
       session: {
         u: { dbId: 'USER-DB-ID-1', fn: 'Sheev' },
         org: { i: 'ORG-ID-1', name: 'Sith' },
-        inv: { e: 'persontoinvite@random.com', fn: 'Anakin', ln: 'Test', rl: 'NormalUser' },
+        inv: { e: 'persontoinvite@random.com', fn: 'Anakin', ln: 'Test', rl: 'User' },
       },
       get: sinon.stub().withArgs('Authorization').returns('Bearer token'),
     };
@@ -88,12 +88,12 @@ describe('Organisation Assign Role Post Controller', () => {
     callController()
       .then()
       .then(() => {
-        expect(req.session.inv.rl).to.eq('SuperUser');
+        expect(req.session.inv.rl).to.eq('Admin');
         expect(tokenApiStub).to.have.been.calledOnceWithExactly(
           'ExampleGeneratedHash',
           'USER-DB-ID-1',
           'ORG-ID-1',
-          'SuperUser',
+          'Admin',
           cookie.getInviteUserEmail()
         );
         expect(emailServiceStub).to.not.have.been.called;
@@ -119,12 +119,12 @@ describe('Organisation Assign Role Post Controller', () => {
     callController()
       .then()
       .then(() => {
-        expect(req.session.inv.rl).to.eq('SuperUser');
+        expect(req.session.inv.rl).to.eq('Admin');
         expect(tokenApiStub).to.have.been.calledOnceWithExactly(
           'ExampleGeneratedHash',
           'USER-DB-ID-1',
           'ORG-ID-1',
-          'SuperUser',
+          'Admin',
           cookie.getInviteUserEmail()
         );
         expect(emailServiceStub).to.not.have.been.called;
@@ -155,12 +155,12 @@ describe('Organisation Assign Role Post Controller', () => {
       .then()
       .then(() => {
         const generatedToken = tokenServiceStub.getCall(0).args[0];
-        expect(req.session.inv.rl).to.eq('SuperUser');
+        expect(req.session.inv.rl).to.eq('Admin');
         expect(tokenApiStub).to.have.been.calledOnceWithExactly(
           'ExampleGeneratedHash',
           'USER-DB-ID-1',
           'ORG-ID-1',
-          'SuperUser',
+          'Admin',
           cookie.getInviteUserEmail()
         );
         expect(emailServiceStub).to.have.been.calledOnceWithExactly(indexPage, 'persontoinvite@random.com', {
@@ -183,9 +183,10 @@ describe('Organisation Assign Role Post Controller', () => {
   it('should redirect if email api ok', () => {
     sinon.stub(config, TEMPLATE_ID).value(indexPage);
     sinon.stub(config, 'BASE_URL').value('http://www.somewhere.com');
-    tokenApiStub.resolves(JSON.stringify({}));
+    tokenApiStub.resolves(JSON.stringify({ tokenSet: true }));
     emailServiceStub.resolves();
     cookie = new CookieModel(req);
+    cookie.setUserRole('Admin');
 
     const callController = async () => {
       await controller(req, res);
@@ -196,12 +197,12 @@ describe('Organisation Assign Role Post Controller', () => {
       .then()
       .then(() => {
         const generatedToken = tokenServiceStub.getCall(0).args[0];
-        expect(req.session.inv.rl).to.eq('SuperUser');
+        expect(req.session.inv.rl).to.eq('Admin');
         expect(tokenApiStub).to.have.been.calledOnceWithExactly(
           'ExampleGeneratedHash',
           'USER-DB-ID-1',
           'ORG-ID-1',
-          'SuperUser',
+          'Admin',
           cookie.getInviteUserEmail()
         );
         expect(emailServiceStub).to.have.been.calledOnceWithExactly(indexPage, 'persontoinvite@random.com', {

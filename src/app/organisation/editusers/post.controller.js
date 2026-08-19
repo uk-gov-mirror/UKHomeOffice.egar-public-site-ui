@@ -4,6 +4,7 @@ const validations = require('./validations');
 const CookieModel = require('../../../common/models/Cookie.class');
 const orgApi = require('../../../common/services/organisationApi');
 const { getRolesForAssigning } = require('../../../common/utils/utils');
+const ValidationRule = require('../../../common/models/ValidationRule.class');
 
 module.exports = (req, res) => {
   logger.debug('In organisation / editusers post controller');
@@ -17,6 +18,26 @@ module.exports = (req, res) => {
   };
 
   const roles = getRolesForAssigning(cookie.getUserRole());
+
+  if (
+    req.body.role !== '' &&
+    cookie.getUserRole() !== undefined &&
+    roles.some((r) => r.name === req.body.role) === false
+  ) {
+    return res.render('app/organisation/editusers/index', {
+      cookie,
+      orgUser,
+      roles,
+      errors: [
+        new ValidationRule(
+          null,
+          'role',
+          req.body.role,
+          'You do not have the permissions to edit this user or perform this action'
+        ),
+      ],
+    });
+  }
 
   validator
     .validateChains(validations.validations(req))
