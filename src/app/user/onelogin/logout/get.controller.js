@@ -9,6 +9,7 @@ module.exports = (req, res) => {
   // Destroy session and clear cookies before redirecting
   if (req.session) {
     const cookie = new CookieModel(req);
+
     req.session.destroy(() => {
       cookie.reset();
 

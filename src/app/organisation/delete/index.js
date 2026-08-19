@@ -7,6 +7,7 @@ const usercheck = require('../../../common/middleware/usercheck');
 
 // Local dependencies
 const getController = require('./get.controller');
+const pageAccess = require('../../../common/middleware/pageAccess');
 
 // Initialisation
 const router = new express.Router();
@@ -16,7 +17,7 @@ const paths = {
 };
 
 // Routing
-router.get(paths.index, flagpole, usercheck, getController);
+router.get(paths.index, flagpole, usercheck, pageAccess, getController);
 
 // Export
 module.exports = { router, paths };

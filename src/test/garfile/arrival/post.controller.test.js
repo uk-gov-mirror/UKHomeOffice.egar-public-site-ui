@@ -60,6 +60,7 @@ describe('Arrival Post Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: {},
     };
   });
 
@@ -89,6 +90,7 @@ describe('Arrival Post Controller', () => {
 
       sinon.stub(garApi, 'get').resolves(apiResponse);
       sinon.stub(garApi, 'patch');
+      res.locals.gar = { garId: apiResponse['garId'] };
 
       const callController = async () => {
         await controller(req, res);
@@ -113,6 +115,7 @@ describe('Arrival Post Controller', () => {
 
       sinon.stub(garApi, 'get').resolves(apiResponse);
       sinon.stub(garApi, 'patch');
+      res.locals.gar = { garId: 'ABCDEFGH' };
 
       const callController = async () => {
         await controller(req, res);
@@ -136,6 +139,7 @@ describe('Arrival Post Controller', () => {
 
       sinon.stub(garApi, 'get').resolves(apiResponse);
       sinon.stub(garApi, 'patch');
+      res.locals.gar = { garId: 'ABCDEFGH' };
 
       const callController = async () => {
         await controller(req, res);
@@ -164,6 +168,7 @@ describe('Arrival Post Controller', () => {
 
       sinon.stub(garApi, 'get').resolves(apiResponse);
       sinon.stub(garApi, 'patch');
+      res.locals.gar = { garId: 'ABCDEFGH' };
 
       const callController = async () => {
         await controller(req, res);
@@ -195,6 +200,7 @@ describe('Arrival Post Controller', () => {
 
         sinon.stub(garApi, 'get').resolves(apiResponse);
         sinon.stub(garApi, 'patch');
+        res.locals.gar = { garId: 'ABCDEFGH' };
 
         const callController = async () => {
           await controller(req, res);
@@ -251,6 +257,7 @@ describe('Arrival Post Controller', () => {
           ],
         });
       });
+      res.locals.gar = { garId: 'ABCDEFGH' };
 
       const callController = async () => {
         await controller(req, res);
@@ -270,6 +277,9 @@ describe('Arrival Post Controller', () => {
           message: 'GAR does not exist',
         })
       );
+
+      res.locals.gar = { garId: 'ABCDEFGH' };
+
       const callController = async () => {
         await controller(req, res);
       };
@@ -296,6 +306,8 @@ describe('Arrival Post Controller', () => {
       const cookie = new CookieModel(req);
       sinon.stub(garApi, 'get').resolves(apiResponse);
       sinon.stub(garApi, 'patch').resolves(JSON.stringify({}));
+      res.locals.gar = { garId: 'ABCDEFGH' };
+
       const callController = async () => {
         await controller(req, res);
       };
@@ -313,6 +325,8 @@ describe('Arrival Post Controller', () => {
       const cookie = new CookieModel(req);
       sinon.stub(garApi, 'get').resolves(apiResponse);
       sinon.stub(garApi, 'patch').resolves(JSON.stringify({}));
+      res.locals.gar = { garId: 'ABCDEFGH' };
+
       const callController = async () => {
         await controller(req, res);
       };

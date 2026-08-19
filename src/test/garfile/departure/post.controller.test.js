@@ -60,6 +60,7 @@ describe('Departure Post Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: {},
     };
 
     apiResponse = JSON.stringify({
@@ -260,6 +261,7 @@ describe('Departure Post Controller', () => {
           ],
         });
       });
+      res.locals.gar = { garId: '12345' };
 
       const callController = async () => {
         await controller(req, res);
@@ -279,6 +281,8 @@ describe('Departure Post Controller', () => {
           message: 'GAR does not exist',
         })
       );
+      res.locals.gar = { garId: '12345' };
+
       const callController = async () => {
         await controller(req, res);
       };
@@ -305,6 +309,8 @@ describe('Departure Post Controller', () => {
       const cookie = new CookieModel(req);
       sinon.stub(garApi, 'get').resolves(apiResponse);
       sinon.stub(garApi, 'patch').resolves(JSON.stringify({}));
+      res.locals.gar = { garId: '12345' };
+
       const callController = async () => {
         await controller(req, res);
       };
@@ -322,6 +328,8 @@ describe('Departure Post Controller', () => {
       const cookie = new CookieModel(req);
       sinon.stub(garApi, 'get').resolves(apiResponse);
       sinon.stub(garApi, 'patch').resolves(JSON.stringify({}));
+      res.locals.gar = { garId: '12345' };
+
       const callController = async () => {
         await controller(req, res);
       };

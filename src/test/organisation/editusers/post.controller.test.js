@@ -128,6 +128,42 @@ describe('Organisation Edit Users Post Controller', () => {
       });
     });
 
+    it('should show error message if manager submits Admin role', () => {
+      req.body.firstName = '';
+      req.body.lastName = '';
+      req.body.role = 'Admin';
+      cookie = new CookieModel(req);
+      cookie.setUserRole('Manager');
+
+      const callController = async () => {
+        await controller(req, res);
+      };
+
+      callController().then(() => {
+        expect(orgApiStub).to.not.have.been.called;
+        expect(sessionSaveStub).to.not.have.been.called;
+        expect(res.redirect).to.not.have.been.called;
+        expect(res.render).to.have.been.calledOnceWithExactly('app/organisation/editusers/index', {
+          cookie,
+          orgUser: {
+            userId: 'EDIT-BADDIE-1',
+            firstName: '',
+            lastName: '',
+            role: 'Admin',
+          },
+          roles: nonAdminRoles,
+          errors: [
+            new ValidationRule(
+              null,
+              'role',
+              req.body.role,
+              'You do not have the permissions to edit this user or perform this action'
+            ),
+          ],
+        });
+      });
+    });
+
     it('should render messages when strings too long', () => {
       req.body.firstName = 'abcdefghijklmnopqrstuvwxyzabcdefghijk';
       req.body.role = 'Admin';

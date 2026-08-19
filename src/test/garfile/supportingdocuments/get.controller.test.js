@@ -24,6 +24,7 @@ describe('GAR Supporting Documents Get Controller', () => {
     };
     res = {
       render: sinon.spy(),
+      locals: {},
     };
 
     apiResponse = {
@@ -41,6 +42,7 @@ describe('GAR Supporting Documents Get Controller', () => {
   it('should render an error message if api rejects', () => {
     const cookie = new CookieModel(req);
     sinon.stub(garApi, 'getSupportingDocs').rejects('garApi.getSupportingDocs Example Reject');
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);
@@ -63,6 +65,7 @@ describe('GAR Supporting Documents Get Controller', () => {
         message: 'GAR not found',
       })
     );
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);
@@ -86,6 +89,7 @@ describe('GAR Supporting Documents Get Controller', () => {
     };
     const cookie = new CookieModel(req);
     sinon.stub(garApi, 'getSupportingDocs').resolves(JSON.stringify(apiResponse));
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);
@@ -111,6 +115,7 @@ describe('GAR Supporting Documents Get Controller', () => {
     req.query = { query: 'v' };
     const cookie = new CookieModel(req);
     sinon.stub(garApi, 'getSupportingDocs').resolves(JSON.stringify(apiResponse));
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);
@@ -131,6 +136,7 @@ describe('GAR Supporting Documents Get Controller', () => {
     req.query = { query: '0' };
     const cookie = new CookieModel(req);
     sinon.stub(garApi, 'getSupportingDocs').resolves(JSON.stringify(apiResponse));
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);
@@ -151,6 +157,7 @@ describe('GAR Supporting Documents Get Controller', () => {
     req.query = { query: 'limit' };
     const cookie = new CookieModel(req);
     sinon.stub(garApi, 'getSupportingDocs').resolves(JSON.stringify(apiResponse));
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);
@@ -173,6 +180,7 @@ describe('GAR Supporting Documents Get Controller', () => {
     req.query = { query: 'deletefailed' };
     const cookie = new CookieModel(req);
     sinon.stub(garApi, 'getSupportingDocs').resolves(JSON.stringify(apiResponse));
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);
@@ -193,6 +201,7 @@ describe('GAR Supporting Documents Get Controller', () => {
     req.query = { query: 'invalid' };
     const cookie = new CookieModel(req);
     sinon.stub(garApi, 'getSupportingDocs').resolves(JSON.stringify(apiResponse));
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);
@@ -213,6 +222,7 @@ describe('GAR Supporting Documents Get Controller', () => {
     req.query = {};
     const cookie = new CookieModel(req);
     sinon.stub(garApi, 'getSupportingDocs').resolves(JSON.stringify(apiResponse));
+    res.locals.gar = { garId: '90210' };
 
     const callController = async () => {
       await controller(req, res);

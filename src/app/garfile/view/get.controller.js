@@ -78,14 +78,6 @@ module.exports = async (req, res) => {
       const durationInDeparture = garApi.getDurationBeforeDeparture(departureDate, departureTime);
       const numberOf0TResponseCodes = (await dataAccessApi.garApi.getPeople(garId, '', '0T'))?.items?.length;
 
-      // Do the check here
-      if (!checkGARUser(parsedGar, cookie.getUserDbId(), cookie.getOrganisationId())) {
-        logger.error(
-          `Detected an attempt by user id: ${cookie.getUserDbId()} to access GAR with id: ${parsedGar.garId} which does not match userId or organisationId! Returning to dashboard.`
-        );
-        res.redirect('/home');
-        return;
-      }
       cookie.setGarId(parsedGar.garId);
       cookie.setGarStatus(parsedGar.status.name);
       logger.info(`Retrieved GAR id: ${parsedGar.garId}`);
