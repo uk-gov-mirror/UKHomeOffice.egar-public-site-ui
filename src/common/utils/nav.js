@@ -15,9 +15,8 @@ const garAccessCheck = require('../middleware/garOwnership');
 const buildRouterAndPaths = (path, getController, postController) => {
   // Initialisation
   const router = new express.Router();
-  const indexPath = path;
   const paths = {
-    index: indexPath,
+    index: path,
   };
 
   // Routing
@@ -32,9 +31,8 @@ const buildRouterAndPaths = (path, getController, postController) => {
 const buildRouterAndPathsNoUserCheck = (path, getController, postController) => {
   // Initialisation
   const router = new express.Router();
-  const indexPath = path;
   const paths = {
-    index: indexPath,
+    index: path,
   };
 
   // Routing
@@ -51,9 +49,9 @@ const buildRouterAndPathsNoUserCheck = (path, getController, postController) => 
  * the response for the given page. So this is a convenience method to perform
  * that step.
  *
- * @param {} req incoming request
- * @param {*} res outgoing response
- * @param {*} page page to render
+ * @param req Object incoming request
+ * @param res Object outgoing response
+ * @param page page to render
  */
 const simpleGetRender = (req, res, page) => {
   logger.info(`Rendering page ${page}`);
@@ -110,7 +108,9 @@ const buildGarRouterAndPaths = (path, getController, postController, middlewares
   const getMiddlewares = [flagpole, usercheck, csrfcheck, pageAccess, garAccessCheck, ...middlewares];
   const postMiddlewares = [flagpole, usercheck, parseForm, csrfcheck, garAccessCheck, ...middlewares];
 
-  buildRoute(router, paths.index, 'GET', getMiddlewares, getController);
+  if (getController) {
+    buildRoute(router, paths.index, 'GET', getMiddlewares, getController);
+  }
 
   if (postController) {
     buildRoute(router, paths.index, 'POST', postMiddlewares, postController);

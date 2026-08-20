@@ -8,7 +8,7 @@ const clamAVService = require('../../../common/services/clamAVService');
 const uploadFile = require('../../../common/services/fileUploadApi');
 const config = require('../../../common/config/index');
 const { isValidFileMime } = require('../../../common/utils/validator');
-const { isAuthorized, isAuthorizedUserAccess } = require('../../auth');
+// const { isAuthorized, isAuthorizedUserAccess } = require('../../auth');
 const UNAUTHORIZED_REDIRECT = config.UNAUTHORIZED_REDIRECT;
 
 const exceedFileNumSizeLimit = (fileSize, garId) => {
@@ -93,40 +93,21 @@ const handleDeleteDocument = async (req, res, garId) => {
 module.exports = async (req, res) => {
   logger.info('Entering upload file post controller');
 
-  if (!isAuthorized(req)) {
-    logger.info('Unauthorized attempt to manage supporting documents');
-    res.redirect(UNAUTHORIZED_REDIRECT);
-    return;
-  }
-
-  const garId = req.body?.garid;
-
   try {
-    const hasGarUploadAccess = await isAuthorizedUserAccess(req, garId);
-    if (!hasGarUploadAccess) {
-      logger.info(`Unauthorized attempt to manage supporting documents for GAR: ${garId}`);
-      res.redirect(UNAUTHORIZED_REDIRECT);
+    const garId = res.locals.gar.garId;
+
+    if (await handleDeleteDocument(req, res, garId)) {
       return;
     }
-  } catch (authorizationErr) {
-    logger.error('Failed to authorize supporting document request');
-    logger.error(authorizationErr);
-    res.redirect(UNAUTHORIZED_REDIRECT);
-    return;
-  }
 
-  if (await handleDeleteDocument(req, res, garId)) {
-    return;
-  }
+    if (!req.file) {
+      logger.debug('No file selected for upload');
+      res.redirect('/garfile/supportingdocuments?query=0');
+      return;
+    }
 
-  if (!req.file) {
-    logger.debug('No file selected for upload');
-    res.redirect('/garfile/supportingdocuments?query=0');
-    return;
-  }
+    logger.debug('Checking file size');
 
-  logger.debug('About to check file size');
-  try {
     const result = await exceedFileNumSizeLimit(req.file.size, garId);
     if (result === 'EXCEEDS_MAX_SIZE') {
       logger.debug('Total file size was greater than the limit');

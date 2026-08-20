@@ -1,6 +1,6 @@
 const CookieModel = require('../../common/models/Cookie.class');
 const logger = require('../../common/utils/logger')(__filename);
-const garApi = require('../../common/services/garApi');
+const dataAccessApi = require('../../common/services/dataAccessApi');
 const checkGARUser = require('../../common/utils/checkGARUser');
 
 const isAuthorized = (req) => {
@@ -18,8 +18,7 @@ const isAuthorizedUserAccess = async (req, garId) => {
     return false;
   }
 
-  const garResponse = await garApi.get(garId);
-  const parsedGar = JSON.parse(garResponse);
+  const parsedGar = await dataAccessApi.garApi.get(garId);
 
   if (Object.prototype.hasOwnProperty.call(parsedGar, 'message')) {
     logger.info(`Unable to authorize supporting document request for GAR: ${garId}`);
