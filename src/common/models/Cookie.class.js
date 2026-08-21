@@ -133,7 +133,8 @@ class Cookie {
           fixedBasedOperatorAnswer: null,
         },
         isMilitaryFlight: null,
-        isInbound: null,
+        // NMSW-4932 disabled until v14.2.0 release
+        // isInbound: null,
         prohibitedGoods: null,
         goodsDeclaration: null,
         continentalShelf: null,
@@ -209,13 +210,14 @@ class Cookie {
     this.session.gar.isMilitaryFlight = isMilitaryFlight;
   }
 
-  getIsInbound() {
-    return this.session.gar.isInbound;
-  }
+  // NMSW-4932 disabled until v14.2.0 release
+  // getIsInbound() {
+  //   return this.session.gar.isInbound;
+  // }
 
-  setIsInbound(isInbound) {
-    this.session.gar.isInbound = isInbound;
-  }
+  // setIsInbound(isInbound) {
+  //   this.session.gar.isInbound = isInbound;
+  // }
 
   setGarCraft(registration, craftType, craftBase, portChoice) {
     this.session.gar.craft.registration = registration;
