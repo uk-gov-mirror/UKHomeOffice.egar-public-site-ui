@@ -40,6 +40,7 @@ describe('API upload file post controller', () => {
     res = {
       redirect: sinon.stub(),
       render: sinon.stub(),
+      locals: { gar: { garId: 'GAR-1' } },
     };
 
     garApiGetDocsStub = sinon.stub(garApi, 'getSupportingDocs');
