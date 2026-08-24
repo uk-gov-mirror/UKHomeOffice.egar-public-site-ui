@@ -48,17 +48,6 @@ const exceedFileNumSizeLimit = (fileSize, garId) => {
   });
 };
 
-const isDocumentInGar = async (garId, deleteDocId) => {
-  const supportingDocsResponse = await garApi.getSupportingDocs(garId);
-  const parsedSupportingDocs = JSON.parse(supportingDocsResponse);
-
-  if (!Array.isArray(parsedSupportingDocs.items)) {
-    return false;
-  }
-
-  return parsedSupportingDocs.items.some((doc) => doc.supportingDocumentId === deleteDocId);
-};
-
 const handleDeleteDocument = async (req, res, garId) => {
   if (!req.body.deleteDocId) {
     return false;
@@ -66,14 +55,6 @@ const handleDeleteDocument = async (req, res, garId) => {
   logger.info('Found delete supporting document request');
 
   try {
-    const isAuthorizedToDeleteDocument = await isDocumentInGar(garId, req.body.deleteDocId);
-
-    if (!isAuthorizedToDeleteDocument) {
-      logger.info(`Unauthorized to delete supporting document for GAR: ${garId}, document: ${req.body.deleteDocId}`);
-      res.redirect(UNAUTHORIZED_REDIRECT);
-      return true;
-    }
-
     const apiResponse = await garApi.deleteGarSupportingDoc(garId, req.body.deleteDocId);
     const parsedResponse = JSON.parse(apiResponse);
     if (parsedResponse.message) {
@@ -83,6 +64,7 @@ const handleDeleteDocument = async (req, res, garId) => {
     res.redirect('/garfile/supportingdocuments');
     return true;
   } catch (deleteSupportingDocErr) {
+    console.log(deleteSupportingDocErr);
     logger.error('Failed to delete supporting document');
     logger.error(deleteSupportingDocErr);
     res.redirect('/garfile/supportingdocuments?query=deletefailed');
