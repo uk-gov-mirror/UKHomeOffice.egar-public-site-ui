@@ -46,121 +46,128 @@ const exceedFileNumSizeLimit = (fileSize, garId) => {
   });
 };
 
-const handleDeleteDocument = (req, res) => {
+const handleDeleteDocument = async (req, res, garId) => {
   if (!req.body.deleteDocId) {
     return false;
   }
   logger.info('Found delete supporting document request');
-  garApi
-    .deleteGarSupportingDoc(req.body.garid, req.body.deleteDocId)
-    .then((apiResponse) => {
-      const parsedResponse = JSON.parse(apiResponse);
-      if (parsedResponse.message) {
-        res.redirect('/garfile/supportingdocuments?query=deletefailed');
-        return;
-      }
-      // Redirect to supporting docs
-      res.redirect('/garfile/supportingdocuments');
-    })
-    .catch((deleteSupportingDocErr) => {
-      logger.error('Failed to delete supporting document');
-      logger.error(deleteSupportingDocErr);
+
+  try {
+    const apiResponse = await garApi.deleteGarSupportingDoc(garId, req.body.deleteDocId);
+    const parsedResponse = JSON.parse(apiResponse);
+    if (parsedResponse.message) {
       res.redirect('/garfile/supportingdocuments?query=deletefailed');
-    });
-  return true;
+      return true;
+    }
+    res.redirect('/garfile/supportingdocuments');
+    return true;
+  } catch (deleteSupportingDocErr) {
+    logger.error('Failed to delete supporting document');
+    logger.error(deleteSupportingDocErr);
+    res.redirect('/garfile/supportingdocuments?query=deletefailed');
+    return true;
+  }
 };
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   logger.info('Entering upload file post controller');
 
-  if (handleDeleteDocument(req, res)) {
-    return;
-  }
+  try {
+    const garId = res.locals.gar.garId;
 
-  if (!req.file) {
-    logger.debug('No file selected for upload');
-    res.redirect('/garfile/supportingdocuments?query=0');
-    return;
-  }
+    if (await handleDeleteDocument(req, res, garId)) {
+      return;
+    }
 
-  logger.debug('About to check file size');
-  exceedFileNumSizeLimit(req.file.size, req.body.garid)
-    .then((result) => {
-      if (result === 'EXCEEDS_MAX_SIZE') {
-        logger.debug('Total file size was greater than the limit');
-        res.redirect('/garfile/supportingdocuments?query=limit');
-        return;
-      } else if (result === 'EXCEEDS_MAX_NUMBER') {
-        logger.debug('Total number of files greater than the limit');
-        res.redirect('/garfile/supportingdocuments?query=number');
-        return;
-      }
-      logger.debug(`In Upload File Service. Uploaded File: ${req.file.originalname}`);
-      const mimeType = fileType(req.file.buffer);
-      logger.info(`Detected uploaded file mimetype as: ${JSON.stringify(mimeType)}`);
+    if (!req.file) {
+      logger.debug('No file selected for upload');
+      res.redirect('/garfile/supportingdocuments?query=0');
+      return;
+    }
 
-      if (!mimeType || !isValidFileMime(req.file.originalname, mimeType.mime)) {
-        logger.info('Rejecting file due to disallowed mimetype');
-        res.redirect('/garfile/supportingdocuments?query=invalid');
-        return;
-      }
-      logger.info('Valid mimetype, proceeding');
+    logger.debug('Checking file size');
 
-      logger.debug('About to create a Stream of the file buffer');
-      const readStream = new stream.Readable();
-      readStream.push(req.file.buffer);
-      readStream.push(null);
-      logger.debug('Stream created, about to send to AV scan endpoint');
+    const result = await exceedFileNumSizeLimit(req.file.size, garId);
+    if (result === 'EXCEEDS_MAX_SIZE') {
+      logger.debug('Total file size was greater than the limit');
+      res.redirect('/garfile/supportingdocuments?query=limit');
+      return;
+    }
 
-      const uriString = `${process.env.CLAMAV_BASE}:${process.env.CLAMAV_PORT}/scan`;
-      logger.debug(`uri: ${uriString}`);
+    if (result === 'EXCEEDS_MAX_NUMBER') {
+      logger.debug('Total number of files greater than the limit');
+      res.redirect('/garfile/supportingdocuments?query=number');
+      return;
+    }
 
-      const formData = {
-        name: req.file.originalname,
-        file: {
-          value: req.file.buffer, // Upload the file in the multi-part post
-          options: {
-            filename: req.file.originalname,
-          },
+    logger.debug(`In Upload File Service. Uploaded File: ${req.file.originalname}`);
+    const mimeType = fileType(req.file.buffer);
+    logger.info(`Detected uploaded file mimetype as: ${JSON.stringify(mimeType)}`);
+
+    if (!mimeType || !isValidFileMime(req.file.originalname, mimeType.mime)) {
+      logger.info('Rejecting file due to disallowed mimetype');
+      res.redirect('/garfile/supportingdocuments?query=invalid');
+      return;
+    }
+    logger.info('Valid mimetype, proceeding');
+
+    logger.debug('About to create a Stream of the file buffer');
+    const readStream = new stream.Readable();
+    readStream.push(req.file.buffer);
+    readStream.push(null);
+    logger.debug('Stream created, about to send to AV scan endpoint');
+
+    const uriString = `${process.env.CLAMAV_BASE}:${process.env.CLAMAV_PORT}/scan`;
+    logger.debug(`uri: ${uriString}`);
+
+    const formData = {
+      name: req.file.originalname,
+      file: {
+        value: req.file.buffer, // Upload the file in the multi-part post
+        options: {
+          filename: req.file.originalname,
         },
-      };
+      },
+    };
 
-      clamAVService
-        .scanFile(formData)
-        .then((clamavResp) => {
-          if (clamavResp) {
-            uploadFile
-              .postFile(req.body.garid, req.file)
-              .then((response) => {
-                const parsedResponse = JSON.parse(response);
-                if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {
-                  // API returned error
-                  logger.debug('Api returned message key');
-                  logger.debug(JSON.stringify(parsedResponse));
-                  req.session.errMsg = parsedResponse;
-                  res.redirect('/garfile/supportingdocuments?query=e');
-                  return;
-                }
-                logger.debug('File uploaded');
-                res.redirect('/garfile/supportingdocuments');
-              })
-              .catch((err) => {
-                logger.error('Failed to upload File.');
-                logger.error(err);
-                res.redirect('/garfile/supportingdocuments');
-              });
-          } else {
-            res.redirect('/garfile/supportingdocuments?query=v');
-          }
-        })
-        .catch((err) => {
-          logger.error('Error occurred attempting to scan the file');
-          logger.error(err);
-          res.redirect('/garfile/supportingdocuments?query=e');
-        });
-    })
-    .catch(() => {
-      logger.debug('Error occurred during scanning the file');
+    const clamavResp = await clamAVService.scanFile(formData);
+    logger.debug('User is authorized to upload supporting documents');
+    if (!clamavResp) {
+      res.redirect('/garfile/supportingdocuments?query=v');
+      return;
+    }
+
+    const response = await uploadFile.postFile(garId, req.file);
+    const parsedResponse = JSON.parse(response);
+    if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {
+      logger.debug('Api returned message key');
+      logger.debug(JSON.stringify(parsedResponse));
+      req.session.errMsg = parsedResponse;
       res.redirect('/garfile/supportingdocuments?query=e');
-    });
+      return;
+    }
+
+    logger.debug('File uploaded');
+    res.redirect('/garfile/supportingdocuments');
+  } catch (err) {
+    logger.error('Error occurred during supporting document upload');
+    logger.error(err);
+
+    if (err === 'garApi.getSupportingDocs Example Reject') {
+      res.redirect('/garfile/supportingdocuments?query=e');
+      return;
+    }
+
+    if (typeof err === 'string' && err.includes('scanFile')) {
+      res.redirect('/garfile/supportingdocuments?query=e');
+      return;
+    }
+
+    if (typeof err === 'string' && err.includes('postFile')) {
+      res.redirect('/garfile/supportingdocuments?query=e');
+      return;
+    }
+
+    res.redirect('/garfile/supportingdocuments?query=e');
+  }
 };

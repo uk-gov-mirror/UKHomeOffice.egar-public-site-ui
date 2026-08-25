@@ -18,7 +18,6 @@ const sessionRegenerateForAuthenticatedUser = (req) => {
     }
     return acc;
   }, {});
-
   return new Promise((resolve) => {
     req.session.regenerate((error) => {
       if (error) {

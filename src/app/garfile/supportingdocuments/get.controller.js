@@ -26,6 +26,7 @@ module.exports = (req, res) => {
       // Bare minimum to send with the render call
       const context = { cookie, supportingDoc, max_num_files };
       let error = null;
+
       switch (req.query.query) {
         case 'e': // Error returned
           error = [req.session.errMsg];
@@ -50,6 +51,9 @@ module.exports = (req, res) => {
           break;
         case 'invalid':
           error = [{ message: 'Invalid file type selected', identifier: 'file' }];
+          break;
+        case 'unauthorized':
+          error = [{ message: 'You are not authorized to manage supporting documents for this GAR' }];
           break;
         default:
         // No need to set an error

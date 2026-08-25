@@ -40,6 +40,7 @@ describe('API upload file post controller', () => {
     res = {
       redirect: sinon.stub(),
       render: sinon.stub(),
+      locals: { gar: { garId: 'GAR-1' } },
     };
 
     garApiGetDocsStub = sinon.stub(garApi, 'getSupportingDocs');
@@ -146,7 +147,6 @@ describe('API upload file post controller', () => {
 
     it('should redirect with limit parameter if function returns true', () => {
       req.file.size = 1000000;
-
       garApiGetDocsStub.resolves(
         JSON.stringify({
           items: [
@@ -284,7 +284,6 @@ describe('API upload file post controller', () => {
     let formData;
 
     beforeEach(() => {
-      // Create form data for ClamAV
       formData = {
         name: req.file.originalname,
         file: {
@@ -352,7 +351,6 @@ describe('API upload file post controller', () => {
     let formData;
 
     beforeEach(() => {
-      // Create form data for ClamAV
       formData = {
         name: req.file.originalname,
         file: {
@@ -399,7 +397,7 @@ describe('API upload file post controller', () => {
             buffer: req.file.buffer,
             size: 10000,
           });
-          expect(res.redirect).to.have.been.calledOnceWithExactly('/garfile/supportingdocuments');
+          expect(res.redirect).to.have.been.calledOnceWithExactly('/garfile/supportingdocuments?query=e');
         });
     });
 
@@ -453,5 +451,4 @@ describe('API upload file post controller', () => {
         });
     });
   });
-  //
 });
