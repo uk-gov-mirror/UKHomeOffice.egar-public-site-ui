@@ -16,7 +16,7 @@ const checkGARUser = (parsedGar, userId, organisationId) => {
     logger.info('GAR organisation id matches current user ID');
     return true;
   }
-  if (parsedGar.userId === userId) {
+  if (parsedGar?.userId === userId) {
     logger.info('GAR user id matches current user ID');
     return true;
   }
