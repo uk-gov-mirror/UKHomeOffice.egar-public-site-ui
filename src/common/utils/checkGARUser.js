@@ -12,7 +12,7 @@ const logger = require('../utils/logger')(__filename);
 const checkGARUser = (parsedGar, userId, organisationId) => {
   if (parsedGar === undefined || parsedGar === null) return false;
 
-  if (parsedGar.organisationId && organisationId && parsedGar.organisationId === organisationId) {
+  if (parsedGar.organisationId === organisationId) {
     logger.info('GAR organisation id matches current user ID');
     return true;
   }

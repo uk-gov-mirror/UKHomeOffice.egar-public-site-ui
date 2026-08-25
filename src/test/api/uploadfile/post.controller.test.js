@@ -294,6 +294,13 @@ describe('API upload file post controller', () => {
         },
       };
 
+      // Set the first four bytes of the buffer to convince fileType library it is a PDF
+      req.file.buffer.writeUInt8(0x25, 0);
+      req.file.buffer.writeUInt8(0x50, 1);
+      req.file.buffer.writeUInt8(0x44, 2);
+      req.file.buffer.writeUInt8(0x46, 3);
+
+      // To allow the exceedFileLimit function to return false
       garApiGetDocsStub.resolves(
         JSON.stringify({
           items: [{ fileName: 'FILE1.doc', size: '2MB' }],
@@ -354,6 +361,13 @@ describe('API upload file post controller', () => {
         },
       };
 
+      // Set the first four bytes of the buffer to convince fileType library it is a PDF
+      req.file.buffer.writeUInt8(0x25, 0);
+      req.file.buffer.writeUInt8(0x50, 1);
+      req.file.buffer.writeUInt8(0x44, 2);
+      req.file.buffer.writeUInt8(0x46, 3);
+
+      // To allow the exceedFileLimit function to return false
       garApiGetDocsStub.resolves(
         JSON.stringify({
           items: [{ fileName: 'FILE1.doc', size: '2MB' }],
@@ -383,7 +397,7 @@ describe('API upload file post controller', () => {
             buffer: req.file.buffer,
             size: 10000,
           });
-          expect(res.redirect).to.have.been.calledOnceWithExactly('/garfile/supportingdocuments');
+          expect(res.redirect).to.have.been.calledOnceWithExactly('/garfile/supportingdocuments?query=e');
         });
     });
 

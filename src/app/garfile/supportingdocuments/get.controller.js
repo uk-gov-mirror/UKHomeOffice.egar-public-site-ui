@@ -36,7 +36,6 @@ module.exports = (req, res) => {
           error = [{ message: 'File cannot be uploaded. The file has a virus', identifier: 'file' }];
           break;
         case '0': // No file
-          console.log('no file found');
           error = [{ identifier: 'file', message: 'No file selected for upload' }];
           break;
         case 'limit':
@@ -61,7 +60,6 @@ module.exports = (req, res) => {
       }
       if (error !== null) {
         // Add to the errors to be passed to the render call
-        console.log(error);
         context.errors = error;
       }
       res.render('app/garfile/supportingdocuments/index', context);

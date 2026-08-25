@@ -8,8 +8,6 @@ const clamAVService = require('../../../common/services/clamAVService');
 const uploadFile = require('../../../common/services/fileUploadApi');
 const config = require('../../../common/config/index');
 const { isValidFileMime } = require('../../../common/utils/validator');
-// const { isAuthorized, isAuthorizedUserAccess } = require('../../auth');
-const UNAUTHORIZED_REDIRECT = config.UNAUTHORIZED_REDIRECT;
 
 const exceedFileNumSizeLimit = (fileSize, garId) => {
   logger.debug(`Entering exceed file number & size limit function, max size ${config.SUPPORTING_DOCS_MAX_SIZE} bytes,
@@ -64,7 +62,6 @@ const handleDeleteDocument = async (req, res, garId) => {
     res.redirect('/garfile/supportingdocuments');
     return true;
   } catch (deleteSupportingDocErr) {
-    console.log(deleteSupportingDocErr);
     logger.error('Failed to delete supporting document');
     logger.error(deleteSupportingDocErr);
     res.redirect('/garfile/supportingdocuments?query=deletefailed');
@@ -167,7 +164,7 @@ module.exports = async (req, res) => {
     }
 
     if (typeof err === 'string' && err.includes('postFile')) {
-      res.redirect('/garfile/supportingdocuments');
+      res.redirect('/garfile/supportingdocuments?query=e');
       return;
     }
 

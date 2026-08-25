@@ -18,7 +18,6 @@ const sessionRegenerateForAuthenticatedUser = (req) => {
     }
     return acc;
   }, {});
-  console.log('asdfadf');
   return new Promise((resolve) => {
     req.session.regenerate((error) => {
       if (error) {
