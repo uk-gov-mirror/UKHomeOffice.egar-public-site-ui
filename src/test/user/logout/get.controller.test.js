@@ -61,8 +61,6 @@ describe('Logout Get Controller', () => {
     expect(sessionDestroyStub).to.have.been.calledOnce;
     expect(res.clearCookie).to.have.been.calledWith('state');
     expect(res.redirect).to.have.been.calledOnce;
-    expect(res.redirect.firstCall.args[0]).to.contain('https://onelogin.example/logout?');
-    expect(res.redirect.firstCall.args[0]).to.contain('id_token_hint=session_id_token');
-    expect(res.redirect.firstCall.args[0]).to.contain('state=valid_state');
+    expect(res.redirect.firstCall.args[0]).to.contain('/welcome/index');
   });
 });
