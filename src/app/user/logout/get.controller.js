@@ -19,14 +19,19 @@ module.exports = (req, res) => {
   const idToken = req.session?.id_token;
 
   // If returning from Onelogin with a "user-deleted" state after delete confirm
-  if (req.query?.action === 'user-deleted') {
+  if (req.query?.state === 'user-deleted') {
     return logoutAndClearCookies(req, res, cookie, '/user/deleteconfirm');
   }
+
   // One login sign path
-  if (req.query?.action === 'user-deleted') {
-    state = 'user-deleted';
+  if (state && idToken) {
+    if (req.query?.action === 'user-deleted') {
+      state = 'user-deleted';
+    }
+
     const logoutUrl = getOneLoginLogoutUrl(req, idToken, state);
-    return logoutAndClearCookies(req, res, cookie, logoutUrl);
+    res.clearCookie('state');
+    return res.redirect(logoutUrl);
   }
 
   // Default logout path
