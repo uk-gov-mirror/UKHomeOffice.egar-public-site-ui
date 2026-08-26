@@ -62,7 +62,7 @@ const getOneLoginLogoutUrl = (req, id_token, state) => {
       state,
     };
     const query = new URLSearchParams(options);
-    return query ? `${url}?${query}` : url;
+    return `${url}?${query}`;
   } catch (error) {
     logger.error('Failed to create oneLogin user logout');
     throw error;
