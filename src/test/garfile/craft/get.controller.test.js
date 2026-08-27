@@ -30,6 +30,7 @@ describe('GAR Craft Get Controller', () => {
     };
     res = {
       render: sinon.spy(),
+      locals: { gar: { garId: 'RANDOM-GAR-ID' } },
     };
 
     garApiGetStub = sinon.stub(garApi, 'get');

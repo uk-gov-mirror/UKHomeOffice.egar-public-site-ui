@@ -9,6 +9,7 @@ const organisationApi = require('../../../common/services/organisationApi');
 const verifyUserService = require('../../../common/services/verificationApi');
 const { parseUrlForNonProd } = require('../../../common/services/oneLoginApi');
 const { getOneLoginLogoutUrl } = require('../../../common/utils/oneLoginAuth');
+const { sessionRegenerateForAuthenticatedUser } = require('../../../common/utils/session_generator');
 
 // Constants
 const ROUTES = {
@@ -24,8 +25,6 @@ const USER_STATES = {
   VERIFIED: 'verified',
 };
 
-let accountUrl = BASE_URL + '/organisation';
-
 /**
  * Checks if user is authenticated in the session
  * @param {Object} userSessionObject - User session object
@@ -36,7 +35,7 @@ const isUserAuthenticated = (userSessionObject) => {
   return !!(userSessionObject.dbId && userSessionObject.vr && userSessionObject.rl);
 };
 
-const sendAdminUpdateEmail = (userObj) => {
+const sendAdminUpdateEmail = (userObj, accountUrl) => {
   if (!userObj.organisation) {
     return new Promise((resolve, _reject) => resolve(userObj));
   }
@@ -68,12 +67,13 @@ const sendAdminUpdateEmail = (userObj) => {
  * @param {Object} cookie - Cookie model instance
  * @returns {Promise<Object>} - User authentication result
  */
-const handleUserAuthentication = (req, res, userInfo, cookie) => {
+const handleUserAuthentication = (req, res, userInfo, accountUrl) => {
   const { email, sub: oneLoginSid } = userInfo;
   return userApi
     .userSearch(email, oneLoginSid)
     .then(async (userData) => {
       if (!userData?.userId) {
+        logger.error('User Id not found during onelogin flow, going to register page');
         return { redirect: ROUTES.REGISTER };
       }
 
@@ -97,7 +97,7 @@ const handleUserAuthentication = (req, res, userInfo, cookie) => {
               .updateEmailOrOneLoginSid(userData.email, { email })
               .then(() => {
                 userData.email = email;
-                sendAdminUpdateEmail(userData).then(() => resolve(userData));
+                sendAdminUpdateEmail(userData, accountUrl).then(() => resolve(userData));
               })
               .catch((err) => reject(err))
           );
@@ -125,6 +125,7 @@ const handleUserAuthentication = (req, res, userInfo, cookie) => {
 
       return userApi.getDetails(email).then((details) => {
         const { organisation } = details || {};
+        const cookie = new CookieModel(req);
 
         setUserCookies(cookie, {
           ...userData,
@@ -156,8 +157,6 @@ const setUserCookies = (cookie, userData) => {
   cookie.setUserOrganisationId(organisation?.organisationId);
 };
 
-let global_id_token = null;
-
 /**
  * Main login controller
  */
@@ -165,8 +164,6 @@ module.exports = async (req, res) => {
   if (req.headers.referer && isUserAuthenticated(req.session.u)) {
     return res.redirect(ROUTES.HOME);
   }
-
-  const cookie = new CookieModel(req);
 
   const { code } = req.query;
 
@@ -180,17 +177,16 @@ module.exports = async (req, res) => {
     return res.redirect(redirectErrorPage(req, res, 'service-error'));
   }
 
-  oneLoginApi
+  return oneLoginApi
     .sendOneLoginTokenRequest(req, code, oneLoginUtil)
     .then(({ access_token, id_token }) => {
-      res.cookie('id_token', id_token);
-      global_id_token = id_token;
-
       if (!id_token) {
         // If for some reason, One Login service does not return a valid id_token, something is wrong with service.
         logger.error('Invalid ID Token error.');
         return res.redirect(redirectErrorPage(req, res, 'service-error'));
       }
+
+      req.session.id_token = id_token;
 
       return new Promise((resolve) => {
         oneLoginUtil.verifyJwt(id_token, req.cookies.nonce, resolve);
@@ -207,24 +203,32 @@ module.exports = async (req, res) => {
             return res.redirect(redirectErrorPage(req, res, 'login-error'));
           }
 
-          accountUrl = parseUrlForNonProd(req, accountUrl);
+          const accountUrl = parseUrlForNonProd(req, `${BASE_URL}/organisation`);
 
-          return handleUserAuthentication(req, res, userInfo, cookie)
+          return sessionRegenerateForAuthenticatedUser(req)
+            .then((isRegenerated) => {
+              if (!isRegenerated) {
+                return { redirect: redirectErrorPage(req, res, 'service-error') };
+              }
+
+              return handleUserAuthentication(req, res, userInfo, accountUrl);
+            })
             .then(({ redirect }) => {
+              const cookie = new CookieModel(req);
+              req.session.id_token = id_token;
               const redirectUrl = cookie.getRedirectUrl();
               if (redirectUrl !== '') {
                 const baseUrl = `${HTTPS}${BASE_URL}`;
                 const urlParams = new URL(redirectUrl, baseUrl);
                 const garId = urlParams.searchParams.get('gar_id');
-                logger.info(`Redirected to GAR ${garId}`);
-                cookie.setGarId(garId);
-                redirect = redirectUrl;
+                if (garId) {
+                  logger.info(`Redirected to GAR ${garId}`);
+                  cookie.setGarId(garId);
+                  redirect = redirectUrl;
+                }
               }
 
-              if (redirect === ROUTES.HOME) {
-                delete req.cookies.nonce;
-                delete req.cookies.state;
-              } else if (redirect === ROUTES.REGISTER) {
+              if (redirect === ROUTES.REGISTER) {
                 req.session.access_token = access_token;
               }
               return redirect;
@@ -232,6 +236,7 @@ module.exports = async (req, res) => {
             .then(async (redirect) => {
               res.set('Referer', req.headers.host);
               if (redirect === ROUTES.REGISTER) {
+                req.session.id_token = id_token;
                 redirect = await checkUserInvite(req, res, userInfo.email);
               }
 
@@ -244,6 +249,7 @@ module.exports = async (req, res) => {
       if (error) {
         logger.error(`Login process failed ${error}`);
       }
+      return res.redirect(redirectErrorPage(req, res, 'service-error'));
     });
 };
 
@@ -264,5 +270,19 @@ async function checkUserInvite(req, res, email) {
 
 function redirectErrorPage(req, res, errorPage) {
   res.cookie('errorPage', errorPage);
-  return getOneLoginLogoutUrl(req, global_id_token, req.cookies.state);
+
+  // Ensure failed OIDC flows do not leave sensitive tokens in session.
+  const sessionToken = req.session?.id_token;
+  if (req.session) {
+    delete req.session.id_token;
+    delete req.session.access_token;
+    delete req.session.step;
+    delete req.session.step_data;
+  }
+
+  if (!sessionToken || !req.cookies?.state) {
+    return ROUTES.ERROR_404;
+  }
+
+  return getOneLoginLogoutUrl(req, sessionToken, req.cookies.state);
 }

@@ -28,6 +28,7 @@ describe('Departure Get Controller', () => {
 
     res = {
       render: sinon.spy(),
+      locals: { gar: { garId: '12345' } },
     };
   });
 

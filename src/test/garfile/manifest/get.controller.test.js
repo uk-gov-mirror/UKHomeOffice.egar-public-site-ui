@@ -10,6 +10,7 @@ require('../../global.test');
 const CookieModel = require('../../../common/models/Cookie.class');
 const personApi = require('../../../common/services/personApi');
 const garApi = require('../../../common/services/garApi');
+const dataAccessApi = require('../../../common/services/dataAccessApi');
 
 const controller = require('../../../app/garfile/manifest/get.controller');
 
@@ -41,6 +42,7 @@ describe('Manifest Get Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: { gar: { garId: '9001' } },
     };
     sinon.stub(garApi, 'get').resolves(true);
   });
@@ -53,7 +55,7 @@ describe('Manifest Get Controller', () => {
   it('should return an error if person api rejects', async () => {
     cookie = new CookieModel(req);
     sinon.stub(personApi, 'getPeople').rejects('Some reason here');
-    sinon.stub(garApi, 'getPeople').resolves();
+    sinon.stub(dataAccessApi.garApi, 'getPeople').resolves();
 
     await controller(req, res);
 
@@ -70,7 +72,7 @@ describe('Manifest Get Controller', () => {
   it('should return an error if gar api rejects', () => {
     cookie = new CookieModel(req);
     sinon.stub(personApi, 'getPeople').resolves();
-    sinon.stub(garApi, 'getPeople').rejects('garApi.getPeople Example Reject');
+    sinon.stub(dataAccessApi.garApi, 'getPeople').rejects('garApi.getPeople Example Reject');
 
     const callController = async () => {
       await controller(req, res);
@@ -92,17 +94,14 @@ describe('Manifest Get Controller', () => {
 
     beforeEach(() => {
       personApiStub = sinon.stub(personApi, 'getPeople').resolves(JSON.stringify(savedPeople()));
-      garApiStub = sinon.stub(garApi, 'getPeople').resolves(
-        JSON.stringify({
-          items: garPeople(),
-        })
-      );
+      garApiStub = sinon.stub(dataAccessApi.garApi, 'getPeople').resolves({
+        items: garPeople(),
+      });
     });
 
     it('should render with errMsg populated', async () => {
       req.session.errMsg = { message: 'Example Error Message' };
       cookie = new CookieModel(req);
-
       await controller(req, res);
 
       expect(personApiStub).to.have.been.calledWith('USER-12345', 'individual');
@@ -113,7 +112,9 @@ describe('Manifest Get Controller', () => {
         savedPeople: flaggedSavedPeople(),
         isInvalidSavedPeople: false,
         isUnableToAddPeople: false,
-        manifest: { items: garPeople() },
+        manifest: {
+          items: garPeople(),
+        },
         errors: [{ message: 'Example Error Message' }],
       });
     });
@@ -138,7 +139,9 @@ describe('Manifest Get Controller', () => {
           savedPeople: flaggedSavedPeople(),
           isInvalidSavedPeople: false,
           isUnableToAddPeople: false,
-          manifest: { items: garPeople() },
+          manifest: {
+            items: garPeople(),
+          },
           manifestInvalidPeople: [{ firstName: 'Jean-Luc', lastName: 'Picard' }],
           errors: [{ message: 'Wrong era' }],
         });
@@ -179,7 +182,9 @@ describe('Manifest Get Controller', () => {
           savedPeople: flaggedSavedPeople(),
           isUnableToAddPeople: false,
           isInvalidSavedPeople: false,
-          manifest: { items: garPeople() },
+          manifest: {
+            items: garPeople(),
+          },
         });
       });
     });

@@ -10,8 +10,6 @@ const welcome = require('./welcome');
 // Register dependencies
 const usersignin = require('./user/login');
 const postusersignin = require('./home');
-const userregister = require('./user/register');
-const registermsg = require('./user/regmsg');
 const oneloginRegister = require('./user/onelogin');
 
 // User dependencies
@@ -73,9 +71,7 @@ const accessibility = require('./accessibility');
 
 // veirfy registeruser
 const verifyregisteruser = require('./verify/registeruser');
-const verifytokenuser = require('./verify');
 const verifyInvite = require('./verify/organisationinvite');
-const verifyMfa = require('./verify/mfa');
 
 // organisation
 const organisation = require('./organisation');
@@ -96,13 +92,10 @@ module.exports.bind = (app) => {
   app.use(index.router);
   app.use(welcome.router);
   app.use(usersignin.router);
-  app.use(userregister.router);
-  app.use(registermsg.router);
   app.use(aircraftdetail.router);
   app.use(departuredetail.router);
   app.use(arrivaldetail.router);
   app.use(verifyregisteruser.router);
-  app.use(verifytokenuser.router);
   app.use(error.router);
   app.use(logout.router);
   app.use(postusersignin.router);
@@ -143,7 +136,6 @@ module.exports.bind = (app) => {
   app.use(garAmend.router);
   app.use(garsubmitfailure.router);
   app.use(garsubmitsucess.router);
-  app.use(verifyMfa.router);
   app.use(aircraft.router);
   app.use(userDetails.router);
   app.use(people.router);

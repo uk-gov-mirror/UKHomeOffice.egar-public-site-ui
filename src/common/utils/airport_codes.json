@@ -5181,10 +5181,10 @@
   },
   {
     "id": "GHF",
-    "id2": "ETEU",
+    "id2": "EDQG",
     "british": false,
     "crownDependency": false,
-    "label": "Giebelstadt Army Air Field (Germany) (ETEU / GHF)"
+    "label": "Giebelstadt Airport (Germany) (EDQG/GHF) "
   },
   {
     "id": "ETHB",
@@ -19811,24 +19811,24 @@
   },
   {
     "id": "BHK",
-    "id2": "UTSB",
+    "id2": "UZSB",
     "british": false,
     "crownDependency": false,
-    "label": "Bukhara Airport (Uzbekistan) (UTSB / BHK)"
+    "label": "Bukhara Airport (Uzbekistan) (UZSB / BHK)"
   },
   {
     "id": "SKD",
-    "id2": "UTSS",
+    "id2": "UZSS",
     "british": false,
     "crownDependency": false,
-    "label": "Samarkand Airport (Uzbekistan) (UTSS / SKD)"
+    "label": "Samarkand Airport (Uzbekistan) (UZSS / SKD)"
   },
   {
     "id": "TAS",
-    "id2": "UTTT",
+    "id2": "UZTT",
     "british": false,
     "crownDependency": false,
-    "label": "Tashkent International Airport (Uzbekistan) (UTTT / TAS)"
+    "label": "Tashkent International Airport (Uzbekistan) (UZTT / TAS)"
   },
   {
     "id": "BZK",
@@ -33552,17 +33552,17 @@
   },
   {
     "id": "NCU",
-    "id2": "UTNN",
+    "id2": "UZNN",
     "british": false,
     "crownDependency": false,
-    "label": "Nukus Airport (Uzbekistan) (UTNN / NCU)"
+    "label": "Nukus Airport (Uzbekistan) (UZNN / NCU)"
   },
   {
     "id": "UGC",
-    "id2": "UTNU",
+    "id2": "UZNU",
     "british": false,
     "crownDependency": false,
-    "label": "Urgench Airport (Uzbekistan) (UTNU / UGC)"
+    "label": "Urgench Airport (Uzbekistan) (UZNU / UGC)"
   },
   {
     "id": "KSQ",
@@ -33573,10 +33573,10 @@
   },
   {
     "id": "TMJ",
-    "id2": "UTST",
+    "id2": "UZST",
     "british": false,
     "crownDependency": false,
-    "label": "Termez Airport (Uzbekistan) (UTST / TMJ)"
+    "label": "Termez Airport (Uzbekistan) (UZST / TMJ)"
   },
   {
     "id": "RYB",
@@ -35638,10 +35638,10 @@
   },
   {
     "id": "NVI",
-    "id2": "UTSA",
+    "id2": "UZSA",
     "british": false,
     "crownDependency": false,
-    "label": "Navoi Airport (Uzbekistan) (UTSA / NVI)"
+    "label": "Navoi Airport (Uzbekistan) (UZSA / NVI)"
   },
   {
     "id": "LFCD",
@@ -56495,5 +56495,26 @@
     "british": false,
     "crownDependency": false,
     "label": "Pokhara International Airport (Nepal) (VNPR / PHH)"
+  },
+  {
+    "id": "KIUA",
+    "id2": "KIUA",
+    "british": false,
+    "crownDependency": false,
+    "label": "Canandaigua Airport (KIUA)"
+  },
+  {
+    "id": "CPS",
+    "id2": "KCPS",
+    "british": false,
+    "crownDependency": false,
+    "label": "St. Louis Downtown Airport (CPS / KCPS)"
+  },
+  {
+    "id": "EGKF",
+    "id2": "EGKF",
+    "british": true,
+    "crownDependency": false,
+    "label": "Kittyhawk Farm (United Kingdom) (EGKF)"
   }
 ]

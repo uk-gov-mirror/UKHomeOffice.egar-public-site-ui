@@ -8,7 +8,7 @@ module.exports = (req, res) => {
   const max_num_files = config.MAX_NUM_FILES;
   logger.debug('In garfile / supporting documents get controller');
   garApi
-    .getSupportingDocs(cookie.getGarId())
+    .getSupportingDocs(res.locals.gar.garId)
     .then((apiResponse) => {
       const parsedResponse = JSON.parse(apiResponse);
       if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {
@@ -26,6 +26,7 @@ module.exports = (req, res) => {
       // Bare minimum to send with the render call
       const context = { cookie, supportingDoc, max_num_files };
       let error = null;
+
       switch (req.query.query) {
         case 'e': // Error returned
           error = [req.session.errMsg];
@@ -39,19 +40,20 @@ module.exports = (req, res) => {
           break;
         case 'limit':
           error = [
-            { message: 'The total file size of all uploaded documents must be less than 8MB', identifier: 'file' },
+            { message: 'The total file size of all uploaded documents must be less than 7.5MB', identifier: 'file' },
           ];
           break;
         case 'number':
-          error = [
-            { message: 'The total file size of all uploaded documents must be less than 8MB', identifier: 'file' },
-          ];
+          error = [{ message: '8 is the maximum number of documents that can be uploaded', identifier: 'file' }];
           break;
         case 'deletefailed':
           error = [{ message: 'Failed to delete document. Try again' }];
           break;
         case 'invalid':
           error = [{ message: 'Invalid file type selected', identifier: 'file' }];
+          break;
+        case 'unauthorized':
+          error = [{ message: 'You are not authorized to manage supporting documents for this GAR' }];
           break;
         default:
         // No need to set an error

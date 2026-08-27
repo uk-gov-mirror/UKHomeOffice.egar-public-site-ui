@@ -7,9 +7,10 @@ const checkKeys = (obj, ...keys) => {
 
 module.exports = (req, res) => {
   if (
-    !checkKeys(req.cookies, 'state', 'id_token', 'nonce') ||
+    !checkKeys(req.cookies, 'state', 'nonce') ||
     req.headers.referer === null ||
-    !req.session?.access_token
+    !req.session?.access_token ||
+    !req.session?.id_token
   ) {
     return res.redirect('/');
   }

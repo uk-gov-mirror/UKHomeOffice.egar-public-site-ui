@@ -7,6 +7,7 @@ require('../../global.test');
 const CookieModel = require('../../../common/models/Cookie.class');
 const manifestFields = require('../../../common/seeddata/gar_manifest_fields.json');
 const garApi = require('../../../common/services/garApi');
+const dataAccessApi = require('../../../common/services/dataAccessApi');
 const controller = require('../../../app/garfile/view/get.controller');
 const { outboundGar } = require('../../fixtures');
 
@@ -46,10 +47,10 @@ describe('GAR view get controller', () => {
       render: sinon.spy(),
     };
 
-    garApiGetStub = sinon.stub(garApi, 'get');
-    garApiGetPeopleStub = sinon.stub(garApi, 'getPeople');
-    garApiGetSupportingDocsStub = sinon.stub(garApi, 'getSupportingDocs');
-    getGarCheckinProgressStub = sinon.stub(garApi, 'getGarCheckinProgress');
+    garApiGetStub = sinon.stub(dataAccessApi.garApi, 'get');
+    garApiGetPeopleStub = sinon.stub(dataAccessApi.garApi, 'getPeople');
+    garApiGetSupportingDocsStub = sinon.stub(dataAccessApi.garApi, 'getSupportingDocs');
+    getGarCheckinProgressStub = sinon.stub(dataAccessApi.garApi, 'getGarCheckinProgress');
     getDurationBeforeDepartureStub = sinon.stub(garApi, 'getDurationBeforeDeparture');
   });
 
@@ -68,31 +69,39 @@ describe('GAR view get controller', () => {
       cookie.setGarId('GAR-ID-EXAMPLE-1');
 
       garApiGetStub.resolves(
-        JSON.stringify({
-          garId: 'GAR-ID-EXAMPLE-1-API',
-          status: { name: 'Draft' },
-          userId: 'USER-123',
-        })
+        new Promise((resolve) =>
+          resolve({
+            garId: 'GAR-ID-EXAMPLE-1-API',
+            status: { name: 'Draft' },
+            userId: 'USER-123',
+          })
+        )
       );
       garApiGetPeopleStub.resolves(
-        JSON.stringify({
-          items: [
-            { id: 'PERSON-1', firstName: 'Simona' },
-            { id: 'PERSON-2', firstName: 'Serena' },
-          ],
-        })
+        new Promise((resolve) =>
+          resolve({
+            items: [
+              { id: 'PERSON-1', firstName: 'Simona' },
+              { id: 'PERSON-2', firstName: 'Serena' },
+            ],
+          })
+        )
       );
 
       garApiGetSupportingDocsStub.resolves(
-        JSON.stringify({
-          items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-        })
+        new Promise((resolve) =>
+          resolve({
+            items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
+          })
+        )
       );
 
       getGarCheckinProgressStub.resolves(
-        JSON.stringify({
-          progress: { progress: 'Complete' },
-        })
+        new Promise((resolve) =>
+          resolve({
+            progress: { progress: 'Complete' },
+          })
+        )
       );
 
       getDurationBeforeDepartureStub.returns(125);
@@ -105,7 +114,6 @@ describe('GAR view get controller', () => {
         .then()
         .then(() => {
           expect(garApiGetStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
-          //expect(garApiGetPeopleStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
           expect(garApiGetSupportingDocsStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
           expect(res.render).to.have.been.calledOnceWithExactly('app/garfile/view/index', {
             cookie,
@@ -141,25 +149,31 @@ describe('GAR view get controller', () => {
       userOldSubmissionGar.departureDate = '2023-03-20';
       userOldSubmissionGar.departureTime = '10:55:26';
 
-      garApiGetStub.resolves(JSON.stringify(userOldSubmissionGar));
+      garApiGetStub.resolves(new Promise((resolve) => resolve(userOldSubmissionGar)));
       garApiGetPeopleStub.resolves(
-        JSON.stringify({
-          items: [
-            { id: 'PERSON-1', firstName: 'Simona' },
-            { id: 'PERSON-2', firstName: 'Serena' },
-          ],
-        })
+        new Promise((resolve) =>
+          resolve({
+            items: [
+              { id: 'PERSON-1', firstName: 'Simona' },
+              { id: 'PERSON-2', firstName: 'Serena' },
+            ],
+          })
+        )
       );
       garApiGetSupportingDocsStub.resolves(
-        JSON.stringify({
-          items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-        })
+        new Promise((resolve) =>
+          resolve({
+            items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
+          })
+        )
       );
 
       getGarCheckinProgressStub.resolves(
-        JSON.stringify({
-          progress: { progress: 'Complete' },
-        })
+        new Promise((resolve) =>
+          resolve({
+            progress: { progress: 'Complete' },
+          })
+        )
       );
       getDurationBeforeDepartureStub.returns(125);
 

@@ -16,7 +16,7 @@ const paths = {
 };
 
 // Routing
-router.get(paths.index, flagpole, csrfcheck, getController);
+router.get(paths.index, flagpole, getController);
 
 // Export
 module.exports = { router, paths };

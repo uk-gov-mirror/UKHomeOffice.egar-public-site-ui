@@ -14,7 +14,7 @@ module.exports = (req, res) => {
   const userId = cookie.getUserDbId();
 
   garApi
-    .get(cookie.getGarId())
+    .get(res?.locals?.gar?.garId)
     .then((garApiResponse) => {
       const gar = JSON.parse(garApiResponse);
       if (

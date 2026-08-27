@@ -56,6 +56,7 @@ describe('Manifest Edit Person Post Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: { gar: { garId: '9001' } },
     };
 
     person = {

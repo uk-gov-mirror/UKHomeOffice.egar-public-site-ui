@@ -10,6 +10,7 @@ module.exports = async (req, res) => {
   const { buttonClicked } = req.body;
 
   logger.debug('In garfile / manifest post controller');
+
   if (req.body.editSavedPerson) {
     req.session.editPersonId = req.body.editSavedPerson;
     req.session.save(() => res.redirect('/people/edit'));
@@ -22,9 +23,8 @@ module.exports = async (req, res) => {
       .getDetailsByIds(req.body.personId, cookie.getUserDbId())
       .then((selectedPeople) => {
         garApi
-          .patch(cookie.getGarId(), 'Draft', { people: selectedPeople })
+          .patch(res?.locals?.gar?.garId, 'Draft', { people: selectedPeople })
           .then(() => {
-            console.debug({ people: selectedPeople });
             res.redirect('/garfile/manifest');
           })
           .catch((err) => {
@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
       })
       .catch(() => {
         logger.error(
-          `user_id: ${cookie.getUserDbId()}, gar_id: ${cookie.getGarId()} > Failed to retrieve manifest ids`
+          `user_id: ${cookie.getUserDbId()}, gar_id: ${res.locals.gar.garId} > Failed to retrieve manifest ids`
         );
         req.session.manifestErr = [
           {
@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
     const addPeopleToGarIds = typeof req.body.garPeopleId === 'string' ? [req.body.garPeopleId] : req.body.garPeopleId;
 
     manifestUtil
-      .getgarPeopleIds(addPeopleToGarIds, cookie.getGarId())
+      .getgarPeopleIds(addPeopleToGarIds, res.locals.gar.garId)
       .then((selectedPeople) => {
         const people = selectedPeople.map(function (element) {
           return {

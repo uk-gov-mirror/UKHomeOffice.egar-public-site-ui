@@ -35,6 +35,12 @@ Notes:
 - Do not manually edit `src/common/app_data/airport_codes.json`; it is derived from the CSV.
 - The generator enforces sorting and normalisation and will overwrite the JSON file.
 - The resulting JSON includes an additional `value` field (priority: IATA > ICAO > first otherCode).
+- when filling the airport_codes.csv, the "otherCodes" column should hold a comma separated list of airport codes that don't match IATA or ICAO.
+
+|name| ICAO                                          | IATA                                         | OtherCode                                   | crownDependency                        | designated                       | british                     | label                  | Comment |
+|---|-----------------------------------------------|----------------------------------------------|---------------------------------------------|----------------------------------------|----------------------------------|-----------------------------|------------------------|---|
+|Kautokeino Air Base| ENKA                                          | QKX                                          |                                             | FALSE                                  | FALSE                            | FALSE                       | Kautokeino Air Base (QKX / ENKA) | ICAO/IATA aircodes|
+ |Bedwell Hey Farm Ely Rd| | | E201| FALSE| TRUE| TRUE| Bedwell Hey Farm Ely Rd| Not IATA/ICAO airfield|
 
 ## Unit tests
 
@@ -80,3 +86,12 @@ In general you don't need to run `gateway-api` and `data-integr-cbp`, unless:
 - `public` folders contains frontend scripts, stylesheets and html that is sent to the user.
 - `locales` contains text used in the app.
 - `common` contains common functionalty used in app.
+
+
+## Managing Token Generation Exclusion
+
+In order to prevent unnecessary generation of token, we added an exclusion list. This list holds the path patterns for routes 
+that don't use CSRF tokens. This was introduced as part of the ticket [sGAR: CSRF
+](https://jira.bics-collaboration.homeoffice.gov.uk/browse/NMSW-3970).
+
+The list is maintained in this file `src/common/config/csrfExclusionList.js`

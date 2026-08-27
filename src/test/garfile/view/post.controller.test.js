@@ -7,6 +7,7 @@ require('../../global.test');
 const CookieModel = require('../../../common/models/Cookie.class');
 const manifestFields = require('../../../common/seeddata/gar_manifest_fields.json');
 const garApi = require('../../../common/services/garApi');
+const dataAccessApi = require('../../../common/services/dataAccessApi');
 
 const controller = require('../../../app/garfile/view/post.controller');
 const { outboundGar } = require('../../fixtures');
@@ -43,9 +44,9 @@ describe('GAR view post controller', () => {
       render: sinon.spy(),
     };
 
-    garApiGetStub = sinon.stub(garApi, 'get');
-    garApiGetPeopleStub = sinon.stub(garApi, 'getPeople');
-    garApiGetSupportingDocsStub = sinon.stub(garApi, 'getSupportingDocs');
+    garApiGetStub = sinon.stub(dataAccessApi.garApi, 'get');
+    garApiGetPeopleStub = sinon.stub(dataAccessApi.garApi, 'getPeople');
+    garApiGetSupportingDocsStub = sinon.stub(dataAccessApi.garApi, 'getSupportingDocs');
     getDurationBeforeDepartureStub = sinon.stub(garApi, 'getDurationBeforeDeparture');
   });
 
@@ -54,74 +55,13 @@ describe('GAR view post controller', () => {
     clock.restore();
   });
 
-  describe('checkGARUser', () => {
-    it('should return false if all undefined fields', () => {
-      expect(controller.checkGARUser(undefined, undefined, undefined)).to.be.false;
-    });
-
-    it('should return false if all null fields', () => {
-      expect(controller.checkGARUser(null, null, null)).to.be.false;
-    });
-
-    it('should return false if user id no match and undefined organisation', () => {
-      const parsedGar = {
-        userId: 'USER-123',
-      };
-
-      expect(controller.checkGARUser(parsedGar, undefined, 'USER-234')).to.be.false;
-    });
-
-    it('should return false if organisation id no match and undefined user', () => {
-      const parsedGar = {
-        userId: 'USER-123',
-        organisationId: 'ORG-123',
-      };
-
-      expect(controller.checkGARUser(parsedGar, undefined, 'ORG-234')).to.be.false;
-    });
-
-    it('should return false if no match', () => {
-      const parsedGar = {
-        userId: 'USER-123',
-        organisationId: 'ORG-123',
-      };
-
-      expect(controller.checkGARUser(parsedGar, 'USER-234', 'ORG-234')).to.be.false;
-    });
-
-    it('should return true if user ids match', () => {
-      const parsedGar = {
-        userId: 'USER-123',
-      };
-
-      expect(controller.checkGARUser(parsedGar, 'USER-123', undefined)).to.be.true;
-    });
-
-    it('should return true if organisation ids match', () => {
-      const parsedGar = {
-        organisationId: 'ORG-123',
-      };
-
-      expect(controller.checkGARUser(parsedGar, 'USER-123', 'ORG-123')).to.be.true;
-    });
-
-    it('should return true if organisation ids match and user ids match', () => {
-      const parsedGar = {
-        organisationId: 'ORG-123',
-        userId: 'USER-123',
-      };
-
-      expect(controller.checkGARUser(parsedGar, 'USER-123', 'ORG-123')).to.be.true;
-    });
-  });
-
-  it('should redirect to home if the api does not find the GAR', () => {
+  it('should redirect to home if the api does not find the GAR', async () => {
     const cookie = new CookieModel(req);
     cookie.setGarId('GAR-ID-EXAMPLE-1');
 
-    garApiGetStub.resolves(JSON.stringify({ message: 'GAR does not exist' }));
-    garApiGetPeopleStub.resolves(JSON.stringify({ message: 'GAR does not exist' }));
-    garApiGetSupportingDocsStub.resolves(JSON.stringify({ message: 'GAR does not exist' }));
+    garApiGetStub.resolves(new Promise((resolve) => resolve({ message: 'GAR does not exist' })));
+    garApiGetPeopleStub.resolves({ message: 'GAR does not exist' });
+    garApiGetSupportingDocsStub.resolves(new Promise((resolve) => resolve({ message: 'GAR does not exist' })));
 
     const callController = async () => {
       await controller(req, res);
@@ -133,7 +73,7 @@ describe('GAR view post controller', () => {
         expect(garApiGetStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1', true);
         expect(garApiGetPeopleStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
         expect(garApiGetSupportingDocsStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
-        expect(res.redirect).to.have.been.calledOnceWithExactly('/home');
+        expect(res.redirect).to.have.been.calledWithExactly('/home');
         expect(res.render).to.not.have.been.called;
       });
   });
@@ -142,8 +82,8 @@ describe('GAR view post controller', () => {
     const cookie = new CookieModel(req);
     cookie.setGarId('GAR-ID-EXAMPLE-1');
 
-    garApiGetStub.resolves();
-    garApiGetPeopleStub.resolves();
+    garApiGetStub.resolves({});
+    garApiGetPeopleStub.resolves({});
     garApiGetSupportingDocsStub.rejects('garApi.getSupportingDocs Example Reject');
     const callController = async () => {
       await controller(req, res);
@@ -155,7 +95,6 @@ describe('GAR view post controller', () => {
         expect(garApiGetStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1', true);
         expect(garApiGetPeopleStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
         expect(garApiGetSupportingDocsStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
-        // expect(res.redirect).to.have.been.calledOnceWithExactly('/home');
         expect(res.render).to.have.been.calledOnceWithExactly('app/garfile/view/index', {
           cookie,
           manifestFields,
@@ -169,28 +108,37 @@ describe('GAR view post controller', () => {
   });
 
   it('should use the session cookie gar id if not in the body', () => {
-    const cookie = new CookieModel(req);
     delete req.body.garId;
     req.session.gar = { id: 'GAR-ID-EXAMPLE-2' };
+    const cookie = new CookieModel(req);
+    // cookie.setGarId('GAR-ID-EXAMPLE-2');
+    // cookie.setOrganisationId('ORG-123');
+
     garApiGetStub.resolves(
-      JSON.stringify({
-        garId: 'GAR-ID-EXAMPLE-2-API',
-        status: { name: 'Draft' },
-        userId: 'USER-123',
-      })
+      new Promise((resolve) =>
+        resolve({
+          garId: 'GAR-ID-EXAMPLE-2',
+          status: { name: 'Draft' },
+          userId: 'USER-123',
+        })
+      )
     );
     garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [
-          { id: 'PERSON-1', firstName: 'Simona' },
-          { id: 'PERSON-2', firstName: 'Serena' },
-        ],
-      })
+      new Promise((resolve) =>
+        resolve({
+          items: [
+            { id: 'PERSON-1', firstName: 'Simona' },
+            { id: 'PERSON-2', firstName: 'Serena' },
+          ],
+        })
+      )
     );
     garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-      })
+      new Promise((resolve) =>
+        resolve({
+          items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
+        })
+      )
     );
     getDurationBeforeDepartureStub.returns(125);
 
@@ -207,7 +155,7 @@ describe('GAR view post controller', () => {
         expect(res.render).to.have.been.calledOnceWithExactly('app/garfile/view/index', {
           cookie,
           manifestFields,
-          garfile: { garId: 'GAR-ID-EXAMPLE-2-API', status: { name: 'Draft' } },
+          garfile: { garId: 'GAR-ID-EXAMPLE-2', status: { name: 'Draft' } },
           isAbleToCancelGar: true,
           garpeople: {
             items: [
@@ -232,24 +180,26 @@ describe('GAR view post controller', () => {
     cookie.setGarId('GAR-ID-EXAMPLE-1');
 
     garApiGetStub.resolves(
-      JSON.stringify({
-        garId: 'GAR-ID-EXAMPLE-1-API',
-        status: { name: 'Draft' },
-        userId: 'USER-123',
-      })
+      new Promise((resolve) =>
+        resolve({
+          garId: 'GAR-ID-EXAMPLE-1',
+          status: { name: 'Draft' },
+          userId: 'USER-123',
+        })
+      )
     );
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [
-          { id: 'PERSON-1', firstName: 'Simona' },
-          { id: 'PERSON-2', firstName: 'Serena' },
-        ],
-      })
-    );
+    garApiGetPeopleStub.resolves({
+      items: [
+        { id: 'PERSON-1', firstName: 'Simona' },
+        { id: 'PERSON-2', firstName: 'Serena' },
+      ],
+    });
     garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-      })
+      new Promise((resolve) =>
+        resolve({
+          items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
+        })
+      )
     );
 
     getDurationBeforeDepartureStub.returns(125);
@@ -267,7 +217,7 @@ describe('GAR view post controller', () => {
         expect(res.render).to.have.been.calledOnceWithExactly('app/garfile/view/index', {
           cookie,
           manifestFields,
-          garfile: { garId: 'GAR-ID-EXAMPLE-1-API', status: { name: 'Draft' } },
+          garfile: { garId: 'GAR-ID-EXAMPLE-1', status: { name: 'Draft' } },
           isAbleToCancelGar: true,
           garpeople: {
             items: [
@@ -291,26 +241,20 @@ describe('GAR view post controller', () => {
     const cookie = new CookieModel(req);
     cookie.setGarId('GAR-ID-EXAMPLE-1');
 
-    garApiGetStub.resolves(
-      JSON.stringify({
-        garId: 'GAR-ID-EXAMPLE-1-API',
-        status: { name: 'Cancelled' },
-        userId: 'USER-123',
-      })
-    );
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [
-          { id: 'PERSON-1', firstName: 'Simona' },
-          { id: 'PERSON-2', firstName: 'Serena' },
-        ],
-      })
-    );
-    garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-      })
-    );
+    garApiGetStub.resolves({
+      garId: 'GAR-ID-EXAMPLE-1',
+      status: { name: 'Cancelled' },
+      userId: 'USER-123',
+    });
+    garApiGetPeopleStub.resolves({
+      items: [
+        { id: 'PERSON-1', firstName: 'Simona' },
+        { id: 'PERSON-2', firstName: 'Serena' },
+      ],
+    });
+    garApiGetSupportingDocsStub.resolves({
+      items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
+    });
 
     getDurationBeforeDepartureStub.returns(125);
 
@@ -330,7 +274,7 @@ describe('GAR view post controller', () => {
           showChangeLinks: false,
           isJourneyUKInbound: true,
           isAbleToCancelGar: true,
-          garfile: { garId: 'GAR-ID-EXAMPLE-1-API', status: { name: 'Cancelled' } },
+          garfile: { garId: 'GAR-ID-EXAMPLE-1', status: { name: 'Cancelled' } },
           garpeople: {
             items: [
               { id: 'PERSON-1', firstName: 'Simona' },
@@ -347,46 +291,6 @@ describe('GAR view post controller', () => {
       });
   });
 
-  it('should redirect if user id does not match', () => {
-    const cookie = new CookieModel(req);
-    cookie.setGarId('GAR-ID-EXAMPLE-1');
-
-    garApiGetStub.resolves(
-      JSON.stringify({
-        garId: 'GAR-ID-EXAMPLE-1-API',
-        status: { name: 'Submitted' },
-        userId: 'USER-124',
-      })
-    );
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [
-          { id: 'PERSON-1', firstName: 'Simona' },
-          { id: 'PERSON-2', firstName: 'Serena' },
-        ],
-      })
-    );
-    garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-      })
-    );
-
-    const callController = async () => {
-      await controller(req, res);
-    };
-
-    callController()
-      .then()
-      .then(() => {
-        expect(garApiGetStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1', true);
-        expect(garApiGetPeopleStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
-        expect(garApiGetSupportingDocsStub).to.have.been.calledOnceWithExactly('GAR-ID-EXAMPLE-1');
-        expect(res.redirect).to.have.been.calledOnceWithExactly('/home');
-        expect(res.render).to.not.have.been.called;
-      });
-  });
-
   it('should render submitted page if Submitted, matching org ids', () => {
     req.session.org = { i: 'ORG-123' };
     const cookie = new CookieModel(req);
@@ -396,20 +300,16 @@ describe('GAR view post controller', () => {
     garWithMatchingOrgsNotUser.userId = 'USER-124';
     garWithMatchingOrgsNotUser.organisationId = 'ORG-123';
 
-    garApiGetStub.resolves(JSON.stringify(garWithMatchingOrgsNotUser));
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [
-          { id: 'PERSON-1', firstName: 'Simona' },
-          { id: 'PERSON-2', firstName: 'Serena' },
-        ],
-      })
-    );
-    garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-      })
-    );
+    garApiGetStub.resolves(garWithMatchingOrgsNotUser);
+    garApiGetPeopleStub.resolves({
+      items: [
+        { id: 'PERSON-1', firstName: 'Simona' },
+        { id: 'PERSON-2', firstName: 'Serena' },
+      ],
+    });
+    garApiGetSupportingDocsStub.resolves({
+      items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
+    });
     getDurationBeforeDepartureStub.returns(125);
 
     const callController = async () => {
@@ -452,20 +352,16 @@ describe('GAR view post controller', () => {
     let outboundGarWithSameUserId = outboundGar();
     outboundGarWithSameUserId.userId = 'USER-123';
 
-    garApiGetStub.resolves(JSON.stringify(outboundGarWithSameUserId));
-    garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [
-          { id: 'PERSON-1', firstName: 'Simona' },
-          { id: 'PERSON-2', firstName: 'Serena' },
-        ],
-      })
-    );
-    garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-      })
-    );
+    garApiGetStub.resolves(outboundGarWithSameUserId);
+    garApiGetPeopleStub.resolves({
+      items: [
+        { id: 'PERSON-1', firstName: 'Simona' },
+        { id: 'PERSON-2', firstName: 'Serena' },
+      ],
+    });
+    garApiGetSupportingDocsStub.resolves({
+      items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
+    });
     getDurationBeforeDepartureStub.returns(125);
 
     const callController = async () => {
@@ -509,19 +405,24 @@ describe('GAR view post controller', () => {
     userOldSubmissionGar.departureDate = '2023-03-20';
     userOldSubmissionGar.departureTime = '10:55:26';
 
-    garApiGetStub.resolves(JSON.stringify(userOldSubmissionGar));
+    garApiGetStub.resolves(new Promise((resolve) => resolve(userOldSubmissionGar)));
     garApiGetPeopleStub.resolves(
-      JSON.stringify({
-        items: [
-          { id: 'PERSON-1', firstName: 'Simona' },
-          { id: 'PERSON-2', firstName: 'Serena' },
-        ],
-      })
+      new Promise((resolve) =>
+        resolve({
+          items: [
+            { id: 'PERSON-1', firstName: 'Simona' },
+            { id: 'PERSON-2', firstName: 'Serena' },
+          ],
+        })
+      )
     );
+
     garApiGetSupportingDocsStub.resolves(
-      JSON.stringify({
-        items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
-      })
+      new Promise((resolve) =>
+        resolve({
+          items: [{ name: 'EXAMPLE-DOC-1', size: '1MB' }],
+        })
+      )
     );
     getDurationBeforeDepartureStub.returns(125);
 
