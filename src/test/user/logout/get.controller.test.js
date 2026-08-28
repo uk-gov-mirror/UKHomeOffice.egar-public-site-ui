@@ -24,6 +24,7 @@ describe('Logout Get Controller', () => {
         u: { dbId: 'USER-DB-ID-1' },
         destroy: (callback) => callback(),
       },
+      query: {},
     };
     res = {
       redirect: sinon.spy(),
@@ -54,8 +55,6 @@ describe('Logout Get Controller', () => {
     config.ONE_LOGIN_INTEGRATION_URL = 'https://onelogin.example';
     config.ONE_LOGIN_LOGOUT_URL = 'https://public-site.dev.egar-notprod.homeoffice.gov.uk/onelogin/logout';
 
-    sessionDestroyStub = sinon.stub(req.session, 'destroy').callsArg(0);
-
     controller(req, res);
 
     expect(sessionDestroyStub).to.have.been.calledOnce;
@@ -64,5 +63,20 @@ describe('Logout Get Controller', () => {
     expect(res.redirect.firstCall.args[0]).to.contain('https://onelogin.example/logout?');
     expect(res.redirect.firstCall.args[0]).to.contain('id_token_hint=session_id_token');
     expect(res.redirect.firstCall.args[0]).to.contain('state=valid_state');
+  });
+
+  it('should redirect to confirm screen after user-deleted', () => {
+    req.cookies = { state: 'user-deleted' };
+    req.query = { state: 'user-deleted' };
+    req.session.id_token = 'session_id_token';
+
+    sessionDestroyStub = sinon.stub(req.session, 'destroy').callsArg(0);
+
+    controller(req, res);
+
+    expect(sessionDestroyStub).to.have.been.calledOnce;
+    expect(res.clearCookie).to.have.been.calledWith('state');
+    expect(res.redirect).to.have.been.calledOnce;
+    expect(res.redirect.firstCall.args[0]).to.contain('/user/deleteconfirm');
   });
 });

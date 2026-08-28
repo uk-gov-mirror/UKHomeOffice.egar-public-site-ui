@@ -6,29 +6,6 @@ const airportValidation = require('../../../common/utils/airportValidation');
 const { isAbleToCancelGar } = require('../../../common/utils/validator');
 const dataAccessApi = require('../../../common/services/dataAccessApi');
 
-/**
- * For a supplied GAR object, check that the user id or organisation id
- * match the given parameters. Returns true if there is a match or false
- * otherwise.
- *
- * @param {Object} parsedGar The GAR to check
- * @param {String} userId The user id to check against
- * @param {String} organisationId The organisation to check against
- */
-const checkGARUser = (parsedGar, userId, organisationId) => {
-  if (parsedGar === undefined || parsedGar === null) return false;
-
-  if (parsedGar.organisationId && organisationId && parsedGar.organisationId === organisationId) {
-    logger.debug('GAR organisation id matches current user ID');
-    return true;
-  }
-  if (parsedGar.userId === userId) {
-    logger.debug('GAR user ID matches current user ID');
-    return true;
-  }
-  return false;
-};
-
 module.exports = async (req, res) => {
   const cookie = new CookieModel(req);
   let renderContext = {};
@@ -77,15 +54,6 @@ module.exports = async (req, res) => {
       const durationInDeparture = garApi.getDurationBeforeDeparture(departureDate, departureTime);
       const numberOf0TResponseCodes = (await dataAccessApi.garApi.getPeople(garId, '', '0T'))?.items?.length;
 
-      // Do the check here
-      if (!checkGARUser(parsedGar, cookie.getUserDbId(), cookie.getOrganisationId())) {
-        logger.error('Detected an unauthorized attempt to access GAR', {
-          userId: cookie.getUserDbId(),
-          garId: parsedGar.garId,
-        });
-        res.redirect('/home');
-        return;
-      }
       cookie.setGarId(parsedGar.garId);
       cookie.setGarStatus(parsedGar.status.name);
       logger.debug(`Retrieved GAR ID: ${parsedGar.garId}`);

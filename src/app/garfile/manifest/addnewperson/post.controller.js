@@ -34,7 +34,7 @@ module.exports = (req, res) => {
     .validateChains(validations.validations(req))
     .then(() => {
       garApi
-        .patch(cookie.getGarId(), 'Draft', { people: [person] })
+        .patch(res.locals.gar.garId, 'Draft', { people: [person] })
         .then((garResponse) => {
           const parsedResponse = JSON.parse(garResponse);
           if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {

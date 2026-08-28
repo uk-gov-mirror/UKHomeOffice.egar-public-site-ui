@@ -82,7 +82,7 @@ const createValidationChains = (voyage) => {
 
 const performAPICall = (cookie, res, buttonClicked) => {
   garApi
-    .patch(cookie.getGarId(), cookie.getGarStatus(), cookie.getGarDepartureVoyage())
+    .patch(res.locals.gar.garId, cookie.getGarStatus(), cookie.getGarDepartureVoyage())
     .then((apiResponse) => {
       const parsedResponse = JSON.parse(apiResponse);
       if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {

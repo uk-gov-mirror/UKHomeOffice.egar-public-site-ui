@@ -7,7 +7,7 @@ const utils = require('../../../common/utils/utils');
 
 module.exports = async (req, res) => {
   const cookie = new CookieModel(req);
-  const garId = cookie.getGarId();
+  const garId = res.locals.gar.garId;
   const context = {
     fixedBasedOperatorOptions,
     cookie,

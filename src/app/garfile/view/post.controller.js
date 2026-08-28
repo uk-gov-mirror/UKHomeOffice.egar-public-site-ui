@@ -6,29 +6,6 @@ const garApi = require('../../../common/services/garApi');
 const dataAccessApi = require('../../../common/services/dataAccessApi');
 const { isAbleToCancelGar } = require('../../../common/utils/validator');
 
-/**
- * For a supplied GAR object, check that the user id or organisation id
- * match the given parameters. Returns true if there is a match or false
- * otherwise.
- *
- * @param {Object} parsedGar The GAR to check
- * @param {String} userId The user id to check against
- * @param {String} organisationId The organisation to check against
- */
-const checkGARUser = (parsedGar, userId, organisationId) => {
-  if (parsedGar === undefined || parsedGar === null) return false;
-
-  if (parsedGar.organisationId && organisationId && parsedGar.organisationId === organisationId) {
-    logger.debug('GAR organisation id matches current user ID');
-    return true;
-  }
-  if (parsedGar.userId === userId) {
-    logger.debug('GAR user ID matches current user ID');
-    return true;
-  }
-  return false;
-};
-
 module.exports = async (req, res) => {
   const cookie = new CookieModel(req);
   let { garId } = req.body;
@@ -62,16 +39,15 @@ module.exports = async (req, res) => {
     const { departureDate, departureTime } = parsedGar;
     const lastDepartureDateString = departureDate && departureTime ? `${departureDate}T${departureTime}.000Z` : null;
 
-    numberOf0TResponseCodes = (parsedPeople.items || []).filter((x) => x.amgCheckinResponseCode === '0T').length;
-    const durationInDeparture = garApi.getDurationBeforeDeparture(parsedGar.departureDate, parsedGar.departureTime);
     // Do the check here
-    if (!checkGARUser(parsedGar, cookie.getUserDbId(), cookie.getOrganisationId())) {
-      logger.error(
-        `Detected an attempt by user id: ${cookie.getUserDbId()} to access GAR with id: ${parsedGar.garId} which does not match userId or organisationId! Returning to dashboard.`
-      );
+    if (parsedGar?.message) {
+      logger.error(`Gar not found : ${parsedGar.garId}.`);
       res.redirect('/home');
       return;
     }
+
+    numberOf0TResponseCodes = (parsedPeople.items || []).filter((x) => x.amgCheckinResponseCode === '0T').length;
+    const durationInDeparture = garApi.getDurationBeforeDeparture(parsedGar.departureDate, parsedGar.departureTime);
 
     cookie.setCbpId(parsedGar.cbpId);
     cookie.setGarId(parsedGar.garId);
@@ -108,4 +84,3 @@ module.exports = async (req, res) => {
     res.render('app/garfile/view/index', renderContext);
   }
 };
-module.exports.checkGARUser = checkGARUser;

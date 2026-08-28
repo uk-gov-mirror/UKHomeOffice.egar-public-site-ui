@@ -30,7 +30,8 @@ module.exports = (req, res) => {
     }
 
     const logoutUrl = getOneLoginLogoutUrl(req, idToken, state);
-    return logoutAndClearCookies(req, res, cookie, logoutUrl);
+    res.clearCookie('state');
+    return res.redirect(logoutUrl);
   }
 
   // Default logout path

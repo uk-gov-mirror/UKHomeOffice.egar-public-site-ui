@@ -50,6 +50,7 @@ describe('GAR Customs Post Controller', () => {
     res = {
       redirect: sinon.spy(),
       render: sinon.spy(),
+      locals: {},
     };
 
     garApiPatchStub = sinon.stub(garApi, 'patch');
@@ -189,6 +190,7 @@ describe('GAR Customs Post Controller', () => {
   it('should show error if api rejects', () => {
     const cookie = new CookieModel(req);
     garApiPatchStub.rejects('garApi.patch Example Reject');
+    res.locals.gar = { garId: 'ABCD-1234' };
 
     const callController = async () => {
       await controller(req, res);
@@ -247,6 +249,7 @@ describe('GAR Customs Post Controller', () => {
         message: 'GAR not found',
       })
     );
+    res.locals.gar = { garId: 'ABCD-1234' };
 
     const callController = async () => {
       await controller(req, res);
@@ -298,6 +301,7 @@ describe('GAR Customs Post Controller', () => {
 
   it('should go to the home page if no buttonClicked property', () => {
     garApiPatchStub.resolves(JSON.stringify({}));
+    res.locals.gar = { garId: 'ABCD-1234' };
 
     const callController = async () => {
       await controller(req, res);
@@ -327,6 +331,7 @@ describe('GAR Customs Post Controller', () => {
   it('should go to craft page if buttonClicked property is set', () => {
     req.body.buttonClicked = 'Save and continue';
     garApiPatchStub.resolves(JSON.stringify({}));
+    res.locals.gar = { garId: 'ABCD-1234' };
 
     const callController = async () => {
       await controller(req, res);
@@ -357,6 +362,7 @@ describe('GAR Customs Post Controller', () => {
     req.body.buttonClicked = 'Save and continue';
     req.body.prohibitedGoods = 'No';
     garApiPatchStub.resolves(JSON.stringify({}));
+    res.locals.gar = { garId: 'ABCD-1234' };
 
     const callController = async () => {
       await controller(req, res);
@@ -387,6 +393,7 @@ describe('GAR Customs Post Controller', () => {
     req.body.buttonClicked = 'Save and continue';
     req.body.prohibitedGoods = 'adFnjKekNnveAiej1324mk';
     garApiPatchStub.resolves(JSON.stringify({}));
+    res.locals.gar = { garId: 'ABCD-1234' };
 
     const callController = async () => {
       await controller(req, res);
@@ -418,6 +425,7 @@ describe('GAR Customs Post Controller', () => {
     req.body.prohibitedGoods = 'No';
     req.body.goodsDeclaration = 'adFnjKekNnveAiej1324mk';
     garApiPatchStub.resolves(JSON.stringify({}));
+    res.locals.gar = { garId: 'ABCD-1234' };
 
     const callController = async () => {
       await controller(req, res);
@@ -449,6 +457,7 @@ describe('GAR Customs Post Controller', () => {
     req.body.prohibitedGoods = 'Yes';
     req.body.goodsDeclaration = '      a      ';
     garApiPatchStub.resolves(JSON.stringify({}));
+    res.locals.gar = { garId: 'ABCD-1234' };
 
     const callController = async () => {
       await controller(req, res);

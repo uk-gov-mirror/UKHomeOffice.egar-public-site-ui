@@ -206,19 +206,15 @@ describe('User OneLogin Post Controller', () => {
     });
 
     it('should clean up session and redirect to home', async () => {
-      req.session.id_token = 'id_token';
       req.session.access_token = 'access_token';
       req.session.step_data = { data: 'value' };
 
       await postController(req, res);
 
-      expect(req.session.id_token).to.be.undefined;
       expect(req.session.access_token).to.be.undefined;
       expect(req.session.step).to.be.undefined;
       expect(req.session.step_data).to.be.undefined;
       expect(req.session.save).to.have.been.called;
-      expect(res.clearCookie).to.have.been.calledWith('state');
-      expect(res.clearCookie).to.have.been.calledWith('nonce');
       expect(res.redirect).to.have.been.calledWith('/home');
     });
   });

@@ -88,3 +88,6 @@ exports.HTTPS = this.IS_HTTPS_SERVER ? 'https://' : 'http';
 
 // Document upload settings
 exports.SUPPORTING_DOCS_MAX_SIZE = 1024 ** 2 * 7.5; // 7.5MB
+
+// UnAuthorized redirect
+exports.UNAUTHORIZED_REDIRECT = '/garfile/supportingdocuments?query=unauthorized';

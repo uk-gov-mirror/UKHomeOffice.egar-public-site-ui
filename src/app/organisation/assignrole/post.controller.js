@@ -8,6 +8,7 @@ const emailService = require('../../../common/services/sendEmail');
 const tokenApi = require('../../../common/services/tokenApi');
 const config = require('../../../common/config/index');
 const { parseUrlForNonProd } = require('../../../common/services/oneLoginApi');
+const { ROLE_PERMISSION_ERROR_MSG } = require('../constants');
 
 module.exports = (req, res) => {
   // Start by clearing cookies and initialising
@@ -17,6 +18,14 @@ module.exports = (req, res) => {
   logger.debug(`Invitee role: ${role}`);
 
   const roles = getRolesForAssigning(cookie.getUserRole());
+
+  if (!roles.some((r) => r.name === role) && role !== '') {
+    return res.render('app/organisation/assignrole/index', {
+      cookie,
+      roles,
+      errors: [new ValidationRule(null, 'role', role, ROLE_PERMISSION_ERROR_MSG)],
+    });
+  }
 
   // Generate a token for the user
   const alphabet = '23456789abcdefghjkmnpqrstuvwxyz-';

@@ -72,6 +72,7 @@ const handleUserAuthentication = (req, res, userInfo, accountUrl) => {
     .userSearch(email, oneLoginSid)
     .then(async (userData) => {
       if (!userData?.userId) {
+        logger.error('User Id not found during onelogin flow, going to register page');
         return { redirect: ROUTES.REGISTER };
       }
 
@@ -213,20 +214,20 @@ module.exports = async (req, res) => {
             })
             .then(({ redirect }) => {
               const cookie = new CookieModel(req);
+              req.session.id_token = id_token;
               const redirectUrl = cookie.getRedirectUrl();
               if (redirectUrl !== '') {
                 const baseUrl = `${HTTPS}${BASE_URL}`;
                 const urlParams = new URL(redirectUrl, baseUrl);
                 const garId = urlParams.searchParams.get('gar_id');
-                logger.info(`Redirected to GAR ${garId}`);
-                cookie.setGarId(garId);
-                redirect = redirectUrl;
+                if (garId) {
+                  logger.info(`Redirected to GAR ${garId}`);
+                  cookie.setGarId(garId);
+                  redirect = redirectUrl;
+                }
               }
 
-              if (redirect === ROUTES.HOME) {
-                res.clearCookie('nonce');
-                res.clearCookie('state');
-              } else if (redirect === ROUTES.REGISTER) {
+              if (redirect === ROUTES.REGISTER) {
                 req.session.access_token = access_token;
               }
               return redirect;
@@ -234,6 +235,7 @@ module.exports = async (req, res) => {
             .then(async (redirect) => {
               res.set('Referer', req.headers.host);
               if (redirect === ROUTES.REGISTER) {
+                req.session.id_token = id_token;
                 redirect = await checkUserInvite(req, res, userInfo.email);
               }
 

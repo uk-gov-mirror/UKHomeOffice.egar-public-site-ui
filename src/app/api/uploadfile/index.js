@@ -1,8 +1,10 @@
 const express = require('express');
 const multer = require('multer');
 const config = require('../../../common/config');
-
+const usercheck = require('../../../common/middleware/usercheck');
+const csrfcheck = require('../../../common/middleware/csrfcheck');
 const logger = require('../../../common/utils/logger')(__filename);
+const garAccessCheck = require('../../../common/middleware/garOwnership');
 
 const postController = require('./post.controller');
 
@@ -16,6 +18,7 @@ const upload = multer({ storage, limits: { fileSize: config.SUPPORTING_DOCS_MAX_
 
 router.post(
   paths.index,
+  usercheck,
   (req, res, next) => {
     upload(req, res, (err) => {
       if (err) {
@@ -25,6 +28,8 @@ router.post(
       next(err);
     });
   },
+  csrfcheck,
+  garAccessCheck,
   postController
 );
 

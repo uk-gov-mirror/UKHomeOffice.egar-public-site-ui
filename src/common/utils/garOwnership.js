@@ -14,29 +14,32 @@ const logger = require('./logger')(__filename);
 const checkGARUser = (parsedGar, userId, organisationId) => {
   if (parsedGar === undefined || parsedGar === null) return false;
 
-  if (parsedGar.organisationId && organisationId && parsedGar.organisationId === organisationId) {
-    logger.debug('GAR organisation id matches current user ID');
-    return true;
+  if (parsedGar.organisationId) {
+    const isSameOrganisation = organisationId !== null && parsedGar.organisationId === organisationId;
+
+    // if a gar has an org, then we can just check if the user and gar from the same Organisation
+    if (!isSameOrganisation) {
+      logger.warn('GAR Organisation does not match the organisation ID of user');
+      return false;
+    }
   }
-  if (parsedGar.userId === userId) {
-    logger.debug('GAR user ID matches current user ID');
-    return true;
-  }
-  return false;
+
+  // organisationId is null for individual users, so we check the userId match.
+  // all organisation user's will have their organisationId set.
+  return !(!organisationId && parsedGar.userId !== userId);
 };
 
 /**
  *
  * @param cookie  CookieModel
  * @param garId   string
- * @param param2  object - {isCbpId: false}
  * @returns {Promise<{ok: boolean, gar: null}>}
  */
-const hasGarOwnership = async (cookie, garId, { isCbpId = false } = {}) => {
+const hasGarOwnership = async (cookie, garId) => {
   if (!garId) return { ok: false, gar: null };
 
   try {
-    const gar = await dataAccessApi.garApi.get(garId, isCbpId);
+    const gar = await dataAccessApi.garApi.get(garId);
     const ok = checkGARUser(gar, cookie.getUserDbId(), cookie.getOrganisationId());
     return { ok, gar };
   } catch (err) {
