@@ -1,4 +1,3 @@
-const logger = require('../utils/logger')(__filename);
 const { isValidAirportCode } = require('../utils/validator');
 const { trimToDecimalPlaces } = require('../utils/utils');
 

@@ -385,7 +385,7 @@ function getDateFromDynamicInput(input) {
     }
   } else {
     //we've got something but we don't  know what it is. this is likely a calling error rather than data error.
-    logger.error('Unrecognised date input:' + input);
+    logger.error('Unrecognised date input', { input });
     providedDate = null;
   }
 

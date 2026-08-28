@@ -1,7 +1,6 @@
 const logger = require('../../../common/utils/logger')(__filename);
 const CookieModel = require('../../../common/models/Cookie.class');
 const manifestFields = require('../../../common/seeddata/gar_manifest_fields.json');
-const garApi = require('../../../common/services/garApi');
 const dataAccessApi = require('../../../common/services/dataAccessApi');
 const validator = require('../../../common/utils/validator');
 const airportValidation = require('../../../common/utils/airportValidation');
@@ -10,7 +9,6 @@ const { Manifest } = require('../../../common/models/Manifest.class');
 const ValidationRule = require('../../../common/models/ValidationRule.class');
 
 module.exports = (req, res) => {
-  logger.debug('In garfile / review get controller');
   const cookie = new CookieModel(req);
   const garId = res?.locals?.gar?.garId;
   const frmUpload = req.query?.from === 'uploadGar';
@@ -61,15 +59,13 @@ module.exports = (req, res) => {
           res.render('app/garfile/review/index', renderObj);
         })
         .catch((err) => {
-          logger.info('GAR review validation failed');
-          logger.debug(err);
+          logger.warn('GAR review validation failed', { garId });
           renderObj.errors = err;
           res.render('app/garfile/review/index', renderObj);
         });
     })
     .catch((err) => {
-      logger.error('Error retrieving GAR for review');
-      logger.error(err);
+      logger.error('Failed to retrieve GAR for review', { errorMessage: err?.message, stack: err?.stack });
       res.render('app/garfile/review/index', {
         cookie,
         errors: [{ message: 'There was an error retrieving the GAR. Try again later' }],

@@ -6,7 +6,6 @@ const PAGE_ONE = 1;
 const PER_PAGE = 10;
 
 module.exports = async (req, res) => {
-  logger.debug('In home  get controller');
   const cookie = new CookieModel(req);
 
   const userId = cookie.getUserDbId();
@@ -49,8 +48,7 @@ module.exports = async (req, res) => {
       cancelledGars: JSON.parse(cancelledGars),
     });
   } catch (error) {
-    logger.error('Failed to get GARS from API');
-    logger.error(error);
+    logger.error('Failed to get GARS from API', { errorMessage: error?.message, stack: error?.stack });
     res.render('app/home/index', {
       cookie,
       successMsg,

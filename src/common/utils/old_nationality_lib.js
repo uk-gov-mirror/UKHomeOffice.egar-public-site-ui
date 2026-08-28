@@ -16,7 +16,7 @@ const customNationalities = [
 ];
 
 const generateNationalityList = () => {
-  logger.info('Obtaining all countries and converting to alpha 3 codes');
+  logger.debug('Generating nationality list from ISO country codes');
   const alpha3List = [];
   countries.registerLocale(en);
 

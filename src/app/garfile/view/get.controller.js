@@ -6,39 +6,15 @@ const airportValidation = require('../../../common/utils/airportValidation');
 const { isAbleToCancelGar } = require('../../../common/utils/validator');
 const dataAccessApi = require('../../../common/services/dataAccessApi');
 
-/**
- * For a supplied GAR object, check that the user id or organisation id
- * match the given parameters. Returns true if there is a match or false
- * otherwise.
- *
- * @param {Object} parsedGar The GAR to check
- * @param {String} userId The user id to check against
- * @param {String} organisationId The organisation to check against
- */
-const checkGARUser = (parsedGar, userId, organisationId) => {
-  if (parsedGar === undefined || parsedGar === null) return false;
-
-  if (parsedGar.organisationId && organisationId && parsedGar.organisationId === organisationId) {
-    logger.info('GAR organisation id matches current user ID');
-    return true;
-  }
-  if (parsedGar.userId === userId) {
-    logger.info('GAR user id matches current user ID');
-    return true;
-  }
-  return false;
-};
-
 module.exports = async (req, res) => {
   const cookie = new CookieModel(req);
   let renderContext = {};
-  logger.debug('In garfile/view get controller');
   let { garId } = req.body || {};
   if (garId === undefined) {
     garId = cookie.getGarId();
   }
   if (garId === null) {
-    logger.info('GAR id is null, redirect to home page');
+    logger.debug('GAR ID is null; redirecting to home page');
     res.redirect('/home');
     return;
   }
@@ -56,7 +32,7 @@ module.exports = async (req, res) => {
     const isResubmitted = cookie.getResubmitFor0T().includes(garId);
 
     if ('poll' in req.query) {
-      logger.info(`User GAR ${garId}: Checkin progress status is ${progress}`);
+      logger.debug(`User GAR ${garId}: check-in progress status is ${progress}`);
       res.json(progress);
       return;
     }
@@ -80,7 +56,7 @@ module.exports = async (req, res) => {
 
       cookie.setGarId(parsedGar.garId);
       cookie.setGarStatus(parsedGar.status.name);
-      logger.info(`Retrieved GAR id: ${parsedGar.garId}`);
+      logger.debug(`Retrieved GAR ID: ${parsedGar.garId}`);
 
       // Maybe not necessary but delete the ids as the template does not need them
       delete parsedGar.userId;
@@ -109,21 +85,19 @@ module.exports = async (req, res) => {
       }
 
       if (progress === 'Incomplete' && resubmitted === 'yes') {
-        logger.info(`Rendering GAR 0T resubmit page`);
+        logger.debug('Rendering GAR 0T resubmit page');
         res.render('app/garfile/amg/checkin/resubmit', renderContext);
       } else {
-        logger.info(`Rendering GAR review page`);
+        logger.debug('Rendering GAR review page');
         res.render('app/garfile/view/index', renderContext);
       }
     } catch (err) {
-      logger.error('Failed to get GAR information');
-      logger.error(err);
+      logger.error('Failed to get GAR information', { garId, errorMessage: err?.message, stack: err?.stack });
       renderContext.errors = [{ message: 'Failed to get GAR information' }];
       res.render('app/garfile/view/index', renderContext);
     }
   } catch (err) {
-    logger.error('Failed to get GAR information');
-    logger.error(err);
+    logger.error('Failed to get GAR information', { garId, errorMessage: err?.message, stack: err?.stack });
     renderContext.errors = [{ message: 'Failed to get GAR information' }];
     res.render('app/garfile/view/index', renderContext);
   }

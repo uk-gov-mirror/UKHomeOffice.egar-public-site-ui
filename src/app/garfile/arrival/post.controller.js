@@ -28,8 +28,11 @@ const performAPICall = (cookie, buttonClicked, res) => {
       }
     })
     .catch((err) => {
-      logger.error('Api failed to update GAR');
-      logger.error(err);
+      logger.error('Failed to update GAR', {
+        garId: cookie.getGarId(),
+        errorMessage: err?.message,
+        stack: err?.stack,
+      });
       res.render('app/garfile/arrival/index', {
         cookie,
         errors: [
@@ -103,8 +106,6 @@ const buildValidations = (voyage) => {
 };
 
 module.exports = async (req, res) => {
-  logger.debug('In garfile / arrival post controller');
-
   const cookie = new CookieModel(req);
   const { buttonClicked } = req.body;
 
@@ -157,8 +158,7 @@ module.exports = async (req, res) => {
       performAPICall(cookie, buttonClicked, res);
     })
     .catch((err) => {
-      logger.info('GAR arrival validation failed');
-      logger.debug(JSON.stringify(err));
+      logger.warn('GAR arrival validation failed', { garId: cookie.getGarId() });
       res.render('app/garfile/arrival/index', {
         cookie,
         errors: err,

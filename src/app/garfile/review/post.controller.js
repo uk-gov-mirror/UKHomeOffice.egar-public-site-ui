@@ -11,7 +11,7 @@ const validationList = require('./validations');
 const performAPICall = async (garId, cookie, req, res) => {
   try {
     const apiResponse = await garApi.patch(garId, 'Submitted', {});
-    logger.info('Received response from API');
+    logger.debug('Received response from API');
     const parsedResponse = JSON.parse(apiResponse);
 
     if (Object.prototype.hasOwnProperty.call(parsedResponse, 'message')) {
@@ -21,13 +21,13 @@ const performAPICall = async (garId, cookie, req, res) => {
         identifier: '',
       };
       req.session.submiterrormessage.push(submitError);
-      logger.error('API has returned an unexpected response');
+      logger.error('API returned an unexpected response');
       logger.error(parsedResponse.message);
       req.session.save(() => res.redirect('/garfile/review'));
       return;
     }
 
-    logger.info('Successfully submitted GAR');
+    logger.info('Submitted GAR');
 
     cookie.setGarStatus('Submitted');
 
@@ -35,8 +35,7 @@ const performAPICall = async (garId, cookie, req, res) => {
       cookie,
     });
   } catch (err) {
-    logger.error('Api failed to update GAR');
-    logger.error(err);
+    logger.error('Failed to update GAR', { garId, errorMessage: err?.message, stack: err?.stack });
     res.render('app/garfile/submit/failure/index', {
       cookie,
     });
@@ -89,7 +88,6 @@ const buildValidations = async (garfile, garpeople, manifest) => {
 };
 
 module.exports = async (req, res) => {
-  logger.debug('In garfile / review post controller');
   const cookie = new CookieModel(req);
   const garId = cookie.getGarId();
   const resubmit = req.body.resubmitFor0T;
@@ -131,7 +129,7 @@ module.exports = async (req, res) => {
         identifier: '',
       };
       req.session.submiterrormessage.push(submitError);
-      logger.info('GAR already submitted');
+      logger.warn('GAR already submitted');
       req.session.save(() => res.redirect('/garfile/review'));
       return;
     }
@@ -145,8 +143,7 @@ module.exports = async (req, res) => {
       showChangeLinks: true,
     };
   } catch (err) {
-    logger.error('Error retrieving GAR for review');
-    logger.error(err);
+    logger.error('Failed to retrieve GAR for review', { garId, errorMessage: err?.message, stack: err?.stack });
     return res.render('app/garfile/review/index', {
       cookie,
       errors: [{ message: 'There was an error retrieving the GAR. Try again later' }],
@@ -156,8 +153,7 @@ module.exports = async (req, res) => {
   try {
     await validator.validateChains(validations);
   } catch (err) {
-    logger.info('Failed to submit incomplete GAR - validation failed');
-    logger.debug(JSON.stringify(err));
+    logger.warn('GAR validation failed', { garId });
     renderObj.errors = err;
     return res.render('app/garfile/review/index', renderObj);
   }
@@ -177,8 +173,11 @@ module.exports = async (req, res) => {
   try {
     await garApi.submitGARForCheckin(garId);
   } catch (err) {
-    logger.error('Api failed to submit GAR people for AMG checkin');
-    logger.error(err);
+    logger.error('Failed to submit GAR people for AMG check-in', {
+      garId,
+      errorMessage: err?.message,
+      stack: err?.stack,
+    });
     return res.render('app/garfile/review/index.njk', {
       cookie,
     });
@@ -195,7 +194,7 @@ module.exports = async (req, res) => {
     res.redirect(`/garfile/view?resubmitted=${resubmit0TLink}`);
   } else {
     if (isRequiresPassengerCheck && !isAnAllMilitaryFlight) {
-      logger.info('Submiited GAR people to AMG checkin');
+      logger.info('Submitted GAR people to AMG check-in', { garId });
       res.redirect(`/garfile/amg/checkin?resubmitted=${resubmit0TLink}${initialSubmit}`);
     } else {
       performAPICall(garId, cookie, req, res);

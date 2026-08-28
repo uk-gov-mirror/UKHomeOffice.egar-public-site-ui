@@ -5,7 +5,6 @@ const manifestFields = require('../../../common/seeddata/gar_manifest_fields.jso
 
 module.exports = (req, res) => {
   const cookie = new CookieModel(req);
-  logger.debug('In garfile/print manifest get controller');
 
   let { garId } = req.body || {};
   if (garId === undefined) {
@@ -53,8 +52,7 @@ module.exports = (req, res) => {
       res.render('app/garfile/printmanifest/index', renderContext);
     })
     .catch((err) => {
-      logger.error('Failed to get GAR information');
-      logger.error(err);
+      logger.error('Failed to get GAR information', { garId, errorMessage: err?.message, stack: err?.stack });
       renderContext.errors = [{ message: 'Failed to get GAR information' }];
       res.render('app/garfile/printmanifest/index', renderContext);
     });
