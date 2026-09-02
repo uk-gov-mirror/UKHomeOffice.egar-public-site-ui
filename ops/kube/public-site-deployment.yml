@@ -4,10 +4,6 @@ kind: Deployment
 metadata:
   name: public-site
   namespace: {{ .KUBE_NAMESPACE }}
-  {{ if ne .KUBE_NAMESPACE "egar-production" }}
-  annotations:
-    downscaler/uptime: {{ .DOWN_SCALER_ANNOTATIONS }}
-  {{ end }}
 spec:
   selector:
     matchLabels:
@@ -25,11 +21,50 @@ spec:
         - name: bundle-certs
           configMap:
             name: bundle
+        - name: nginx-openresty
+          emptyDir: {}
+        - name: init-temp
+          emptyDir: {}
+        - name: init-var-run
+          emptyDir: {}
+        - name: proxy-temp
+          emptyDir: {}
+        - name: proxy-var-run
+          emptyDir: {}
+        - name: public-site-temp
+          emptyDir: {}
+        - name: public-site-var-run
+          emptyDir: {}
+      initContainers:
+        - name: public-site-proxy-init
+          image: quay.io/ukhomeofficedigital/acp-nginx-proxy-rocky:0.0.3
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - cp -a /usr/local/openresty/nginx/. /nginx-temp/
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            privileged: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: nginx-openresty
+              mountPath: /nginx-temp
+            - name: init-temp
+              mountPath: /tmp
+              readOnly: true
+            - name: init-var-run
+              mountPath: /var/run
+              readOnly: true
       containers:
         - name: public-site-proxy
           image: quay.io/ukhomeofficedigital/acp-nginx-proxy-rocky:0.0.3
           imagePullPolicy: IfNotPresent
           securityContext:
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
             privileged: false
@@ -61,6 +96,14 @@ spec:
           volumeMounts:
             - name: bundle-certs
               mountPath: /etc/ssl/certs
+              readOnly: true
+            - name: nginx-openresty
+              mountPath: /usr/local/openresty/nginx
+            - name: proxy-temp
+              mountPath: /tmp
+              readOnly: true
+            - name: proxy-var-run
+              mountPath: /var/run
               readOnly: true
         - name: public-site
           image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/egar/public-site-ui:{{ .TAGGED_VERSION }}
@@ -315,6 +358,12 @@ spec:
           volumeMounts:
             - name: bundle-certs
               mountPath: /etc/ssl/certs
+              readOnly: true
+            - name: public-site-temp
+              mountPath: /tmp
+              readOnly: true
+            - name: public-site-var-run
+              mountPath: /var/run
               readOnly: true
           ports:
             - name: public-site-prt
